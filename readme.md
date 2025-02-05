@@ -25,13 +25,4 @@ python3 ./scripts/import.py
 
 ## Développement
 
-### Démarrage des bases de données
-
-1. Installez Docker
-2. Démarrez les bases de données en utilisant la commande suivante :
-```
-docker compose up -d mongo cassandra 
-```
-
-
 ## License
