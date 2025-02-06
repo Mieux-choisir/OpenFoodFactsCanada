@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from utils import *
-from product import *
+from scripts.utils import *
+from scripts.product import *
 
 WANTED_COUNTRY = "Canada"
 
