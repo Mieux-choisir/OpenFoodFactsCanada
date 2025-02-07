@@ -2,3 +2,4 @@ requests
 pymongo
 pydantic
 ijson
+tenacity
