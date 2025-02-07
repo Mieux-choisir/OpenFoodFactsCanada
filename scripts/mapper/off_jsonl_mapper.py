@@ -163,11 +163,6 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
     packaging_tags_field = 'packaging_tags'
-    packaging_material_tags_field = 'packaging_material_tags'
-    packaging_field = 'packagings'
-    packaging_shape_subfield = 'shape'
-    packaging_material_subfield = 'material'
-    recycling_subfield = 'recycling'
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
