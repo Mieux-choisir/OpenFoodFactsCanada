@@ -170,7 +170,7 @@ def map_dict_to_packaging(product_dict: dict) -> Packaging:
     recycling_subfield = 'recycling'
 
     return Packaging(
-        non_recyclable_and_non_biodegradable_materials=product_dict[packaging_field][recycling_subfield],
+        non_recyclable_and_non_biodegradable_materials=None,
         packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
     )
 
