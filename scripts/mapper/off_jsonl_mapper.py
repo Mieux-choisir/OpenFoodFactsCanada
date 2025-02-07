@@ -176,12 +176,12 @@ def map_dict_to_packaging(product_dict: dict) -> Packaging:
 
 
 def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
-    labels_field = "labels"
+    labels_field = "labels_tags"
 
     return ProductionSystem(
-        labels=product_dict[labels_field].split(",") if product_dict[labels_field] is not None else [], #TODO check other fields
+        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
         value=None,
-        warning=None,
+        warning=None
     )
 
 
