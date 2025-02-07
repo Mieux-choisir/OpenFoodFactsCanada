@@ -10,9 +10,9 @@ import logging
 from pymongo import MongoClient
 
 from product import Product
-from off_csv_mapper import *
-from off_jsonl_mapper import *
-from fdc_mapper import *
+from scripts.mapper.off_csv_mapper import *
+from scripts.mapper.off_jsonl_mapper import *
+from scripts.mapper.fdc_mapper import *
 
 ########################################################################################################################
 ##### VARIABLES GLOBALES ###############################################################################################
