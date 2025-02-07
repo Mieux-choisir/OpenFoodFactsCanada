@@ -162,20 +162,16 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
-    packaging_field = "packaging"
-    #print('packaging tags', product_dict['packaging_tags'])
-    #print('packaging_materials_tags', product_dict['packaging_materials_tags'])
-    #print('packaging_text', product_dict['packaging_text'])
-    #print('packagings_complete', product_dict['packagings_complete'])
-    #print('packagings_materials', product_dict['packagings_materials'])
-    #print('packagings_materials_main', product_dict['packagings_materials_main'])
-    #print('packagings', product_dict['packagings'])
-    #print('packagings_n', product_dict['packagings_n'])
-    #print('packaging', product_dict['packaging'])
+    packaging_tags_field = 'packaging_tags'
+    packaging_material_tags_field = 'packaging_material_tags'
+    packaging_field = 'packagings'
+    packaging_shape_subfield = 'shape'
+    packaging_material_subfield = 'material'
+    recycling_subfield = 'recycling'
 
     return Packaging(
-        non_recyclable_and_non_biodegradable_materials=None,
-        packaging=product_dict[packaging_field].split(",") if product_dict[packaging_field] is not None else []
+        non_recyclable_and_non_biodegradable_materials=product_dict[packaging_field][recycling_subfield],
+        packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
     )
 
 
