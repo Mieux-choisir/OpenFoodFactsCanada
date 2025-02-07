@@ -29,7 +29,7 @@ categories_non_base = {
 def map_letter_to_number(letter: str) -> int | None:
     try:
         return ord(letter.lower()) - 96
-    except TypeError:
+    except TypeError :
         return None
 
 
