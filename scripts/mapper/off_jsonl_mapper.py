@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from utils import *
-from product import *
+from scripts.utils import *
+from scripts.product import *
 
 WANTED_COUNTRY = "Canada"
 
@@ -180,12 +180,12 @@ def map_dict_to_packaging(product_dict: dict) -> Packaging:
 
 
 def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
-    labels_field = "labels_tags"
+    labels_field = "labels"
 
     return ProductionSystem(
-        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
+        labels=product_dict[labels_field].split(",") if product_dict[labels_field] is not None else [], #TODO check other fields
         value=None,
-        warning=None
+        warning=None,
     )
 
 
