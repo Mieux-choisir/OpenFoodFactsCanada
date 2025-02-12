@@ -20,15 +20,15 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
 
     return Product(
         id=product_dict[id_field],
-        product_name=product_dict[product_name_field],
-        generic_name_en=product_dict[generic_name_field],
+        product_name=product_dict[product_name_field].strip() if product_dict[product_name_field] is not None else None,
+        generic_name_en=product_dict[generic_name_field].strip() if product_dict[generic_name_field] is not None else None,
         is_raw=off_json_is_raw_aliment(product_dict),
-        brands=product_dict[brands_field],
-        brand_owner=product_dict[brand_owner_field],
-        food_groups_en=[product_dict[food_groups_en_field] if product_dict[food_groups_en_field] is not None else ''],
+        brands=map_off_dict_to_brands(product_dict, brands_field),
+        brand_owner=map_off_dict_to_brand_owner(product_dict, brand_owner_field, brands_field),
+        food_groups_en=map_off_dict_to_food_groups(product_dict, food_groups_en_field),
         ingredients=map_off_dict_to_ingredients(product_dict),
         nutrition_facts=map_off_dict_to_nutrition_facts(product_dict),
-        allergens=[product_dict[allergens_en_field]],
+        allergens=map_off_dict_to_allergens(product_dict, allergens_en_field),
         nutriscore_data=map_off_dict_to_nutriscore_data(product_dict),
         ecoscore_data=map_off_dict_to_ecoscore_data(product_dict),
         nova_data=map_off_dict_to_nova_data(product_dict)
@@ -70,6 +70,29 @@ def off_json_is_raw_aliment(product_dict: dict) -> bool:
     return False
 
 
+def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> List[str]:
+    brands_value = []
+    if product_dict[brands_field] is not None:
+        brands_value = product_dict[brands_field].title().split(',')
+    return brands_value
+
+
+def map_off_dict_to_brand_owner(product_dict: dict, brand_owner_field:str, brands_field:str) -> str | None:
+    brand_owner_value = None
+    if product_dict[brand_owner_field] is not None:
+        brand_owner_value = product_dict[brand_owner_field].title()
+    elif product_dict[brands_field] is not None:
+        brand_owner_value = product_dict[brands_field].title()
+    return brand_owner_value
+
+
+def map_off_dict_to_food_groups(product_dict: dict, food_groups_en_field: str) -> List[str]:
+    food_groups = []
+    if product_dict[food_groups_en_field] is not None:
+        food_groups = product_dict[food_groups_en_field].split(',')
+    return food_groups
+
+
 def map_off_dict_to_ingredients(product_dict: dict) -> Ingredients:
     ingredients_text_field = "ingredients_text"
 
@@ -109,6 +132,13 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         nutrient_level=nutrient_level,
         nutrients=nutrients,
     )
+
+
+def map_off_dict_to_allergens(product_dict: dict, allergens_en_field: str) -> list[str]:
+    allergens_value = []
+    if product_dict[allergens_en_field] != "":
+        allergens_value = product_dict[allergens_en_field].split(',')
+    return allergens_value
 
 
 def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
