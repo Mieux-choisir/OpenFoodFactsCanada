@@ -113,18 +113,9 @@ def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreDat
     )
 
 
-def map_fdc_dict_to_ecoscore_data() -> EcoscoreData:
-    return EcoscoreData(
-        score=None,
-        origin_of_ingredients=[],
-        packaging=None,
-        production_system=None,
-        threatened_species={},
-    )
+def map_fdc_dict_to_ecoscore_data() -> EcoscoreData | None:
+    return None
 
 
-def map_fdc_dict_to_nova_data() -> NovaData:
-    return NovaData(
-        score=None,
-        group_markers={}
-    )
+def map_fdc_dict_to_nova_data() -> NovaData | None:
+    return None
