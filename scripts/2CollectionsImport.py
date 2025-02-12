@@ -1,5 +1,7 @@
 import csv
 import gzip
+import zipfile
+
 import ijson
 import json
 import os
@@ -8,11 +10,12 @@ import sys
 import logging
 
 from pymongo import MongoClient
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from product import Product
-from scripts.mapper.off_csv_mapper import *
-from scripts.mapper.off_jsonl_mapper import *
-from scripts.mapper.fdc_mapper import *
+from mapper.off_csv_mapper import *
+from mapper.off_jsonl_mapper import *
+from mapper.fdc_mapper import *
 
 ########################################################################################################################
 ##### VARIABLES GLOBALES ###############################################################################################
@@ -20,35 +23,77 @@ from scripts.mapper.fdc_mapper import *
 
 # URL of the off csv file
 off_csv_url = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
-off_csv_url = r"C:\Users\david\OneDrive - Université Laval\H2025\Projet en génie logiciel\OFF\OFFcsv\en.openfoodfacts.org.products.csv"
 
 # URL of the off json file
-off_json_url = r"C:\Users\david\OneDrive - Université Laval\H2025\Projet en génie logiciel\OFF\OFFjsonl\openfoodfacts-products.jsonl"
+off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
 # URL of the fdc file
-fdc_json_url = r"C:\Users\david\OneDrive - Université Laval\H2025\Projet en génie logiciel\OFF\Branded\brandedDownload.json"
+fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
 
 
 ########################################################################################################################
 ##### TELECHARGEMENT DES FICHIERS ######################################################################################
 ########################################################################################################################
 
-def download_file(url, download_path):
+def download_and_decompress_data(source_url, compressed_file, compressed_file_extension, decompressed_file):
+    download_file(source_url, compressed_file)
+    decompress_file(compressed_file, compressed_file_extension, decompressed_file)
+    cleanup_file(compressed_file)
+
+
+def download_file(url, download_path, chunk_size=1024*1024, max_retries=5, timeout=60):
     """Downloads a file from a given url into a given download path"""
     logging.info(f"Downloading file from {url}...")
-    response = requests.get(url, stream=True)
-    with open(download_path, 'wb') as f:
-        f.write(response.content)
-    logging.info(f"Download complete: {download_path}")
+
+    @retry(stop=stop_after_attempt(max_retries), wait=wait_fixed(5))
+    def download():
+        try:
+            with requests.get(url, stream=True, timeout=timeout) as response:
+                response.raise_for_status()
+                with open(download_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=chunk_size):
+                        f.write(chunk)
+            logging.info(f"Download complete: {download_path}")
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error downloading file {e}")
+            raise
+
+    try:
+        download()
+    except Exception as e:
+        logging.error(f"Download failed after {max_retries} attemps: {e}")
+        raise
 
 
-def decompress_off_file(gz_file, output_file):
+def decompress_file(compressed_file, compressed_file_extension, output_file, buffer_size=1024*1024):
+    logging.info(f"Decompressing {compressed_file} into {output_file}...")
+
+    if compressed_file_extension == '.gz':
+        decompress_gz_file(compressed_file, output_file, buffer_size)
+    elif compressed_file_extension == '.zip':
+        decompress_zip_file(compressed_file, output_file, buffer_size)
+    else:
+        logging.error(f"Unsupported file extension: {compressed_file_extension}")
+        raise ValueError(f"Unsupported file extension: {compressed_file_extension}. Supported extensions are '.gz' and '.zip'.")
+    logging.info(f"Decompression complete")
+
+
+def decompress_gz_file(gz_file, output_file, buffer_size=1024*1024):
     """Decompresses a .gz file into a file named output_file"""
-    logging.info(f"Decompressing {gz_file}...")
     with gzip.open(gz_file, 'rb') as f_in:
         with open(output_file, 'wb') as f_out:
-            f_out.write(f_in.read())
-    logging.info(f"Decompression complete: {output_file}")  # TODO regarder pourquoi il crée un fichier vide
+            while chunk := f_in.read(buffer_size):
+                f_out.write(chunk)
+
+
+def decompress_zip_file(zip_file, output_file, buffer_size=1024*1024):
+    """Decompresses a .zip file into a file named output_file"""
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        with zip_ref.open(zip_ref.namelist()[0], 'r') as f_in:
+            with open(output_file, 'wb') as f_out:
+                while chunk := f_in.read(buffer_size):
+                    f_out.write(chunk)
+
 
 
 ########################################################################################################################
@@ -170,21 +215,27 @@ def main():
     )
 
     # Download and decompress
-    # download_csv(csv_url, gz_file)
-    # decompress_csv(gz_file, csv_file)
+    off_csv_gz_file = "off_csv.gz"
+    off_csv_file = "off_csv.csv"
+    download_and_decompress_data(off_csv_url, off_csv_gz_file, '.gz', off_csv_file)
+
+    fdc_zip_file = "fdc_branded.zip"
+    fdc_file = "fdc_branded.json"
+    download_and_decompress_data(fdc_json_url, fdc_zip_file, '.zip', fdc_file)
 
     # Load data and transform it
     #off_products = import_jsonl_off_data(off_json_url)
-    off_products = import_csv_off_data(off_csv_url)
-    fdc_products = import_json_fdc_data(fdc_json_url)
+    off_products = import_csv_off_data(off_csv_file)
+    fdc_products = import_json_fdc_data(fdc_file)
 
     # Load transformed data into Mongo
     load_products_to_mongo(off_products, "off_products")
     load_products_to_mongo(fdc_products, "fdc_products")
 
     # Clean up
-    # cleanup_file(gz_file)
-    # cleanup_file(csv_file)
+    cleanup_file(off_csv_file)
+    #cleanup_file(off_jsonl_file)
+    cleanup_file(fdc_file)
 
 
 if __name__ == "__main__":
