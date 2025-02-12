@@ -13,7 +13,8 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
     id_field = "code"
     product_name_field = "product_name"
     generic_name_field = "generic_name"
-    brand_owner_field = "brands"
+    brands_field = "brands"
+    brand_owner_field = "brand_owner"
     food_groups_en_field = "food_groups"
     allergens_en_field = "allergens"
 
@@ -22,7 +23,8 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
         product_name=product_dict[product_name_field],
         generic_name_en=product_dict[generic_name_field],
         is_raw=off_json_is_raw_aliment(product_dict),
-        brand_name=product_dict[brand_owner_field],
+        brands=product_dict[brands_field],
+        brand_owner=product_dict[brand_owner_field],
         food_groups_en=[product_dict[food_groups_en_field] if product_dict[food_groups_en_field] is not None else ''],
         ingredients=map_off_dict_to_ingredients(product_dict),
         nutrition_facts=map_off_dict_to_nutrition_facts(product_dict),

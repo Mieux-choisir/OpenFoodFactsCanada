@@ -13,7 +13,8 @@ def map_off_row_to_product(row: list[str], header: list[str]) -> Product | None:
     id_field = header.index("code")
     product_name_field = header.index("product_name")
     generic_name_field = header.index("generic_name")
-    brand_owner_field = header.index("brands")
+    brands_field = header.index("brands")
+    brand_owner_field = header.index("brand_owner")
     food_groups_en_field = header.index("food_groups_en")
     allergens_en_field = header.index("allergens_en")
 
@@ -22,7 +23,8 @@ def map_off_row_to_product(row: list[str], header: list[str]) -> Product | None:
         product_name=row[product_name_field],
         generic_name_en=row[generic_name_field],
         is_raw=off_csv_is_raw_aliment(row, header),
-        brand_name=row[brand_owner_field],
+        brands=row[brands_field],
+        brand_owner=row[brand_owner_field],
         food_groups_en=[row[food_groups_en_field]],
         ingredients=map_off_row_to_ingredients(row, header),
         nutrition_facts=map_off_row_to_nutrition_facts(row, header),

@@ -11,6 +11,7 @@ def map_fdc_dict_to_product(dict: dict) -> Product:
     id_field = 'gtinUpc'
     product_name_field = 'description'
     generic_name_field = 'description'
+    brands_field = 'brandName'
     brand_owner_field = 'brandOwner'
     food_groups_en_field = ''  # TODO trouver le bon champ
     allergens_en_field = ''
@@ -20,7 +21,8 @@ def map_fdc_dict_to_product(dict: dict) -> Product:
         product_name=dict[product_name_field].title(),
         generic_name_en=dict[generic_name_field].title(),
         is_raw=None,  # TODO verifier si cest toujours cru ou pas
-        brand_name=dict[brand_owner_field].title(),
+        brands=[dict[brand_owner_field].title(), dict[brands_field].title()] if brands_field in dict.keys() else [dict[brand_owner_field].title()],
+        brand_owner=dict[brand_owner_field].title(),
         food_groups_en=[''],  # TODO compléter la liste si possible
         ingredients=map_fdc_dict_to_ingredients(dict['ingredients']),
         nutrition_facts=map_fdc_dict_to_nutrition_facts(dict['foodNutrients']),
