@@ -5,32 +5,51 @@ from scripts.product import *
 WANTED_COUNTRY = "Canada"
 
 
-def map_fdc_dict_to_product(dict: dict) -> Product:
+def map_fdc_dict_to_product(product_dict: dict, categories):
     """Maps a fdc dictionary to a product object"""
-    country_field = ''
+    country_field = 'marketCountry'
     id_field = 'gtinUpc'
     product_name_field = 'description'
     generic_name_field = 'description'
     brands_field = 'brandName'
     brand_owner_field = 'brandOwner'
-    food_groups_en_field = ''  # TODO trouver le bon champ
+    food_groups_en_field = 'brandedFoodCategory'  # TODO convert fdc categories to off food groups
     allergens_en_field = ''
 
+    if product_dict['brandedFoodCategory'] in categories.keys():
+        categories[product_dict['brandedFoodCategory']] += 1
+    else:
+        categories[product_dict['brandedFoodCategory']] = 1
+
+    if product_dict['brandedFoodCategory'] == 'Berries/Small Fruit':
+        print(product_dict['gtinUpc'], ":", product_dict['ingredients'], ":", product_dict)
+
     return Product(
-        id=dict[id_field],
-        product_name=dict[product_name_field].title(),
-        generic_name_en=dict[generic_name_field].title(),
-        is_raw=None,  # TODO verifier si cest toujours cru ou pas
-        brands=[dict[brand_owner_field].title(), dict[brands_field].title()] if brands_field in dict.keys() else [dict[brand_owner_field].title()],
-        brand_owner=dict[brand_owner_field].title(),
-        food_groups_en=[''],  # TODO compléter la liste si possible
-        ingredients=map_fdc_dict_to_ingredients(dict['ingredients']),
-        nutrition_facts=map_fdc_dict_to_nutrition_facts(dict['foodNutrients']),
-        allergens=[''],  # TODO compléter la liste si possible
-        nutriscore_data=map_fdc_dict_to_nutriscore_data(dict['foodNutrients']),
+        id=product_dict[id_field],
+        product_name=product_dict[product_name_field].title(),
+        generic_name_en=product_dict[generic_name_field].title(),
+        is_raw=fdc_is_raw_aliment(product_dict['brandedFoodCategory']),
+        brands=[product_dict[brand_owner_field].title(), product_dict[brands_field].title()] if brands_field in product_dict.keys() else [product_dict[brand_owner_field].title()],
+        brand_owner=product_dict[brand_owner_field].title(),
+        food_groups_en=product_dict[food_groups_en_field].split(','),
+        ingredients=map_fdc_dict_to_ingredients(product_dict['ingredients']),
+        nutrition_facts=map_fdc_dict_to_nutrition_facts(product_dict['foodNutrients']),
+        allergens=[],
+        nutriscore_data=map_fdc_dict_to_nutriscore_data(product_dict['foodNutrients']),
         ecoscore_data=map_fdc_dict_to_ecoscore_data(),
         nova_data=map_fdc_dict_to_nova_data()
-    )
+    ), categories
+
+
+def fdc_is_raw_aliment(category: str):
+    is_raw = False
+
+    if category in ['Vegetables  Unprepared/Unprocessed (Frozen)', 'Fruits, Vegetables & Produce', 'Vegetables - Unprepared/Unprocessed (Frozen)']:
+        is_raw = True
+    elif category == 'Pre-Packaged Fruit & Vegetables':
+        is_raw = None #currently no way of knowing if the product is raw, there should be a more complex analysis
+    return is_raw
+
 
 
 def map_fdc_dict_to_ingredients(ingredients: str) -> Ingredients:
