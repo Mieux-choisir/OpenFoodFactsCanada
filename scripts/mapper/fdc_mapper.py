@@ -1,4 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
+from decimal import Decimal
+
 from scripts.utils import *
 from scripts.product import *
 
@@ -63,19 +65,20 @@ def map_fdc_dict_to_ingredients(ingredients: str) -> Ingredients:
 
 def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFacts:
     fat_id = 1004
-    sodium_id = 1093  # TODO convertir sodium en sel
+    sodium_id = 1093
     saturated_fats_id = 1258
     sugar_field = 2000
 
+    fat_level = next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == fat_id), None)
+    sodium_level = next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == sodium_id), None)
+    salt_level = sodium_level * Decimal('2.5') if sodium_level is not None else None
+    saturated_fats_level = next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == saturated_fats_id), None)
+    sugar_level = next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == sugar_field), None)
     nutrient_level = NutrientLevel(
-        fat=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == fat_id), None),
-        salt=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == sodium_id), None),
-        # TODO convertir sodium en sel
-        saturated_fats=next(
-            (item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == saturated_fats_id),
-            None),
-        sugar=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == sugar_field),
-                   None),
+        fat=fat_level,
+        salt= salt_level,
+        saturated_fats=saturated_fats_level,
+        sugar=sugar_level,
     )
 
     carbohydrates_100g_field = 1005
