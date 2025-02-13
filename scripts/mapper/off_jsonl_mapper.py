@@ -166,36 +166,21 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
-    packaging_field = "packaging"
-    #print(""packaging tags"", product_dict[""packaging_tags""])
-    #print(""packaging_materials_tags"", product_dict[""packaging_materials_tags""])
-    #print(""packaging_text"", product_dict[""packaging_text""])
-    #print(""packagings_complete"", product_dict[""packagings_complete""])
-    #print(""packagings_materials"", product_dict[""packagings_materials""])
-    #print(""packagings_materials_main"", product_dict[""packagings_materials_main""])
-    #print(""packagings"", product_dict[""packagings""])
-    #print(""packagings_n"", product_dict[""packagings_n""])
-    #print(""packaging"", product_dict[""packaging""])
-
-    packaging_data = product_dict.get(packaging_field, None)
+    packaging_tags_field = 'packaging_tags'
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        #packaging=product_dict[packaging_field].split(",") if product_dict[packaging_field] is not None else []
-        packaging=packaging_data.split(",") if packaging_data else [] 
+        packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
     )
 
 
 def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
-    labels_field = "labels"
-
-    labels_data = product_dict.get(labels_field, None)
+    labels_field = "labels_tags"
 
     return ProductionSystem(
-        #labels=product_dict[labels_field].split(",") if product_dict[labels_field] is not None else [], #TODO check other fields
-        labels=labels_data.split(",") if labels_data else [],
+        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
         value=None,
-        warning=None,
+        warning=None
     )
 
 def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
