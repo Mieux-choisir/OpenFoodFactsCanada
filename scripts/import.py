@@ -35,13 +35,14 @@ fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_f
 ##### TELECHARGEMENT DES FICHIERS ######################################################################################
 ########################################################################################################################
 
-def download_and_decompress_data(source_url, compressed_file, compressed_file_extension, decompressed_file):
+def download_and_decompress_data(source_url: str, compressed_file: str, compressed_file_extension: str,
+                                 decompressed_file: str) -> None:
     download_file(source_url, compressed_file)
     decompress_file(compressed_file, compressed_file_extension, decompressed_file)
     cleanup_file(compressed_file)
 
 
-def download_file(url, download_path, chunk_size=1024*1024, max_retries=5, timeout=60):
+def download_file(url: str, download_path: str, chunk_size: int = 1024 * 1024, max_retries: int = 5, timeout: int = 60) -> None:
     """Downloads a file from a given url into a given download path"""
     logging.info(f"Downloading file from {url}...")
 
@@ -54,18 +55,18 @@ def download_file(url, download_path, chunk_size=1024*1024, max_retries=5, timeo
                     for chunk in response.iter_content(chunk_size=chunk_size):
                         f.write(chunk)
             logging.info(f"Download complete: {download_path}")
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Error downloading file {e}")
+        except requests.exceptions.RequestException as exc:
+            logging.error(f"Error downloading file {exc}")
             raise
 
     try:
         download()
     except Exception as e:
-        logging.error(f"Download failed after {max_retries} attemps: {e}")
+        logging.error(f"Download failed after {max_retries} attempts: {e}")
         raise
 
 
-def decompress_file(compressed_file, compressed_file_extension, output_file, buffer_size=1024*1024):
+def decompress_file(compressed_file: str, compressed_file_extension: str, output_file: str, buffer_size: int = 1024 * 1024) -> None:
     logging.info(f"Decompressing {compressed_file} into {output_file}...")
 
     if compressed_file_extension == '.gz':
@@ -74,11 +75,12 @@ def decompress_file(compressed_file, compressed_file_extension, output_file, buf
         decompress_zip_file(compressed_file, output_file, buffer_size)
     else:
         logging.error(f"Unsupported file extension: {compressed_file_extension}")
-        raise ValueError(f"Unsupported file extension: {compressed_file_extension}. Supported extensions are '.gz' and '.zip'.")
+        raise ValueError(
+            f"Unsupported file extension: {compressed_file_extension}. Supported extensions are '.gz' and '.zip'.")
     logging.info(f"Decompression complete")
 
 
-def decompress_gz_file(gz_file, output_file, buffer_size=1024*1024):
+def decompress_gz_file(gz_file: str, output_file: str, buffer_size: int = 1024 * 1024) -> None:
     """Decompresses a .gz file into a file named output_file"""
     with gzip.open(gz_file, 'rb') as f_in:
         with open(output_file, 'wb') as f_out:
@@ -86,13 +88,14 @@ def decompress_gz_file(gz_file, output_file, buffer_size=1024*1024):
                 f_out.write(chunk)
 
 
-def decompress_zip_file(zip_file, output_file, buffer_size=1024*1024):
+def decompress_zip_file(zip_file: str, output_file: str, buffer_size: int = 1024 * 1024) -> None:
     """Decompresses a .zip file into a file named output_file"""
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:
         with zip_ref.open(zip_ref.namelist()[0], 'r') as f_in:
             with open(output_file, 'wb') as f_out:
                 while chunk := f_in.read(buffer_size):
                     f_out.write(chunk)
+
 
 ########################################################################################################################
 ##### IMPORTS ##########################################################################################################
@@ -111,7 +114,7 @@ def import_json_fdc_data(filename: str) -> list[Product]:
     return products
 
 
-def import_jsonl_off_data(filename: str, limit=None) -> list[Product]:
+def import_jsonl_off_data(filename: str, limit: int = None) -> list[Product]:
     """Imports the data of canadian food in a json file into a list of products"""
     if limit is not None:
         logging.info(f"Extracting {limit} products from Open Food Facts jsonl dataset...")
@@ -138,10 +141,11 @@ def import_jsonl_off_data(filename: str, limit=None) -> list[Product]:
     return products
 
 
-def import_csv_off_data(filename: str, limit=None) -> list[Product]:
+def import_csv_off_data(filename: str, limit: int = None) -> list[Product]:
     """Imports the data of canadian food in a csv file into a list of products
 
      Args:
+        filename: The path to the imported Open Food Facts csv file
         limit (int, optional): The number of lines to read from the dataset. Defaults to None.
     Returns:
         list[Product]: A list of Product objects extracted from the dataset.
@@ -262,7 +266,7 @@ def update_nutrition_facts_values(off_value: NutritionFacts, fdc_value: Nutritio
 ##### AJOUT DANS MONGO #################################################################################################
 ########################################################################################################################
 
-def load_products_to_mongo(products: list[Product], db_name="openfoodfacts", collection_name="products"):
+def load_products_to_mongo(products: list[Product], db_name: str = "openfoodfacts", collection_name: str = "products") -> None:
     logging.info(f"Loading products to MongoDB...")
 
     # Connect to MongoDB (default localhost:27017)
@@ -280,7 +284,7 @@ def load_products_to_mongo(products: list[Product], db_name="openfoodfacts", col
 ##### NETTOYAGE ########################################################################################################
 ########################################################################################################################
 
-def cleanup_file(file_path):
+def cleanup_file(file_path: str) -> None:
     """Removes the file located in file_path"""
     logging.info(f"Cleaning up the file {file_path}...")
     os.remove(file_path)
@@ -302,28 +306,25 @@ def main():
     off_csv_gz_file = "off_csv.gz"
     off_csv_file = "off_csv.csv"
     download_and_decompress_data(off_csv_url, off_csv_gz_file, '.gz', off_csv_file)
-    #off_jsonl_gz_file = "off_jsonl.gz"
-    #off_jsonl_file = "off_jsonl.jsonl"
-    #download_and_decompress_data(off_jsonl_url, off_jsonl_gz_file, '.gz', off_jsonl_file)
+    # off_jsonl_gz_file = "off_jsonl.gz"
+    # off_jsonl_file = "off_jsonl.jsonl"
+    # download_and_decompress_data(off_jsonl_url, off_jsonl_gz_file, '.gz', off_jsonl_file)
 
     fdc_zip_file = "fdc_branded.zip"
     fdc_file = "fdc_branded.json"
     download_and_decompress_data(fdc_json_url, fdc_zip_file, '.zip', fdc_file)
-
 
     # Load data and transform it
     off_products = import_csv_off_data(off_csv_file, 10)
     fdc_products = import_json_fdc_data(fdc_file)
     off_products = complete_products_data(off_products, fdc_products)
 
-
     # Load transformed data into Mongo
     load_products_to_mongo(off_products)
 
-
     # Clean up
     cleanup_file(off_csv_file)
-    #cleanup_file(off_jsonl_file)
+    # cleanup_file(off_jsonl_file)
     cleanup_file(fdc_file)
 
 
