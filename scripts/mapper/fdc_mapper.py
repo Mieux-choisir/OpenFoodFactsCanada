@@ -1,19 +1,16 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import *
-from scripts.product import *
+from scripts.utils import normalise_ingredients_list
+from scripts.product import Product, Ingredients, NutritionFacts, NutrientLevel, Nutrients, NutriscoreData, EcoscoreData, NovaData
 
 WANTED_COUNTRY = "Canada"
 
 
 def map_fdc_dict_to_product(dict: dict) -> Product:
     """Maps a fdc dictionary to a product object"""
-    country_field = ""
     id_field = "gtinUpc"
     product_name_field = "description"
     generic_name_field = "description"
     brand_owner_field = "brandOwner"
-    food_groups_en_field = ""  # TODO trouver le bon champ
-    allergens_en_field = ""
 
     return Product(
         id=dict[id_field],
@@ -128,10 +125,8 @@ def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFact
 
 
 def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreData:
-    nutriscore_score_id = None
     energy_id = 1008
     fibers_id = 1079
-    fruit_percentage_id = None
     proteins_id = 1003
     saturated_fats_id = 1258
     sodium_id = 1093
