@@ -139,7 +139,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         carbohydrates_100g=product_dict[nutriments_field][carbohydrates_100g_field],
         energy_100g=product_dict[nutriments_field][energy_100g_field],
         energy_kcal_100g=product_dict[nutriments_field][energy_kcal_100g_field],
-        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field]
+        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field],
     )
 
     return NutritionFacts(
@@ -212,11 +212,15 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
-    packaging_tags_field = 'packaging_tags'
+    packaging_tags_field = "packaging_tags"
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
+        packaging=(
+            product_dict[packaging_tags_field]
+            if product_dict[packaging_tags_field] is not None
+            else []
+        ),
     )
 
 
@@ -224,9 +228,11 @@ def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
     labels_field = "labels_tags"
 
     return ProductionSystem(
-        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
+        labels=(
+            product_dict[labels_field] if product_dict[labels_field] is not None else []
+        ),
         value=None,
-        warning=None
+        warning=None,
     )
 
 
@@ -235,5 +241,5 @@ def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
 
     return NovaData(
         score=int(product_dict[score_field]) if product_dict[score_field] else None,
-        group_markers={}
+        group_markers={},
     )
