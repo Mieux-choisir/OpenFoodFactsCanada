@@ -332,7 +332,7 @@ def load_products_to_mongo(
     db_name: str = "openfoodfacts",
     collection_name: str = "products",
 ) -> None:
-    logging.info(f"Loading products to MongoDB...")
+    logging.info("Loading products to MongoDB...")
 
     # Connect to MongoDB (default localhost:27017)
     client = MongoClient("mongodb://mongo:27017/")
