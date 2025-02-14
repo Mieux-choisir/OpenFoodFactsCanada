@@ -16,8 +16,16 @@ def map_off_row_to_product(row: list[str], header: list[str]) -> Product | None:
 
     return Product(
         id=row[id_index],
-        product_name=row[product_name_index].strip() if row[product_name_index] is not None else None,
-        generic_name_en=row[generic_name_index].strip() if row[generic_name_index] is not None else None,
+        product_name=(
+            row[product_name_index].strip()
+            if row[product_name_index] is not None
+            else None
+        ),
+        generic_name_en=(
+            row[generic_name_index].strip()
+            if row[generic_name_index] is not None
+            else None
+        ),
         is_raw=off_csv_is_raw_aliment(row, header),
         brands=map_off_row_to_brands(row, header),
         brand_owner=map_off_row_to_brand_owner(row, header),
@@ -70,7 +78,7 @@ def map_off_row_to_brands(row: list[str], header: list[str]) -> list[str]:
 
     brands = []
     if row[brands_index] is not None and row[brands_index] != "":
-        brands = row[brands_index].split(',')
+        brands = row[brands_index].split(",")
     return brands
 
 
@@ -91,7 +99,7 @@ def map_off_row_to_food_groups(row: str, header: list[str]) -> list[str]:
 
     food_groups = []
     if row[food_groups_index] is not None:
-        food_groups = row[food_groups_index].split(',')
+        food_groups = row[food_groups_index].split(",")
     return food_groups
 
 
@@ -140,7 +148,7 @@ def map_off_row_to_allergens(row: list[str], header: list[str]) -> list[str]:
 
     allergens = []
     if row[allergens_index] != "" and row[allergens_index] is not None:
-        allergens = row[allergens_index].split(',')
+        allergens = row[allergens_index].split(",")
     return allergens
 
 
@@ -155,7 +163,11 @@ def map_off_row_to_nutriscore_data(row: list[str], header: list[str]) -> Nutrisc
     sugar_index = header.index("sugars_100g")
 
     return NutriscoreData(
-        score=map_letter_to_number(row[nutriscore_score_index]) if row[nutriscore_score_index] else None,
+        score=(
+            map_letter_to_number(row[nutriscore_score_index])
+            if row[nutriscore_score_index]
+            else None
+        ),
         energy=row[energy_index],
         fibers=row[fibers_index],
         fruit_percentage=row[fruit_percentage_index],
@@ -185,7 +197,9 @@ def map_off_row_to_ecoscore_data(row: list[str], header: list[str]) -> EcoscoreD
     )
 
 
-def map_row_to_origin_of_ingredients(row: list[str], header: list[str]) -> OriginOfIngredients:
+def map_row_to_origin_of_ingredients(
+    row: list[str], header: list[str]
+) -> OriginOfIngredients:
     origin_index = header.index("origins")
 
     return OriginOfIngredients(
@@ -200,7 +214,7 @@ def map_row_to_packaging(row: list[str], header: list[str]) -> Packaging:
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=row[packaging_index].split(",")
+        packaging=row[packaging_index].split(","),
     )
 
 
@@ -218,6 +232,5 @@ def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:
     score_index = header.index("nova_group")
 
     return NovaData(
-        score=int(row[score_index]) if row[score_index] else None,
-        group_markers={}
+        score=int(row[score_index]) if row[score_index] else None, group_markers={}
     )

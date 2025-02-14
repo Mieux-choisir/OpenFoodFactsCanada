@@ -40,15 +40,17 @@ def normalise_ingredients_list(ingredients_text: str) -> list[str]:
     ingredients_text = ingredients_text.title()
 
     # Step 2: Split by commas
-    if ingredients_text.endswith('.') or ingredients_text.endswith(','):
+    if ingredients_text.endswith(".") or ingredients_text.endswith(","):
         ingredients_text = ingredients_text[:-1]
-    ingredients_list = ingredients_text.split(',')
+    ingredients_list = ingredients_text.split(",")
 
     # Step 3: Process each segment using regex
-    cleaned_ingredients = [] #TODO the ingredients listed between ( ) are separated when they shouldn't be
+    cleaned_ingredients = (
+        []
+    )  # TODO the ingredients listed between ( ) are separated when they shouldn't be
     for ingredient in ingredients_list:
         # Use regex to match everything after the last colon
-        ingredient = re.sub(r'.*:(.*)', r'\1', ingredient).strip()
+        ingredient = re.sub(r".*:(.*)", r"\1", ingredient).strip()
         cleaned_ingredients.append(ingredient)
 
     # Step 4: Remove repetitions while keeping the order of the first occurrences
@@ -108,8 +110,11 @@ def check_string_categories(category: str):
 
 def check_list_categories(category: list):
     """Returns True if the given category is a foundation food AND not a non foundation food, False otherwise"""
-    if (category and any(cat in categories_aliments_base for cat in category)
-            and not any(cat in categories_non_base for cat in category)):
+    if (
+        category
+        and any(cat in categories_aliments_base for cat in category)
+        and not any(cat in categories_non_base for cat in category)
+    ):
         return True
     return False
 
@@ -119,10 +124,10 @@ def check_additives(additives: str, nova_group: str) -> bool:
     if additives and additives != "":
         try:
             if (
-                    int(additives) == 0
-                    and nova_group
-                    and nova_group != ""
-                    and int(nova_group) <= 2
+                int(additives) == 0
+                and nova_group
+                and nova_group != ""
+                and int(nova_group) <= 2
             ):
                 return True
         except ValueError:

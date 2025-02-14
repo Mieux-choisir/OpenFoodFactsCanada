@@ -20,18 +20,28 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
 
     return Product(
         id=product_dict[id_field],
-        product_name=product_dict[product_name_field].strip() if product_dict[product_name_field] is not None else None,
-        generic_name_en=product_dict[generic_name_field].strip() if product_dict[generic_name_field] is not None else None,
+        product_name=(
+            product_dict[product_name_field].strip()
+            if product_dict[product_name_field] is not None
+            else None
+        ),
+        generic_name_en=(
+            product_dict[generic_name_field].strip()
+            if product_dict[generic_name_field] is not None
+            else None
+        ),
         is_raw=off_json_is_raw_aliment(product_dict),
         brands=map_off_dict_to_brands(product_dict, brands_field),
-        brand_owner=map_off_dict_to_brand_owner(product_dict, brand_owner_field, brands_field),
+        brand_owner=map_off_dict_to_brand_owner(
+            product_dict, brand_owner_field, brands_field
+        ),
         food_groups_en=map_off_dict_to_food_groups(product_dict, food_groups_en_field),
         ingredients=map_off_dict_to_ingredients(product_dict),
         nutrition_facts=map_off_dict_to_nutrition_facts(product_dict),
         allergens=map_off_dict_to_allergens(product_dict, allergens_en_field),
         nutriscore_data=map_off_dict_to_nutriscore_data(product_dict),
         ecoscore_data=map_off_dict_to_ecoscore_data(product_dict),
-        nova_data=map_off_dict_to_nova_data(product_dict)
+        nova_data=map_off_dict_to_nova_data(product_dict),
     )
 
 
@@ -73,11 +83,13 @@ def off_json_is_raw_aliment(product_dict: dict) -> bool:
 def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> List[str]:
     brands_value = []
     if product_dict[brands_field] is not None:
-        brands_value = product_dict[brands_field].title().split(',')
+        brands_value = product_dict[brands_field].title().split(",")
     return brands_value
 
 
-def map_off_dict_to_brand_owner(product_dict: dict, brand_owner_field:str, brands_field:str) -> str | None:
+def map_off_dict_to_brand_owner(
+    product_dict: dict, brand_owner_field: str, brands_field: str
+) -> str | None:
     brand_owner_value = None
     if product_dict[brand_owner_field] is not None:
         brand_owner_value = product_dict[brand_owner_field].title()
@@ -86,10 +98,12 @@ def map_off_dict_to_brand_owner(product_dict: dict, brand_owner_field:str, brand
     return brand_owner_value
 
 
-def map_off_dict_to_food_groups(product_dict: dict, food_groups_en_field: str) -> List[str]:
+def map_off_dict_to_food_groups(
+    product_dict: dict, food_groups_en_field: str
+) -> List[str]:
     food_groups = []
     if product_dict[food_groups_en_field] is not None:
-        food_groups = product_dict[food_groups_en_field].split(',')
+        food_groups = product_dict[food_groups_en_field].split(",")
     return food_groups
 
 
@@ -103,7 +117,7 @@ def map_off_dict_to_ingredients(product_dict: dict) -> Ingredients:
 
 
 def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
-    nutriments_field = 'nutriments'
+    nutriments_field = "nutriments"
     fat_field = "fat_100g"
     salt_field = "salt_100g"
     saturated_fats_field = "saturated-fat_100g"
@@ -113,7 +127,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         fat=product_dict[nutriments_field][fat_field],
         salt=product_dict[nutriments_field][salt_field],
         saturated_fats=product_dict[nutriments_field][saturated_fats_field],
-        sugar=product_dict[nutriments_field][sugar_field]
+        sugar=product_dict[nutriments_field][sugar_field],
     )
 
     carbohydrates_100g_field = "carbohydrates_100g"
@@ -125,7 +139,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         carbohydrates_100g=product_dict[nutriments_field][carbohydrates_100g_field],
         energy_100g=product_dict[nutriments_field][energy_100g_field],
         energy_kcal_100g=product_dict[nutriments_field][energy_kcal_100g_field],
-        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field]
+        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field],
     )
 
     return NutritionFacts(
@@ -137,12 +151,12 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
 def map_off_dict_to_allergens(product_dict: dict, allergens_en_field: str) -> list[str]:
     allergens_value = []
     if product_dict[allergens_en_field] != "":
-        allergens_value = product_dict[allergens_en_field].split(',')
+        allergens_value = product_dict[allergens_en_field].split(",")
     return allergens_value
 
 
 def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
-    nutriments_field = 'nutriments'
+    nutriments_field = "nutriments"
     nutriscore_score_field = "nutriscore_grade"
     energy_field = "energy_100g"
     fibers_field = "fiber_100g"
@@ -153,7 +167,11 @@ def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
     sugar_field = "sugars_100g"
 
     return NutriscoreData(
-        score=map_letter_to_number(product_dict[nutriscore_score_field]) if product_dict[nutriscore_score_field] else None,
+        score=(
+            map_letter_to_number(product_dict[nutriscore_score_field])
+            if product_dict[nutriscore_score_field]
+            else None
+        ),
         energy=product_dict[nutriments_field][energy_field],
         fibers=product_dict[nutriments_field][fibers_field],
         fruit_percentage=product_dict[nutriments_field][fruit_percentage_field],
@@ -179,7 +197,7 @@ def map_off_dict_to_ecoscore_data(product_dict: dict) -> EcoscoreData:
         origin_of_ingredients=origin_of_ingredients,
         packaging=packaging,
         production_system=production_system,
-        threatened_species={}
+        threatened_species={},
     )
 
 
@@ -195,19 +213,23 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
     packaging_field = "packaging"
-    #print('packaging tags', product_dict['packaging_tags'])
-    #print('packaging_materials_tags', product_dict['packaging_materials_tags'])
-    #print('packaging_text', product_dict['packaging_text'])
-    #print('packagings_complete', product_dict['packagings_complete'])
-    #print('packagings_materials', product_dict['packagings_materials'])
-    #print('packagings_materials_main', product_dict['packagings_materials_main'])
-    #print('packagings', product_dict['packagings'])
-    #print('packagings_n', product_dict['packagings_n'])
-    #print('packaging', product_dict['packaging'])
+    # print('packaging tags', product_dict['packaging_tags'])
+    # print('packaging_materials_tags', product_dict['packaging_materials_tags'])
+    # print('packaging_text', product_dict['packaging_text'])
+    # print('packagings_complete', product_dict['packagings_complete'])
+    # print('packagings_materials', product_dict['packagings_materials'])
+    # print('packagings_materials_main', product_dict['packagings_materials_main'])
+    # print('packagings', product_dict['packagings'])
+    # print('packagings_n', product_dict['packagings_n'])
+    # print('packaging', product_dict['packaging'])
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=product_dict[packaging_field].split(",") if product_dict[packaging_field] is not None else []
+        packaging=(
+            product_dict[packaging_field].split(",")
+            if product_dict[packaging_field] is not None
+            else []
+        ),
     )
 
 
@@ -215,7 +237,11 @@ def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
     labels_field = "labels"
 
     return ProductionSystem(
-        labels=product_dict[labels_field].split(",") if product_dict[labels_field] is not None else [], #TODO check other fields
+        labels=(
+            product_dict[labels_field].split(",")
+            if product_dict[labels_field] is not None
+            else []
+        ),  # TODO check other fields
         value=None,
         warning=None,
     )
@@ -226,5 +252,5 @@ def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
 
     return NovaData(
         score=int(product_dict[score_field]) if product_dict[score_field] else None,
-        group_markers={}
+        group_markers={},
     )
