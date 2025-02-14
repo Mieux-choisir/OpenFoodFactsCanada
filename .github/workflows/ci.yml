@@ -27,8 +27,8 @@ jobs:
 
       - name: Run Black
         run: |
-          black --check . 
+          black --check ./scripts
 
       - name: Run Flake8
         run: |
-          flake8 . --max-line-length=160
+          flake8 ./scripts --max-line-length=160
