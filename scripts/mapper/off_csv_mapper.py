@@ -1,7 +1,27 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import check_nova_raw_group, check_nova_transformed_group, check_pnn_groups, check_string_categories, map_letter_to_number, check_additives
-from scripts.product import Product, Ingredients, NutritionFacts, Nutrients, NutriscoreData, NutrientLevel, NovaData
-from scripts.product import EcoscoreData, OriginOfIngredients, Packaging, ProductionSystem
+from scripts.utils import (
+    check_nova_raw_group,
+    check_nova_transformed_group,
+    check_pnn_groups,
+    check_string_categories,
+    map_letter_to_number,
+    check_additives,
+)
+from scripts.product import (
+    Product,
+    Ingredients,
+    NutritionFacts,
+    Nutrients,
+    NutriscoreData,
+    NutrientLevel,
+    NovaData,
+)
+from scripts.product import (
+    EcoscoreData,
+    OriginOfIngredients,
+    Packaging,
+    ProductionSystem,
+)
 
 WANTED_COUNTRY = "Canada"
 

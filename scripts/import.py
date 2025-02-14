@@ -15,7 +15,15 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from product import Product
 from scripts.mapper.off_csv_mapper import map_off_row_to_product
 from scripts.mapper.off_jsonl_mapper import map_off_dict_to_product
-from scripts.mapper.fdc_mapper import map_fdc_dict_to_product, normalise_ingredients_list, Ingredients, NutriscoreData, EcoscoreData, NutritionFacts, NovaData
+from scripts.mapper.fdc_mapper import (
+    map_fdc_dict_to_product,
+    normalise_ingredients_list,
+    Ingredients,
+    NutriscoreData,
+    EcoscoreData,
+    NutritionFacts,
+    NovaData,
+)
 
 ########################################################################################################################
 # VARIABLES GLOBALES ###################################################################################################
