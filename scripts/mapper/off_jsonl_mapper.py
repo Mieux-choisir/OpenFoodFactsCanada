@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import *
-from scripts.product import *
+from scripts.utils import check_nova_raw_group, check_nova_transformed_group, check_pnn_groups, check_list_categories, map_letter_to_number, check_additives
+from scripts.product import Product, Ingredients, NutritionFacts, Nutrients, NutriscoreData, NutrientLevel, NovaData
+from scripts.product import EcoscoreData, OriginOfIngredients, Packaging, ProductionSystem
 
 WANTED_COUNTRY = "Canada"
 
@@ -23,13 +24,19 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
         generic_name_en=product_dict[generic_name_field],
         is_raw=off_json_is_raw_aliment(product_dict),
         brand_name=product_dict[brand_owner_field],
-        food_groups_en=[product_dict[food_groups_en_field] if product_dict[food_groups_en_field] is not None else ''],
+        food_groups_en=[
+            (
+                product_dict[food_groups_en_field]
+                if product_dict[food_groups_en_field] is not None
+                else ""
+            )
+        ],
         ingredients=map_off_dict_to_ingredients(product_dict),
         nutrition_facts=map_off_dict_to_nutrition_facts(product_dict),
         allergens=[product_dict[allergens_en_field]],
         nutriscore_data=map_off_dict_to_nutriscore_data(product_dict),
         ecoscore_data=map_off_dict_to_ecoscore_data(product_dict),
-        nova_data=map_off_dict_to_nova_data(product_dict)
+        nova_data=map_off_dict_to_nova_data(product_dict),
     )
 
 
@@ -78,7 +85,7 @@ def map_off_dict_to_ingredients(product_dict: dict) -> Ingredients:
 
 
 def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
-    nutriments_field = 'nutriments'
+    nutriments_field = "nutriments"
     fat_field = "fat_100g"
     salt_field = "salt_100g"
     saturated_fats_field = "saturated-fat_100g"
@@ -88,7 +95,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         fat=product_dict[nutriments_field][fat_field],
         salt=product_dict[nutriments_field][salt_field],
         saturated_fats=product_dict[nutriments_field][saturated_fats_field],
-        sugar=product_dict[nutriments_field][sugar_field]
+        sugar=product_dict[nutriments_field][sugar_field],
     )
 
     carbohydrates_100g_field = "carbohydrates_100g"
@@ -100,7 +107,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
         carbohydrates_100g=product_dict[nutriments_field][carbohydrates_100g_field],
         energy_100g=product_dict[nutriments_field][energy_100g_field],
         energy_kcal_100g=product_dict[nutriments_field][energy_kcal_100g_field],
-        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field]
+        vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field],
     )
 
     return NutritionFacts(
@@ -110,7 +117,7 @@ def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
 
 
 def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
-    nutriments_field = 'nutriments'
+    nutriments_field = "nutriments"
     nutriscore_score_field = "nutriscore_grade"
     energy_field = "energy_100g"
     fibers_field = "fiber_100g"
@@ -121,7 +128,11 @@ def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
     sugar_field = "sugars_100g"
 
     return NutriscoreData(
-        score=map_letter_to_number(product_dict[nutriscore_score_field]) if product_dict[nutriscore_score_field] else None,
+        score=(
+            map_letter_to_number(product_dict[nutriscore_score_field])
+            if product_dict[nutriscore_score_field]
+            else None
+        ),
         energy=product_dict[nutriments_field][energy_field],
         fibers=product_dict[nutriments_field][fibers_field],
         fruit_percentage=product_dict[nutriments_field][fruit_percentage_field],
@@ -147,7 +158,7 @@ def map_off_dict_to_ecoscore_data(product_dict: dict) -> EcoscoreData:
         origin_of_ingredients=origin_of_ingredients,
         packaging=packaging,
         production_system=production_system,
-        threatened_species={}
+        threatened_species={},
     )
 
 
@@ -162,11 +173,15 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
-    packaging_tags_field = 'packaging_tags'
+    packaging_tags_field = "packaging_tags"
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
+        packaging=(
+            product_dict[packaging_tags_field]
+            if product_dict[packaging_tags_field] is not None
+            else []
+        ),
     )
 
 
@@ -174,9 +189,11 @@ def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
     labels_field = "labels_tags"
 
     return ProductionSystem(
-        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
+        labels=(
+            product_dict[labels_field] if product_dict[labels_field] is not None else []
+        ),
         value=None,
-        warning=None
+        warning=None,
     )
 
 
@@ -185,5 +202,5 @@ def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
 
     return NovaData(
         score=int(product_dict[score_field]) if product_dict[score_field] else None,
-        group_markers={}
+        group_markers={},
     )
