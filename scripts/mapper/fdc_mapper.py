@@ -80,21 +80,19 @@ def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFact
     )
 
     carbohydrates_100g_field = 1005
-    energy_100g_field = None  # TODO voir si on peut lui trouver quelque chose
     energy_kcal_100g_field = 1008
     vitamin_a_100g_field = 1104
 
+    energy_kcal_100g_value = next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == energy_kcal_100g_field), None)
+    energy_100g_value = energy_kcal_100g_value * Decimal(4.1868) if energy_kcal_100g_value is not None else None
+
     nutrients = Nutrients(
-        carbohydrates_100g=next((item['nutrient']['number'] for item in food_nutrients if
+        carbohydrates_100g=next((item['amount'] for item in food_nutrients if
                                  item['nutrient']['id'] == carbohydrates_100g_field), None),
-        energy_100g=next(
-            (item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == energy_100g_field),
-            None),
-        energy_kcal_100g=next(
-            (item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == energy_kcal_100g_field),
-            None),
+        energy_100g=energy_100g_value,
+        energy_kcal_100g=energy_kcal_100g_value,
         vitamin_a_100g=next(
-            (item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == vitamin_a_100g_field),
+            (item['amount'] for item in food_nutrients if item['nutrient']['id'] == vitamin_a_100g_field),
             None),
     )
 
@@ -105,10 +103,8 @@ def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFact
 
 
 def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreData:
-    nutriscore_score_id = None
     energy_id = 1008
     fibers_id = 1079
-    fruit_percentage_id = None
     proteins_id = 1003
     saturated_fats_id = 1258
     sodium_id = 1093
@@ -116,19 +112,19 @@ def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreDat
 
     return NutriscoreData(
         score=None,
-        energy=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == energy_id),
+        energy=next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == energy_id),
                     None),
-        fibers=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == fibers_id),
+        fibers=next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == fibers_id),
                     None),
         fruit_percentage=None,
-        proteins=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == proteins_id),
+        proteins=next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == proteins_id),
                       None),
         saturated_fats=next(
-            (item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == saturated_fats_id),
+            (item['amount'] for item in food_nutrients if item['nutrient']['id'] == saturated_fats_id),
             None),
-        sodium=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == sodium_id),
+        sodium=next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == sodium_id),
                     None),
-        sugar=next((item['nutrient']['number'] for item in food_nutrients if item['nutrient']['id'] == sugar_id), None),
+        sugar=next((item['amount'] for item in food_nutrients if item['nutrient']['id'] == sugar_id), None),
         is_beverage=None,
     )
 
