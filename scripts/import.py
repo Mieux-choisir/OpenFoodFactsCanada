@@ -373,7 +373,7 @@ def main():
     )
 
     data_dir = "/app/data"
-    os.makedirs(data_dir, exist_ok=True)  # Crée le dossier s'il n'existe pas
+    os.makedirs(data_dir, exist_ok=True)  # Create the folder if it does not exist
 
     # Download and decompress
     off_csv_gz_file = os.path.join(data_dir, "off_csv.gz")
