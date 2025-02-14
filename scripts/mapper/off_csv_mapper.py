@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import *
-from scripts.product import *
+from scripts.utils import check_nova_raw_group, check_nova_transformed_group, check_pnn_groups, check_string_categories, map_letter_to_number, check_additives
+from scripts.product import Product, Ingredients, NutritionFacts, Nutrients, NutriscoreData, NutrientLevel, NovaData
+from scripts.product import EcoscoreData, OriginOfIngredients, Packaging, ProductionSystem
 
 WANTED_COUNTRY = "Canada"
 
@@ -118,7 +119,11 @@ def map_off_row_to_nutriscore_data(row: list[str], header: list[str]) -> Nutrisc
     sugar_field = header.index("sugars_100g")
 
     return NutriscoreData(
-        score=map_letter_to_number(row[nutriscore_score_field]) if row[nutriscore_score_field] else None,
+        score=(
+            map_letter_to_number(row[nutriscore_score_field])
+            if row[nutriscore_score_field]
+            else None
+        ),
         energy=row[energy_field],
         fibers=row[fibers_field],
         fruit_percentage=row[fruit_percentage_field],
@@ -149,7 +154,7 @@ def map_off_row_to_ecoscore_data(row: list[str], header: list[str]) -> EcoscoreD
 
 
 def map_row_to_origin_of_ingredients(
-        row: list[str], header: list[str]
+    row: list[str], header: list[str]
 ) -> OriginOfIngredients:
     origin_field = header.index("origins")
 
@@ -165,7 +170,7 @@ def map_row_to_packaging(row: list[str], header: list[str]) -> Packaging:
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=row[packaging_field].split(",")
+        packaging=row[packaging_field].split(","),
     )
 
 
@@ -183,6 +188,5 @@ def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:
     score_field = header.index("nova_group")
 
     return NovaData(
-        score=int(row[score_field]) if row[score_field] else None,
-        group_markers={}
+        score=int(row[score_field]) if row[score_field] else None, group_markers={}
     )
