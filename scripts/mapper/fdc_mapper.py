@@ -7,7 +7,7 @@ from scripts.product import *
 WANTED_COUNTRY = "Canada"
 
 
-def map_fdc_dict_to_product(product_dict: dict, categories):
+def map_fdc_dict_to_product(product_dict: dict) -> Product:
     """Maps a fdc dictionary to a product object"""
     id_field = "gtinUpc"
     product_name_field = "description"
@@ -18,44 +18,27 @@ def map_fdc_dict_to_product(product_dict: dict, categories):
         "brandedFoodCategory"  # TODO convert fdc categories to off food groups
     )
 
-    if product_dict["brandedFoodCategory"] in categories.keys():
-        categories[product_dict["brandedFoodCategory"]] += 1
-    else:
-        categories[product_dict["brandedFoodCategory"]] = 1
-
-    if product_dict["brandedFoodCategory"] == "Berries/Small Fruit":
-        print(
-            product_dict["gtinUpc"], ":", product_dict["ingredients"], ":", product_dict
-        )
-
-    return (
-        Product(
-            id=product_dict[id_field],
-            product_name=product_dict[product_name_field].title(),
-            generic_name_en=product_dict[generic_name_field].title(),
-            is_raw=fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
-            brands=(
-                [
-                    product_dict[brand_owner_field].title(),
-                    product_dict[brands_field].title(),
-                ]
-                if brands_field in product_dict.keys()
-                else [product_dict[brand_owner_field].title()]
-            ),
-            brand_owner=product_dict[brand_owner_field].title(),
-            food_groups_en=product_dict[food_groups_en_field].split(","),
-            ingredients=map_fdc_dict_to_ingredients(product_dict["ingredients"]),
-            nutrition_facts=map_fdc_dict_to_nutrition_facts(
-                product_dict["foodNutrients"]
-            ),
-            allergens=[],
-            nutriscore_data=map_fdc_dict_to_nutriscore_data(
-                product_dict["foodNutrients"]
-            ),
-            ecoscore_data=map_fdc_dict_to_ecoscore_data(),
-            nova_data=map_fdc_dict_to_nova_data(),
+    return Product(
+        id=product_dict[id_field],
+        product_name=product_dict[product_name_field].title(),
+        generic_name_en=product_dict[generic_name_field].title(),
+        is_raw=fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
+        brands=(
+            [
+                product_dict[brand_owner_field].title(),
+                product_dict[brands_field].title(),
+            ]
+            if brands_field in product_dict.keys()
+            else [product_dict[brand_owner_field].title()]
         ),
-        categories,
+        brand_owner=product_dict[brand_owner_field].title(),
+        food_groups_en=product_dict[food_groups_en_field].split(","),
+        ingredients=map_fdc_dict_to_ingredients(product_dict["ingredients"]),
+        nutrition_facts=map_fdc_dict_to_nutrition_facts(product_dict["foodNutrients"]),
+        allergens=[],
+        nutriscore_data=map_fdc_dict_to_nutriscore_data(product_dict["foodNutrients"]),
+        ecoscore_data=map_fdc_dict_to_ecoscore_data(),
+        nova_data=map_fdc_dict_to_nova_data(),
     )
 
 
