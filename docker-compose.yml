@@ -5,7 +5,7 @@ services:
     image: mongo:latest
     container_name: openfoodfacts-mongo
     ports:
-      - "27017:27017"
+      - "37017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -17,12 +17,11 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./scripts:/app  # Assuming your Python script is inside a `scripts` folder in the current directory
-      - ./scripts:/app/scripts
-
+      - ./scripts:/app/scripts  # Mount scripts folder
+      - ./data:/app/data        # Mount the folder containing your CSV and JSON files
     networks:
       - openfoodfacts-net
-    command: python /app/import.py  # This will run the script when the container starts
+    command: python /app/scripts/import.py  # Run script after build
 
 networks:
   openfoodfacts-net:

@@ -20,13 +20,15 @@ from fdc_mapper import *
 
 # URL of the off csv file
 off_csv_url = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
-off_csv_url = r"C:\Users\estre\Documents\stage\test2\pythonProject\scripts\en.openfoodfacts.org.products.csv"
+# URL of the off csv file
+off_csv_url = "/app/data/en.openfoodfacts.org.products.csv"
 
 # URL of the off json file
-off_json_url = r"C:\Users\estre\Documents\stage\test2\pythonProject\scripts\filtered_canada_products.json"
+off_json_url = "/app/data/filtered_canada_products.json"
 
 # URL of the fdc file
-fdc_json_url = r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json"
+fdc_json_url = "/app/data/brandedDownload.json"
+
 
 
 ########################################################################################################################
@@ -223,7 +225,7 @@ def load_products_to_mongo(products: list[Product], db_name="openfoodfacts", col
     logging.info(f"Loading products to MongoDB...")
 
     # Connect to MongoDB (default localhost:27017)
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://mongo:27017/")
     db = client[db_name]
     collection = db[collection_name]
     logging.info("Connected to client")
@@ -260,7 +262,8 @@ def main():
     # decompress_csv(gz_file, csv_file)
 
     # Load data and transform it
-    off_products = import_jsonl_off_data(off_json_url, 10)
+    #off_products = import_jsonl_off_data(off_json_url, 10)
+    off_products = import_csv_off_data(off_csv_url, 10)
     fdc_products = import_json_fdc_data(fdc_json_url)
     off_products = complete_products_data(off_products, fdc_products)
 

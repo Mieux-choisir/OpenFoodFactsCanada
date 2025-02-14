@@ -1,17 +1,21 @@
 # Use an official Python 3 image as a parent image
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt .
 
 # Install necessary Python dependencies
 RUN pip install --no-cache-dir requests pymongo pandas
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Copy the current directory contents into the container at /app
-COPY scripts/import.py ./
+# Copier les scripts Python
+COPY scripts/ ./scripts
 
-# Set the command to run your Python script
-CMD ["python", "./scripts/import.py"]
+# Ajouter wait-for-it pour attendre MongoDB
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# Définir la commande pour exécuter le script Python après que MongoDB soit prêt
+CMD ["/wait-for-it.sh", "mongo:27017", "--", "python", "./scripts/import.py"]
