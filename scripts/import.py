@@ -22,9 +22,7 @@ from scripts.mapper.fdc_mapper import *
 ########################################################################################################################
 
 # URL of the off csv file
-off_csv_url = (
-    "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
-)
+off_csv_url = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
 
 # URL of the off json file
 off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
@@ -68,7 +66,7 @@ def download_file(
         try:
             with requests.get(url, stream=True, timeout=timeout) as response:
                 response.raise_for_status()
-                with open(download_path, "wb") as f:
+                with open(download_path, 'wb') as f:
                     for chunk in response.iter_content(chunk_size=chunk_size):
                         f.write(chunk)
             logging.info(f"Download complete: {download_path}")
@@ -91,9 +89,9 @@ def decompress_file(
 ) -> None:
     logging.info(f"Decompressing {compressed_file} into {output_file}...")
 
-    if compressed_file_extension == ".gz":
+    if compressed_file_extension == '.gz':
         decompress_gz_file(compressed_file, output_file, buffer_size)
-    elif compressed_file_extension == ".zip":
+    elif compressed_file_extension == '.zip':
         decompress_zip_file(compressed_file, output_file, buffer_size)
     else:
         logging.error(f"Unsupported file extension: {compressed_file_extension}")
@@ -107,8 +105,8 @@ def decompress_gz_file(
     gz_file: str, output_file: str, buffer_size: int = 1024 * 1024
 ) -> None:
     """Decompresses a .gz file into a file named output_file"""
-    with gzip.open(gz_file, "rb") as f_in:
-        with open(output_file, "wb") as f_out:
+    with gzip.open(gz_file, 'rb') as f_in:
+        with open(output_file, 'wb') as f_out:
             while chunk := f_in.read(buffer_size):
                 f_out.write(chunk)
 
@@ -117,9 +115,9 @@ def decompress_zip_file(
     zip_file: str, output_file: str, buffer_size: int = 1024 * 1024
 ) -> None:
     """Decompresses a .zip file into a file named output_file"""
-    with zipfile.ZipFile(zip_file, "r") as zip_ref:
-        with zip_ref.open(zip_ref.namelist()[0], "r") as f_in:
-            with open(output_file, "wb") as f_out:
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        with zip_ref.open(zip_ref.namelist()[0], 'r') as f_in:
+            with open(output_file, 'wb') as f_out:
                 while chunk := f_in.read(buffer_size):
                     f_out.write(chunk)
 
@@ -132,12 +130,10 @@ def decompress_zip_file(
 def import_json_fdc_data(filename: str) -> list[Product]:
     """Imports the data of branded food in a json file into a list of strings for each branded food"""
     products = []
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filename, 'r', encoding='utf-8') as file:
         logging.info("Extracting Food Data Central products...")
-        for obj in ijson.items(file, "BrandedFoods.item"):
-            if (
-                obj["marketCountry"] == "United States"
-            ):  # there are also products from New Zealand
+        for obj in ijson.items(file, 'BrandedFoods.item'):
+            if obj['marketCountry'] == 'United States':  # there are also products from New Zealand
                 prod = map_fdc_dict_to_product(obj)
                 products.append(prod)
     logging.info("FDC data imported")
@@ -147,16 +143,14 @@ def import_json_fdc_data(filename: str) -> list[Product]:
 def import_jsonl_off_data(filename: str, limit: int = None) -> list[Product]:
     """Imports the data of canadian food in a json file into a list of products"""
     if limit is not None:
-        logging.info(
-            f"Extracting {limit} products from Open Food Facts jsonl dataset..."
-        )
+        logging.info(f"Extracting {limit} products from Open Food Facts jsonl dataset...")
     else:
         logging.info("Extracting all products from Open Food Facts jsonl dataset...")
 
     products = []
     n = 0
 
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filename, 'r', encoding='utf-8') as file:
         for line in file:
             try:
                 obj = json.loads(line.strip())
@@ -189,11 +183,11 @@ def import_csv_off_data(filename: str, limit: int = None) -> list[Product]:
 
     # Increase the CSV field size limit to avoid the error:
     # _csv.Error: field larger than field limit (131072)
-    csv.field_size_limit(2**30)
+    csv.field_size_limit(2 ** 30)
 
     products: list[Product] = []
     n = 0
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         reader = csv.reader(f, delimiter="\t")
         header = next(reader)
 
@@ -255,19 +249,14 @@ def complete_product(off_product: Product, fdc_product: Product) -> Product:
     for field, fdc_value in fdc_product.__dict__.items():
         # if the off_product field is None, an empty list or a list of empty strings, complete it
         off_value = getattr(off_product, field, None)
-        if off_value is None or (
-            isinstance(off_value, list)
-            and ((not off_value) or v == "" for v in off_value)
-        ):
+        if off_value is None or (isinstance(off_value, list) and ((not off_value) or v == "" for v in off_value)):
             setattr(off_product, field, fdc_value)
         elif isinstance(off_value, Ingredients):
             setattr(off_product, field, update_ingredients_values(off_value, fdc_value))
         elif isinstance(off_value, NutriscoreData):
             setattr(off_product, field, update_nutriscore_values(off_value, fdc_value))
         elif isinstance(off_value, NutritionFacts):
-            setattr(
-                off_product, field, update_nutrition_facts_values(off_value, fdc_value)
-            )
+            setattr(off_product, field, update_nutrition_facts_values(off_value, fdc_value))
         elif isinstance(off_value, EcoscoreData) or isinstance(off_value, NovaData):
             pass  # no useful information for these scores is present in fdc
     return off_product
@@ -299,17 +288,11 @@ def update_nutrition_facts_values(
 ) -> NutritionFacts:
     for field, value in off_value.nutrient_level:
         if value is None:
-            setattr(
-                off_value.nutrient_level,
-                field,
-                getattr(fdc_value.nutrient_level, field, None),
-            )
+            setattr(off_value.nutrient_level,field,getattr(fdc_value.nutrient_level, field, None))
 
     for field, value in off_value.nutrients:
         if value is None:
-            setattr(
-                off_value.nutrients, field, getattr(fdc_value.nutrients, field, None)
-            )
+            setattr(off_value.nutrients, field, getattr(fdc_value.nutrients, field, None))
 
     return off_value
 
