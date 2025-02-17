@@ -52,6 +52,10 @@ def download_and_decompress_data(
     compressed_file_extension: str,
     decompressed_file: str,
 ) -> None:
+    if os.path.exists(decompressed_file):
+        logging.info(f"File {decompressed_file} already exists. Skipping download.")
+        return
+
     download_file(source_url, compressed_file)
     decompress_file(compressed_file, compressed_file_extension, decompressed_file)
     cleanup_file(compressed_file)
@@ -332,12 +336,20 @@ def load_products_to_mongo(
         logging.info("Loading products to MongoDB...")
 
         # Connect to MongoDB (default localhost:27017)
-        client = MongoClient("mongodb://localhost:27017/")
+        client = MongoClient("mongodb://mongo:27017/")
         db = client[db_name]
         collection = db[collection_name]
         logging.info("Connected to client")
 
+        # Check if the collection already contains data
+        if collection.estimated_document_count() > 0:
+            logging.info(
+                f"MongoDB collection {collection_name} already contains data. Skipping import."
+            )
+            return
+
         # Insert products into MongoDB
+        logging.info("Inserting data into MongoDB...")
         collection.insert_many([product.model_dump() for product in products])
         logging.info(f"Data loading complete into {db_name}.{collection_name}")
     except Exception as e:
@@ -345,17 +357,19 @@ def load_products_to_mongo(
             f"Problem while loading the products in {db_name}.{collection_name}: {e}"
         )
 
-
 ########################################################################################################################
 # NETTOYAGE ############################################################################################################
 ########################################################################################################################
 
 
-def cleanup_file(file_path: str) -> None:
-    """Removes the file located in file_path"""
-    logging.info(f"Cleaning up the file {file_path}...")
-    os.remove(file_path)
-    logging.info(f"File {file_path} removed.")
+def cleanup_file(file_path: str, force_delete: bool = False) -> None:
+    """Removes the file located in file_path if force_delete is True"""
+    if force_delete:
+        logging.info(f"Cleaning up the file {file_path}...")
+        os.remove(file_path)
+        logging.info(f"File {file_path} removed.")
+    else:
+        logging.info(f"Skipping cleanup for {file_path}. File retained.")
 
 
 ########################################################################################################################
@@ -370,16 +384,20 @@ def main():
         handlers=[logging.StreamHandler()],
     )
 
+    data_dir = "/app/data"
+    os.makedirs(data_dir, exist_ok=True)  # Create the folder if it does not exist
+
     # Download and decompress
-    off_csv_gz_file = "off_csv.gz"
-    off_csv_file = "off_csv.csv"
+    off_csv_gz_file = os.path.join(data_dir, "off_csv.gz")
+    off_csv_file = os.path.join(data_dir, "off_csv.csv")
+
     download_and_decompress_data(off_csv_url, off_csv_gz_file, ".gz", off_csv_file)
     # off_jsonl_gz_file = "off_jsonl.gz"
     # off_jsonl_file = "off_jsonl.jsonl"
     # download_and_decompress_data(off_jsonl_url, off_jsonl_gz_file, '.gz', off_jsonl_file)
 
-    fdc_zip_file = "fdc_branded.zip"
-    fdc_file = "fdc_branded.json"
+    fdc_zip_file = os.path.join(data_dir, "fdc_branded.zip")
+    fdc_file = os.path.join(data_dir, "fdc_branded.json")
     download_and_decompress_data(fdc_json_url, fdc_zip_file, ".zip", fdc_file)
 
     # Load data and transform it
@@ -391,9 +409,8 @@ def main():
     load_products_to_mongo(off_products)
 
     # Clean up
-    cleanup_file(off_csv_file)
-    # cleanup_file(off_jsonl_file)
-    cleanup_file(fdc_file)
+    cleanup_file(off_csv_file, force_delete=False)
+    cleanup_file(fdc_file, force_delete=False)
 
 
 if __name__ == "__main__":
