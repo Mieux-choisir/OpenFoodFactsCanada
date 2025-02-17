@@ -99,7 +99,7 @@ def off_json_is_raw_aliment(product_dict: dict) -> bool:
     return False
 
 
-def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> List[str]:
+def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> list[str]:
     brands_value = []
     if product_dict[brands_field] is not None:
         brands_value = product_dict[brands_field].title().split(",")
@@ -119,7 +119,7 @@ def map_off_dict_to_brand_owner(
 
 def map_off_dict_to_food_groups(
     product_dict: dict, food_groups_en_field: str
-) -> List[str]:
+) -> list[str]:
     food_groups = []
     if product_dict[food_groups_en_field] is not None:
         food_groups = product_dict[food_groups_en_field].split(",")
