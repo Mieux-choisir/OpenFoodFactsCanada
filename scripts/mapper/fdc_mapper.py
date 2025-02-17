@@ -1,8 +1,17 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
 from decimal import Decimal
 
-from scripts.utils import *
-from scripts.product import *
+from scripts.utils import normalise_ingredients_list
+from scripts.product import (
+    Product,
+    Ingredients,
+    NutritionFacts,
+    NutrientLevel,
+    Nutrients,
+    NutriscoreData,
+    EcoscoreData,
+    NovaData,
+)
 
 WANTED_COUNTRY = "Canada"
 
