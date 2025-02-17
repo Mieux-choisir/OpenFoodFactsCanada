@@ -13,9 +13,9 @@ from pymongo import MongoClient
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from product import Product
-from scripts.mapper.off_csv_mapper import *
-from scripts.mapper.off_jsonl_mapper import *
-from scripts.mapper.fdc_mapper import *
+from mapper.off_csv_mapper import *
+from mapper.off_jsonl_mapper import *
+from mapper.fdc_mapper import *
 
 ########################################################################################################################
 ##### VARIABLES GLOBALES ###############################################################################################
@@ -191,12 +191,15 @@ def complete_products_data(off_products: list[Product], fdc_products: list[Produ
     of products"""
     logging.info("Completing missing data for OFF products...")
 
+    match_count = 0
     products = []
     for fdc_product in fdc_products:
         # try to find the same product in off products
         # if present : add the missing values
         off_product = find_product(fdc_product, off_products)
         if off_product is not None:
+            print(f"Found product {off_product.id}")
+            match_count += 1
             new_product = complete_product(off_product, fdc_product)
             products.append(new_product)
         # else : add the whole product
@@ -205,6 +208,7 @@ def complete_products_data(off_products: list[Product], fdc_products: list[Produ
         if len(products) > 100:
             continue
     logging.info("OFF products completed")
+    logging.info(f"Matched {match_count} products")
     return products
 
 
