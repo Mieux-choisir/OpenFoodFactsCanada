@@ -18,7 +18,7 @@ from scripts.product import (
     EcoscoreData,
     OriginOfIngredients,
     Packaging,
-    ProductionSystem
+    ProductionSystem,
 )
 
 WANTED_COUNTRY = "Canada"
