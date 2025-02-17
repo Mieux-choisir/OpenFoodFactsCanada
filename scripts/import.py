@@ -15,7 +15,15 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from product import Product
 from scripts.mapper.off_csv_mapper import map_off_row_to_product
 from scripts.mapper.off_jsonl_mapper import map_off_dict_to_product
-from scripts.mapper.fdc_mapper import map_fdc_dict_to_product, normalise_ingredients_list, Ingredients, NutriscoreData, EcoscoreData, NutritionFacts, NovaData
+from scripts.mapper.fdc_mapper import (
+    map_fdc_dict_to_product,
+    normalise_ingredients_list,
+    Ingredients,
+    NutriscoreData,
+    EcoscoreData,
+    NutritionFacts,
+    NovaData,
+)
 
 ########################################################################################################################
 # VARIABLES GLOBALES ###################################################################################################
@@ -320,17 +328,22 @@ def load_products_to_mongo(
     db_name: str = "openfoodfacts",
     collection_name: str = "products",
 ) -> None:
-    logging.info("Loading products to MongoDB...")
+    try:
+        logging.info("Loading products to MongoDB...")
 
-    # Connect to MongoDB (default localhost:27017)
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client[db_name]
-    collection = db[collection_name]
-    logging.info("Connected to client")
+        # Connect to MongoDB (default localhost:27017)
+        client = MongoClient("mongodb://localhost:27017/")
+        db = client[db_name]
+        collection = db[collection_name]
+        logging.info("Connected to client")
 
-    # Insert products into MongoDB
-    collection.insert_many([product.model_dump() for product in products])
-    logging.info(f"Data loading complete into {db_name}.{collection_name}")
+        # Insert products into MongoDB
+        collection.insert_many([product.model_dump() for product in products])
+        logging.info(f"Data loading complete into {db_name}.{collection_name}")
+    except Exception as e:
+        logging.info(
+            f"Problem while loading the products in {db_name}.{collection_name}: {e}"
+        )
 
 
 ########################################################################################################################
