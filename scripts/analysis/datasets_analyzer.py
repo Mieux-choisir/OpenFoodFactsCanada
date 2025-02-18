@@ -19,13 +19,16 @@ def analyze_off_csv_data(filename: str, limit: int = None) -> None:
         reader = csv.reader(f, delimiter="\t")
         header = next(reader)
 
-        fields_types = dict.fromkeys(header, [])
+        fields_types = dict.fromkeys(header, {})
 
         for row in reader:
             for field_index in range(len(header)):
                 field, field_value = header[field_index], row[field_index]
-                if not type(field_value) in fields_types[field]:
-                    fields_types[field].append(type(field_value))
+
+                if not type(field_value) in fields_types[field].keys():
+                    fields_types[field] = {type(field_value): 1}
+                else:
+                    fields_types[field][type(field_value)] += 1
 
             n += 1
 
@@ -34,7 +37,7 @@ def analyze_off_csv_data(filename: str, limit: int = None) -> None:
 
     logging.info("OFF data analyzed.")
     result = ""
-    for field in fields_types:
+    for field in fields_types.keys():
         result += f"\n\t{field}: {fields_types[field]}"
     logging.info(result)
 
@@ -129,6 +132,6 @@ if __name__ == "__main__":
         handlers=[logging.StreamHandler()],
     )
 
-    analyze_off_csv_data(r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv", 1000)
+    analyze_off_csv_data(r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv", 2000)
     analyze_off_jsonl_data(r"C:\Users\estre\Documents\stage\bds\off\full\filtered_canada_products.json", False, 1000)
     analyze_fdc_data(r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json", False, 1000)
