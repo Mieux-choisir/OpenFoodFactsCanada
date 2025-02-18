@@ -1,6 +1,27 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from utils import *
-from product import *
+from scripts.utils import (
+    check_nova_raw_group,
+    check_nova_transformed_group,
+    check_pnn_groups,
+    check_list_categories,
+    map_letter_to_number,
+    check_additives,
+)
+from scripts.product import (
+    Product,
+    Ingredients,
+    NutritionFacts,
+    Nutrients,
+    NutriscoreData,
+    NutrientLevel,
+    NovaData,
+)
+from scripts.product import (
+    EcoscoreData,
+    OriginOfIngredients,
+    Packaging,
+    ProductionSystem,
+)
 
 WANTED_COUNTRY = "Canada"
 
@@ -23,14 +44,19 @@ def map_off_dict_to_product(product_dict: dict) -> Product | None:
         generic_name_en=product_dict.get(generic_name_field, ""),
         is_raw=off_json_is_raw_aliment(product_dict),
         brand_name=product_dict.get(brand_owner_field, ""),
-        food_groups_en=product_dict.get(food_groups_en_field, "").split(",") if isinstance(product_dict.get(food_groups_en_field, ""), str) else product_dict.get(food_groups_en_field, []),
-        #food_groups_en = product_dict.get(food_groups_en_field, []),
+        food_groups_en=[
+            (
+                product_dict[food_groups_en_field]
+                if product_dict[food_groups_en_field] is not None
+                else ""
+            )
+        ],
         ingredients=map_off_dict_to_ingredients(product_dict),
         nutrition_facts=map_off_dict_to_nutrition_facts(product_dict),
         allergens=product_dict.get(allergens_en_field, "").split(",") if isinstance(product_dict.get(allergens_en_field, ""), str) else product_dict.get(allergens_en_field, []),
         nutriscore_data=map_off_dict_to_nutriscore_data(product_dict),
         ecoscore_data=map_off_dict_to_ecoscore_data(product_dict),
-        nova_data=map_off_dict_to_nova_data(product_dict)
+        nova_data=map_off_dict_to_nova_data(product_dict),
     )
 
 
@@ -123,7 +149,11 @@ def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
     sugar_field = "sugars_100g"
 
     return NutriscoreData(
-        score=map_letter_to_number(product_dict.get(nutriscore_score_field, None)) if product_dict.get(nutriscore_score_field, None) is not None else None,
+        score=(
+            map_letter_to_number(product_dict[nutriscore_score_field])
+            if product_dict[nutriscore_score_field]
+            else None
+        ),
         energy=product_dict.get(nutriments_field, {}).get(energy_field, None),
         fibers=product_dict.get(nutriments_field, {}).get(fibers_field, None),
         fruit_percentage=product_dict.get(nutriments_field, {}).get(fruit_percentage_field, None),
@@ -166,11 +196,15 @@ def map_dict_to_origin_of_ingredients(product_dict: dict) -> OriginOfIngredients
 
 
 def map_dict_to_packaging(product_dict: dict) -> Packaging:
-    packaging_tags_field = 'packaging_tags'
+    packaging_tags_field = "packaging_tags"
 
     return Packaging(
         non_recyclable_and_non_biodegradable_materials=None,
-        packaging=product_dict[packaging_tags_field] if product_dict[packaging_tags_field] is not None else []
+        packaging=(
+            product_dict[packaging_tags_field]
+            if product_dict[packaging_tags_field] is not None
+            else []
+        ),
     )
 
 
@@ -178,9 +212,11 @@ def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
     labels_field = "labels_tags"
 
     return ProductionSystem(
-        labels=product_dict[labels_field] if product_dict[labels_field] is not None else [],
+        labels=(
+            product_dict[labels_field] if product_dict[labels_field] is not None else []
+        ),
         value=None,
-        warning=None
+        warning=None,
     )
 
 def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
@@ -191,6 +227,6 @@ def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
     score = int(score_value) if score_value is not None else None
 
     return NovaData(
-        score=score,
-        group_markers={} 
+        score=int(product_dict[score_field]) if product_dict[score_field] else None,
+        group_markers={},
     )
