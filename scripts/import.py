@@ -12,18 +12,14 @@ import logging
 from pymongo import MongoClient
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from product import Product
-from scripts.mapper.off_csv_mapper import map_off_row_to_product
-from scripts.mapper.off_jsonl_mapper import map_off_dict_to_product
-from scripts.mapper.fdc_mapper import (
-    map_fdc_dict_to_product,
-    normalise_ingredients_list,
-    Ingredients,
-    NutriscoreData,
-    EcoscoreData,
-    NutritionFacts,
-    NovaData,
-)
+from product.complexFields.nova_data import NovaData
+from product.product import Product
+from scripts.mapper.product_mapper import ProductMapper
+from scripts.product.complexFields.ingredients import Ingredients
+from scripts.product.complexFields.nutrient_facts import NutritionFacts
+from scripts.product.complexFields.score.ecoscore_data import EcoscoreData
+from scripts.product.complexFields.score.nutriscore_data import NutriscoreData
+from scripts.utils import normalise_ingredients_list
 
 ########################################################################################################################
 # VARIABLES GLOBALES ###################################################################################################
@@ -146,7 +142,8 @@ def import_json_fdc_data(filename: str) -> list[Product]:
             if (
                 obj["marketCountry"] == "United States"
             ):  # there are also products from New Zealand
-                prod = map_fdc_dict_to_product(obj)
+                product_mapper = ProductMapper()
+                prod = product_mapper.map_fdc_dict_to_product(obj)
                 products.append(prod)
     logging.info("FDC data imported")
     return products
@@ -168,7 +165,8 @@ def import_jsonl_off_data(filename: str, limit: int = None) -> list[Product]:
         for line in file:
             try:
                 obj = json.loads(line.strip())
-                prod = map_off_dict_to_product(obj)
+                product_mapper = ProductMapper()
+                prod = product_mapper.map_off_dict_to_product(obj)
                 if prod is not None:
                     products.append(prod)
                 n += 1
@@ -204,9 +202,10 @@ def import_csv_off_data(filename: str, limit: int = None) -> list[Product]:
     with open(filename, "r", encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         header = next(reader)
+        product_mapper = ProductMapper()
 
         for row in reader:
-            product = map_off_row_to_product(row, header)
+            product = product_mapper.map_off_row_to_product(row, header)
 
             if product is None:
                 continue
@@ -336,7 +335,7 @@ def load_products_to_mongo(
         logging.info("Loading products to MongoDB...")
 
         # Connect to MongoDB (default localhost:27017)
-        client = MongoClient("mongodb://mongo:27017/")
+        client = MongoClient("localhost:37017")
         db = client[db_name]
         collection = db[collection_name]
         logging.info("Connected to client")
