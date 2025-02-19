@@ -93,7 +93,9 @@ class NutritionFactsMapper:
         )
 
     @staticmethod
-    def map_off_row_to_nutrition_facts(row: list[str], header: list[str]) -> NutritionFacts:
+    def map_off_row_to_nutrition_facts(
+        row: list[str], header: list[str]
+    ) -> NutritionFacts:
         fat_field = header.index("fat_100g")
         salt_field = header.index("salt_100g")
         saturated_fats_field = header.index("saturated-fat_100g")

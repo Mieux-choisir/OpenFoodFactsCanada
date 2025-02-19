@@ -8,9 +8,9 @@ from domain.product.product import Product
 class DataLoader:
     @staticmethod
     def load_products_to_mongo(
-            products: list[Product],
-            db_name: str = "openfoodfacts",
-            collection_name: str = "products",
+        products: list[Product],
+        db_name: str = "openfoodfacts",
+        collection_name: str = "products",
     ) -> None:
         try:
             logging.info("Loading products to MongoDB...")

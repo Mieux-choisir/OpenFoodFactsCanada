@@ -69,7 +69,9 @@ class NutriscoreDataMapper:
             is_beverage=None,
         )
 
-    def map_off_row_to_nutriscore_data(self, row: list[str], header: list[str]) -> NutriscoreData:
+    def map_off_row_to_nutriscore_data(
+        self, row: list[str], header: list[str]
+    ) -> NutriscoreData:
         nutriscore_score_field = header.index("nutriscore_grade")
         energy_field = header.index("energy_100g")
         fibers_field = header.index("fiber_100g")
@@ -108,7 +110,9 @@ class NutriscoreDataMapper:
 
         return NutriscoreData(
             score=(
-                self.number_mapper.map_letter_to_number(product_dict[nutriscore_score_field])
+                self.number_mapper.map_letter_to_number(
+                    product_dict[nutriscore_score_field]
+                )
                 if product_dict[nutriscore_score_field]
                 else None
             ),

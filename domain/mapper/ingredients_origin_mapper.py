@@ -4,7 +4,7 @@ from domain.product.complexFields.ingredients_origin import IngredientsOrigin
 class IngredientsOriginMapper:
     @staticmethod
     def map_row_to_ingredients_origin(
-            row: list[str], header: list[str]
+        row: list[str], header: list[str]
     ) -> IngredientsOrigin:
         origin_field = header.index("origins")
 

@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 class CategoryEnum(IntEnum):
     DAIRY_AND_EGG_PRODUCTS = 1
     SPICES_AND_HERBS = 2

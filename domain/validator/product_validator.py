@@ -1,4 +1,3 @@
-
 class ProductValidator:
     raw_food_categories = {
         "en:flours": True,
@@ -38,7 +37,10 @@ class ProductValidator:
         if category:
             categories = set(category.split(","))
             if any(cat in ProductValidator.raw_food_categories for cat in categories):
-                if not any(cat in ProductValidator.transformed_food_categories for cat in categories):
+                if not any(
+                    cat in ProductValidator.transformed_food_categories
+                    for cat in categories
+                ):
                     return True
         return False
 
@@ -46,9 +48,11 @@ class ProductValidator:
     def check_list_categories(category: list) -> bool:
         """Returns True if the given category is a foundation food AND not a non foundation food, False otherwise"""
         if (
-                category
-                and any(cat in ProductValidator.raw_food_categories for cat in category)
-                and not any(cat in ProductValidator.transformed_food_categories for cat in category)
+            category
+            and any(cat in ProductValidator.raw_food_categories for cat in category)
+            and not any(
+                cat in ProductValidator.transformed_food_categories for cat in category
+            )
         ):
             return True
         return False
@@ -59,10 +63,10 @@ class ProductValidator:
         if additives and additives != "":
             try:
                 if (
-                        int(additives) == 0
-                        and nova_group
-                        and nova_group != ""
-                        and int(nova_group) <= 2
+                    int(additives) == 0
+                    and nova_group
+                    and nova_group != ""
+                    and int(nova_group) <= 2
                 ):
                     return True
             except ValueError:

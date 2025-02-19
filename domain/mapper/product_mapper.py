@@ -65,15 +65,23 @@ class ProductMapper:
             is_raw=None,  # TODO verifier si cest toujours cru ou pas
             brand_name=dict[brand_owner_field].title(),
             food_groups_en=[""],  # TODO compléter la liste si possible
-            ingredients=ingredients_mapper.map_fdc_dict_to_ingredients(dict["ingredients"]),
-            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(dict["foodNutrients"]),
+            ingredients=ingredients_mapper.map_fdc_dict_to_ingredients(
+                dict["ingredients"]
+            ),
+            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(
+                dict["foodNutrients"]
+            ),
             allergens=[""],  # TODO compléter la liste si possible
-            nutriscore_data=NutriscoreDataMapper.map_fdc_dict_to_nutriscore_data(dict["foodNutrients"]),
+            nutriscore_data=NutriscoreDataMapper.map_fdc_dict_to_nutriscore_data(
+                dict["foodNutrients"]
+            ),
             ecoscore_data=EcoscoreDataMapper.map_fdc_dict_to_ecoscore_data(),
             nova_data=NovaDataMapper.map_fdc_dict_to_nova_data(),
         )
 
-    def map_off_row_to_product(self, row: list[str], header: list[str]) -> Product | None:
+    def map_off_row_to_product(
+        self, row: list[str], header: list[str]
+    ) -> Product | None:
         country_field = header.index("countries_en")
         if row[country_field] != ProductMapper.WANTED_COUNTRY:
             return None
@@ -95,9 +103,13 @@ class ProductMapper:
             brand_name=row[brand_owner_field],
             food_groups_en=[row[food_groups_en_field]],
             ingredients=IngredientsMapper.map_off_row_to_ingredients(row, header),
-            nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(row, header),
+            nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
+                row, header
+            ),
             allergens=[row[allergens_en_field]],
-            nutriscore_data=nutriscore_data_mapper.map_off_row_to_nutriscore_data(row, header),
+            nutriscore_data=nutriscore_data_mapper.map_off_row_to_nutriscore_data(
+                row, header
+            ),
             ecoscore_data=EcoscoreDataMapper.map_off_row_to_ecoscore_data(row, header),
             nova_data=NovaDataMapper.map_off_row_to_nova_data(row, header),
         )
@@ -128,10 +140,16 @@ class ProductMapper:
                 )
             ],
             ingredients=IngredientsMapper.map_off_dict_to_ingredients(product_dict),
-            nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(product_dict),
+            nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
+                product_dict
+            ),
             allergens=[product_dict[allergens_en_field]],
-            nutriscore_data=NutriscoreDataMapper.map_off_dict_to_nutriscore_data(product_dict),
-            ecoscore_data=EcoscoreDataMapper.map_off_dict_to_ecoscore_data(product_dict),
+            nutriscore_data=NutriscoreDataMapper.map_off_dict_to_nutriscore_data(
+                product_dict
+            ),
+            ecoscore_data=EcoscoreDataMapper.map_off_dict_to_ecoscore_data(
+                product_dict
+            ),
             nova_data=NovaDataMapper.map_off_dict_to_nova_data(product_dict),
         )
 
@@ -197,7 +215,9 @@ class ProductMapper:
         # Check the additives
         additives_field = "additives_n"
         try:
-            if ProductValidator.check_additives(product_dict[additives_field], nova_group):
+            if ProductValidator.check_additives(
+                product_dict[additives_field], nova_group
+            ):
                 return True
         except ValueError:
             pass

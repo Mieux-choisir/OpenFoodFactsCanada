@@ -7,7 +7,9 @@ from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
 from scripts.product_completer import ProductCompleter
 
-off_csv_url = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
+off_csv_url = (
+    "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
+)
 
 off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
@@ -29,12 +31,16 @@ def main():
     off_csv_gz_file = os.path.join(data_dir, "off_csv.gz")
     off_csv_file = os.path.join(data_dir, "off_csv.csv")
 
-    data_downloader.download_and_decompress_data(off_csv_url, off_csv_gz_file, ".gz", off_csv_file)
+    data_downloader.download_and_decompress_data(
+        off_csv_url, off_csv_gz_file, ".gz", off_csv_file
+    )
 
     fdc_zip_file = os.path.join(data_dir, "fdc_branded.zip")
     fdc_file = os.path.join(data_dir, "fdc_branded.json")
 
-    data_downloader.download_and_decompress_data(fdc_json_url, fdc_zip_file, ".zip", fdc_file)
+    data_downloader.download_and_decompress_data(
+        fdc_json_url, fdc_zip_file, ".zip", fdc_file
+    )
 
     data_importer = DataImporter(ProductMapper())
 

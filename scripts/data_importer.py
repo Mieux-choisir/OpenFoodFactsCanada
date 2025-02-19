@@ -19,7 +19,7 @@ class DataImporter:
             logging.info("Extracting Food Data Central products...")
             for obj in ijson.items(file, "BrandedFoods.item"):
                 if (
-                        obj["marketCountry"] == "United States"
+                    obj["marketCountry"] == "United States"
                 ):  # there are also products from New Zealand
                     prod = self.product_mapper.map_fdc_dict_to_product(obj)
                     products.append(prod)
@@ -33,7 +33,9 @@ class DataImporter:
                 f"Extracting {limit} products from Open Food Facts jsonl dataset..."
             )
         else:
-            logging.info("Extracting all products from Open Food Facts jsonl dataset...")
+            logging.info(
+                "Extracting all products from Open Food Facts jsonl dataset..."
+            )
 
         products = []
         n = 0
@@ -64,13 +66,15 @@ class DataImporter:
             list[Product]: A list of Product objects extracted from the dataset.
         """
         if limit is not None:
-            logging.info(f"Extracting {limit} products from Open Food Facts csv dataset...")
+            logging.info(
+                f"Extracting {limit} products from Open Food Facts csv dataset..."
+            )
         else:
             logging.info("Extracting all products from Open Food Facts csv dataset...")
 
         # Increase the CSV field size limit to avoid the error:
         # _csv.Error: field larger than field limit (131072)
-        csv.field_size_limit(2 ** 30)
+        csv.field_size_limit(2**30)
 
         products: list[Product] = []
         n = 0

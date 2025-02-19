@@ -10,9 +10,9 @@ from domain.utils.ingredient_normalizer import IngredientNormalizer
 
 
 class ProductCompleter:
-    def complete_products_data(self,
-                               off_products: list[Product], fdc_products: list[Product]
-                               ) -> list[Product]:
+    def complete_products_data(
+        self, off_products: list[Product], fdc_products: list[Product]
+    ) -> list[Product]:
         """Completes the obtained OFF products with the data in the FDC products and returns a new completed list
         of products"""
         logging.info("Completing missing data for OFF products...")
@@ -34,7 +34,9 @@ class ProductCompleter:
         return products
 
     @staticmethod
-    def __find_product(searched_product: Product, products: list[Product]) -> Product | None:
+    def __find_product(
+        searched_product: Product, products: list[Product]
+    ) -> Product | None:
         """Searches the product in the products list based on its id and returns it if it finds it"""
         for product in products:
             if product.id == searched_product.id:
@@ -47,18 +49,29 @@ class ProductCompleter:
             # if the off_product field is None, an empty list or a list of empty strings, complete it
             off_value = getattr(off_product, field, None)
             if off_value is None or (
-                    isinstance(off_value, list)
-                    and ((not off_value) or v == "" for v in off_value)
+                isinstance(off_value, list)
+                and ((not off_value) or v == "" for v in off_value)
             ):
                 setattr(off_product, field, fdc_value)
             elif isinstance(off_value, Ingredients):
-                setattr(off_product, field,
-                        self.__update_ingredients_values(off_value, fdc_value, IngredientNormalizer()))
+                setattr(
+                    off_product,
+                    field,
+                    self.__update_ingredients_values(
+                        off_value, fdc_value, IngredientNormalizer()
+                    ),
+                )
             elif isinstance(off_value, NutriscoreData):
-                setattr(off_product, field, self.__update_nutriscore_values(off_value, fdc_value))
+                setattr(
+                    off_product,
+                    field,
+                    self.__update_nutriscore_values(off_value, fdc_value),
+                )
             elif isinstance(off_value, NutritionFacts):
                 setattr(
-                    off_product, field, self.__update_nutrition_facts_values(off_value, fdc_value)
+                    off_product,
+                    field,
+                    self.__update_nutrition_facts_values(off_value, fdc_value),
                 )
             elif isinstance(off_value, EcoscoreData) or isinstance(off_value, NovaData):
                 pass  # no useful information for these scores is present in fdc
@@ -66,19 +79,23 @@ class ProductCompleter:
 
     @staticmethod
     def __update_ingredients_values(
-            off_value: Ingredients, fdc_value: Ingredients, ingredient_normalizer: IngredientNormalizer
+        off_value: Ingredients,
+        fdc_value: Ingredients,
+        ingredient_normalizer: IngredientNormalizer,
     ) -> Ingredients:
         if off_value.ingredients_text is None:
             off_value.ingredients_text = fdc_value.ingredients_text
         if not off_value.ingredients_list:
-            off_value.ingredients_list = ingredient_normalizer.normalise_ingredients_list(
-                off_value.ingredients_text
+            off_value.ingredients_list = (
+                ingredient_normalizer.normalise_ingredients_list(
+                    off_value.ingredients_text
+                )
             )
         return off_value
 
     @staticmethod
     def __update_nutriscore_values(
-            off_value: NutriscoreData, fdc_value: NutriscoreData
+        off_value: NutriscoreData, fdc_value: NutriscoreData
     ) -> NutriscoreData:
         for field, value in off_value.__dict__.items():
             if value is None and getattr(fdc_value, field, None) is not None:
@@ -87,7 +104,7 @@ class ProductCompleter:
 
     @staticmethod
     def __update_nutrition_facts_values(
-            off_value: NutritionFacts, fdc_value: NutritionFacts
+        off_value: NutritionFacts, fdc_value: NutritionFacts
     ) -> NutritionFacts:
         for field, value in off_value.nutrient_level:
             if value is None:
@@ -100,7 +117,9 @@ class ProductCompleter:
         for field, value in off_value.nutrients:
             if value is None:
                 setattr(
-                    off_value.nutrients, field, getattr(fdc_value.nutrients, field, None)
+                    off_value.nutrients,
+                    field,
+                    getattr(fdc_value.nutrients, field, None),
                 )
 
         return off_value

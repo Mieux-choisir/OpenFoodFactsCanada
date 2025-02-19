@@ -7,11 +7,12 @@ class IngredientsMapper:
         self.ingredient_normalizer = ingredient_normalizer
 
     def map_fdc_dict_to_ingredients(self, ingredients: str) -> Ingredients:
-        ingredients_list = self.ingredient_normalizer.normalise_ingredients_list(ingredients)
+        ingredients_list = self.ingredient_normalizer.normalise_ingredients_list(
+            ingredients
+        )
 
         return Ingredients(
-            ingredients_list=ingredients_list,
-            ingredients_text=ingredients.title()
+            ingredients_list=ingredients_list, ingredients_text=ingredients.title()
         )
 
     @staticmethod

@@ -24,7 +24,9 @@ class EcoscoreDataMapper:
             IngredientsOriginMapper.map_row_to_ingredients_origin(row, header)
         ]
         packaging = PackagingMapper.map_row_to_packaging(row, header)
-        production_system = ProductionSystemMapper.map_row_to_production_system(row, header)
+        production_system = ProductionSystemMapper.map_row_to_production_system(
+            row, header
+        )
 
         return EcoscoreData(
             score=int(row[score_field]) if row[score_field] else None,
@@ -42,7 +44,9 @@ class EcoscoreDataMapper:
             IngredientsOriginMapper.map_dict_to_ingredients_origin(product_dict)
         ]
         packaging = PackagingMapper.map_dict_to_packaging(product_dict)
-        production_system = ProductionSystemMapper.map_dict_to_production_system(product_dict)
+        production_system = ProductionSystemMapper.map_dict_to_production_system(
+            product_dict
+        )
 
         return EcoscoreData(
             score=int(product_dict[score_field]) if product_dict[score_field] else None,

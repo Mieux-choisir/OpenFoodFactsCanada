@@ -9,26 +9,28 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 class DataDownloader:
     def download_and_decompress_data(
-            self,
-            source_url: str,
-            compressed_file: str,
-            compressed_file_extension: str,
-            decompressed_file: str,
+        self,
+        source_url: str,
+        compressed_file: str,
+        compressed_file_extension: str,
+        decompressed_file: str,
     ) -> None:
         if os.path.exists(decompressed_file):
             logging.info(f"File {decompressed_file} already exists. Skipping download.")
             return
 
         self.__download_file(source_url, compressed_file)
-        self.__decompress_file(compressed_file, compressed_file_extension, decompressed_file)
+        self.__decompress_file(
+            compressed_file, compressed_file_extension, decompressed_file
+        )
 
     @staticmethod
     def __download_file(
-            url: str,
-            download_path: str,
-            chunk_size: int = 1024 * 1024,
-            max_retries: int = 5,
-            timeout: int = 60,
+        url: str,
+        download_path: str,
+        chunk_size: int = 1024 * 1024,
+        max_retries: int = 5,
+        timeout: int = 60,
     ) -> None:
         """Downloads a file from a given url into a given download path"""
         logging.info(f"Downloading file from {url}...")
@@ -52,12 +54,13 @@ class DataDownloader:
             logging.error(f"Download failed after {max_retries} attempts: {e}")
             raise
 
-    def __decompress_file(self,
-                          compressed_file: str,
-                          compressed_file_extension: str,
-                          output_file: str,
-                          buffer_size: int = 1024 * 1024,
-                          ) -> None:
+    def __decompress_file(
+        self,
+        compressed_file: str,
+        compressed_file_extension: str,
+        output_file: str,
+        buffer_size: int = 1024 * 1024,
+    ) -> None:
         logging.info(f"Decompressing {compressed_file} into {output_file}...")
 
         if compressed_file_extension == ".gz":
@@ -73,7 +76,7 @@ class DataDownloader:
 
     @staticmethod
     def __decompress_gz_file(
-            gz_file: str, output_file: str, buffer_size: int = 1024 * 1024
+        gz_file: str, output_file: str, buffer_size: int = 1024 * 1024
     ) -> None:
         """Decompresses a .gz file into a file named output_file"""
         with gzip.open(gz_file, "rb") as f_in:
@@ -83,7 +86,7 @@ class DataDownloader:
 
     @staticmethod
     def __decompress_zip_file(
-            zip_file: str, output_file: str, buffer_size: int = 1024 * 1024
+        zip_file: str, output_file: str, buffer_size: int = 1024 * 1024
     ) -> None:
         """Decompresses a .zip file into a file named output_file"""
         with zipfile.ZipFile(zip_file, "r") as zip_ref:
