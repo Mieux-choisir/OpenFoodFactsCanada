@@ -131,13 +131,13 @@ def show_json_report(fields_types: dict, fields_can_be_none: set) -> None:
     logging.info(f"{len(fields_can_be_none)} out of {len(fields_types)} fields can be None : {possible_nonetypes}")
 
 
-def show_unconsistent_fields(field_types: dict) -> None:
-    unconsistent_fields = {}
+def show_inconsistent_fields(field_types: dict) -> None:
+    inconsistent_fields = {}
     for field in field_types.keys():
         if len(field_types[field].keys()) > 1:
-            unconsistent_fields[field] = list(field_types[field].keys())
+            inconsistent_fields[field] = list(field_types[field].keys())
 
-    logging.info(f"Unconsistent fields: {unconsistent_fields}")
+    logging.info(f"Inconsistent fields: {inconsistent_fields}")
 
 
 
@@ -152,6 +152,6 @@ if __name__ == "__main__":
     off_jsonl_field_types, off_jsonl_none = analyze_off_jsonl_data(r"C:\Users\estre\Documents\stage\bds\off\full\filtered_canada_products.json", False, 1000)
     fdc_field_types, fdc_none = analyze_fdc_data(r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json", False, 1000)
 
-    show_unconsistent_fields(off_csv_field_types)
-    show_unconsistent_fields(off_jsonl_field_types)
-    show_unconsistent_fields(fdc_field_types)
+    show_inconsistent_fields(off_csv_field_types)
+    show_inconsistent_fields(off_jsonl_field_types)
+    show_inconsistent_fields(fdc_field_types)
