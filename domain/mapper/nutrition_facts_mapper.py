@@ -1,6 +1,6 @@
-from scripts.product.complexFields.nutrient_facts import NutritionFacts
-from scripts.product.complexFields.nutrient_level import NutrientLevel
-from scripts.product.complexFields.nutrients import Nutrients
+from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutrient_level import NutrientLevel
+from domain.product.complexFields.nutrients import Nutrients
 
 
 class NutritionFactsMapper:

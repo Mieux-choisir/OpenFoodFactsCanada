@@ -1,9 +1,9 @@
-from scripts.mapper.ecoscore_data_mapper import EcoscoreDataMapper
-from scripts.mapper.ingredients_mapper import IngredientsMapper
-from scripts.mapper.nova_data_mapper import NovaDataMapper
-from scripts.mapper.nutriscore_data_mapper import NutriscoreDataMapper
-from scripts.mapper.nutrition_facts_mapper import NutritionFactsMapper
-from scripts.product.product import Product
+from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
+from domain.mapper.ingredients_mapper import IngredientsMapper
+from domain.mapper.nova_data_mapper import NovaDataMapper
+from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
+from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
+from domain.product.product import Product
 from scripts.utils import check_nova_raw_group, check_nova_transformed_group, check_pnn_groups, check_list_categories, \
     check_additives, check_string_categories
 

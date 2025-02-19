@@ -2,7 +2,7 @@ from typing import Dict
 
 from pydantic import BaseModel, Field
 
-from scripts.product.category_enum import CategoryEnum
+from domain.product.category_enum import CategoryEnum
 
 
 class FoodCategoryModel(BaseModel):

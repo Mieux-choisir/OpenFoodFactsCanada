@@ -1,4 +1,4 @@
-from scripts.product.complexFields.nova_data import NovaData
+from domain.product.complexFields.nova_data import NovaData
 
 
 class NovaDataMapper:

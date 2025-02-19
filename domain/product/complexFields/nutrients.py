@@ -1,6 +1,6 @@
 from typing import Optional
 
-from scripts.product.complexFields.complex_field import ComplexField
+from domain.product.complexFields.complex_field import ComplexField
 
 
 class Nutrients(ComplexField):

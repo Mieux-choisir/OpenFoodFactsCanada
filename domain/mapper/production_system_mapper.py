@@ -1,4 +1,4 @@
-from scripts.product.complexFields.production_system import ProductionSystem
+from domain.product.complexFields.production_system import ProductionSystem
 
 
 class ProductionSystemMapper:

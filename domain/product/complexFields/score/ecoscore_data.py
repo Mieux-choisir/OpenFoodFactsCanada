@@ -1,9 +1,9 @@
 from typing import Optional, List, Dict
 
-from scripts.product.complexFields.complex_field import ComplexField
-from scripts.product.complexFields.ingredients_origin import IngredientsOrigin
-from scripts.product.complexFields.packaging import Packaging
-from scripts.product.complexFields.production_system import ProductionSystem
+from domain.product.complexFields.complex_field import ComplexField
+from domain.product.complexFields.ingredients_origin import IngredientsOrigin
+from domain.product.complexFields.packaging import Packaging
+from domain.product.complexFields.production_system import ProductionSystem
 
 
 class EcoscoreData(ComplexField):

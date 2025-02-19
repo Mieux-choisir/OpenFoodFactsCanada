@@ -1,14 +1,13 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
-from typing import Optional, List, Dict
-from pydantic import BaseModel, Field
+from typing import Optional, List
 
-from scripts.product.category_enum import CategoryEnum
-from scripts.product.complexFields.complex_field import ComplexField
-from scripts.product.complexFields.ingredients import Ingredients
-from scripts.product.complexFields.nova_data import NovaData
-from scripts.product.complexFields.nutrient_facts import NutritionFacts
-from scripts.product.complexFields.score.ecoscore_data import EcoscoreData
-from scripts.product.complexFields.score.nutriscore_data import NutriscoreData
+from domain.product.category_enum import CategoryEnum
+from domain.product.complexFields.complex_field import ComplexField
+from domain.product.complexFields.ingredients import Ingredients
+from domain.product.complexFields.nova_data import NovaData
+from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.score.ecoscore_data import EcoscoreData
+from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 
 
 class Product(ComplexField):

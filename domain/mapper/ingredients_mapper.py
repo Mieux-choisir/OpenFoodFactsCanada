@@ -1,4 +1,4 @@
-from scripts.product.complexFields.ingredients import Ingredients
+from domain.product.complexFields.ingredients import Ingredients
 from scripts.utils import normalise_ingredients_list
 
 

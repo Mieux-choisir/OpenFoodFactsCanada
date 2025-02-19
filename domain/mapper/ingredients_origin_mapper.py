@@ -1,4 +1,4 @@
-from scripts.product.complexFields.ingredients_origin import IngredientsOrigin
+from domain.product.complexFields.ingredients_origin import IngredientsOrigin
 
 
 class IngredientsOriginMapper:

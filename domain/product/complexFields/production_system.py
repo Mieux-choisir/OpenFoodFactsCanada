@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from scripts.product.complexFields.complex_field import ComplexField
+from domain.product.complexFields.complex_field import ComplexField
 
 
 class ProductionSystem(ComplexField):

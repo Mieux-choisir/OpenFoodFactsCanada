@@ -1,4 +1,4 @@
-from scripts.product.complexFields.packaging import Packaging
+from domain.product.complexFields.packaging import Packaging
 
 
 class PackagingMapper:

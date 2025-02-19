@@ -1,4 +1,4 @@
-from scripts.product.complexFields.score.nutriscore_data import NutriscoreData
+from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 from scripts.utils import map_letter_to_number
 
 
@@ -120,3 +120,10 @@ class NutriscoreDataMapper:
             sugar=product_dict[nutriments_field][sugar_field],
             is_beverage=None,
         )
+
+    @staticmethod
+    def __map_letter_to_number(letter: str) -> int | None:
+        try:
+            return ord(letter.lower()) - 96
+        except TypeError:
+            return None

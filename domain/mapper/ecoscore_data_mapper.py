@@ -1,10 +1,8 @@
-from scripts.mapper.ingredients_origin_mapper import IngredientsOriginMapper
-from scripts.mapper.packaging_mapper import PackagingMapper
-from scripts.mapper.production_system_mapper import ProductionSystemMapper
-from scripts.product.complexFields.ingredients_origin import IngredientsOrigin
-from scripts.product.complexFields.packaging import Packaging
-from scripts.product.complexFields.production_system import ProductionSystem
-from scripts.product.complexFields.score.ecoscore_data import EcoscoreData
+from domain.mapper.ingredients_origin_mapper import IngredientsOriginMapper
+from domain.mapper.packaging_mapper import PackagingMapper
+from domain.mapper.production_system_mapper import ProductionSystemMapper
+from domain.product.complexFields.ingredients_origin import IngredientsOrigin
+from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 
 
 class EcoscoreDataMapper:
