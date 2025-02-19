@@ -159,7 +159,11 @@ def import_csv_off_data(filename: str, limit=None) -> list[Product]:
         reader = csv.reader(f, delimiter="\t")
         header = next(reader)
 
-        for row in reader:
+        for i, row in enumerate(reader):
+            if i in range(0, 5):
+                print ("Produit", i)
+                for h, r in zip(header, row):
+                    print(f"{h}: {r}")
             product = map_off_row_to_product(row, header)
 
             if product is None:
@@ -182,7 +186,7 @@ def load_products_to_mongo(products: list[Product], collection_name: str):
     db_name = "openfoodfacts"
 
     # Connect to MongoDB (default localhost:27017)
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://localhost:37017/")
     db = client[db_name]
     collection = db[collection_name]
     logging.info("Connected to client")

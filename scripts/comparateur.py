@@ -48,7 +48,7 @@ def calculate_similarity(row):
 
 def store_mismatched_products(mismatches):
     """Stocke les produits dont la similarité est inférieure à 100% dans MongoDB"""
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://localhost:37017/")
     db = client["openfoodfacts"]
     collection = db["waiting_for_treatement_products"]
 

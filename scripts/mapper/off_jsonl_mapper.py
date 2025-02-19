@@ -1,5 +1,5 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import (
+from utils import (
     check_nova_raw_group,
     check_nova_transformed_group,
     check_pnn_groups,
@@ -7,7 +7,7 @@ from scripts.utils import (
     map_letter_to_number,
     check_additives,
 )
-from scripts.product import (
+from product import (
     Product,
     Ingredients,
     NutritionFacts,
@@ -16,7 +16,7 @@ from scripts.product import (
     NutrientLevel,
     NovaData,
 )
-from scripts.product import (
+from product import (
     EcoscoreData,
     OriginOfIngredients,
     Packaging,

@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring
-from scripts.utils import normalise_ingredients_list
-from scripts.product import (
+from utils import normalise_ingredients_list
+from product import (
     Product,
     Ingredients,
     NutritionFacts,

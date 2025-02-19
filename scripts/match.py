@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 
 def extract_data():
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://localhost:37017/")
     db = client["openfoodfacts"]
     
     collection = db["off_products"]
