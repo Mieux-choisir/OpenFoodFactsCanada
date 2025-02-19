@@ -33,6 +33,7 @@ def main():
 
     fdc_zip_file = os.path.join(data_dir, "fdc_branded.zip")
     fdc_file = os.path.join(data_dir, "fdc_branded.json")
+
     data_downloader.download_and_decompress_data(fdc_json_url, fdc_zip_file, ".zip", fdc_file)
 
     data_importer = DataImporter(ProductMapper())

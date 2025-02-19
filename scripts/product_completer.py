@@ -6,7 +6,7 @@ from domain.product.complexFields.nutrient_facts import NutritionFacts
 from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 from domain.product.product import Product
-from domain.utils.Ingredient_normalizer import IngredientNormalizer
+from domain.utils.ingredient_normalizer import IngredientNormalizer
 
 
 class ProductCompleter:

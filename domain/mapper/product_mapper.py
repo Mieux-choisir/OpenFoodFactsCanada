@@ -1,11 +1,13 @@
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.ingredients_mapper import IngredientsMapper
 from domain.mapper.nova_data_mapper import NovaDataMapper
+from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.product import Product
-from scripts.utils import check_nova_raw_group, check_nova_transformed_group, check_pnn_groups, check_list_categories, \
-    check_additives, check_string_categories
+from domain.utils.ingredient_normalizer import IngredientNormalizer
+from domain.validator.nova_data_validator import NovaDataValidator
+from domain.validator.product_validator import ProductValidator
 
 
 def __off_json_is_raw_aliment(product_dict: dict) -> bool:
@@ -15,27 +17,27 @@ def __off_json_is_raw_aliment(product_dict: dict) -> bool:
     nova_group = product_dict[nova_field]
 
     try:
-        if check_nova_raw_group(nova_group):
+        if NovaDataValidator.check_nova_raw_group(nova_group):
             return True
-        if check_nova_transformed_group(nova_group):
+        if NovaDataValidator.check_nova_transformed_group(nova_group):
             return False
     except ValueError:
         pass
 
     # Check the PNNS groups
     pnns_field = "pnns_groups_1"
-    if check_pnn_groups(product_dict[pnns_field]):
+    if ProductValidator.check_pnn_groups(product_dict[pnns_field]):
         return True
 
     # Check the categories
     cat_field = "categories_tags"
-    if check_list_categories(product_dict[cat_field]):
+    if ProductValidator.check_list_categories(product_dict[cat_field]):
         return True
 
     # Check the additives
     additives_field = "additives_n"
     try:
-        if check_additives(product_dict[additives_field], nova_group):
+        if ProductValidator.check_additives(product_dict[additives_field], nova_group):
             return True
     except ValueError:
         pass
@@ -54,6 +56,8 @@ class ProductMapper:
         generic_name_field = "description"
         brand_owner_field = "brandOwner"
 
+        ingredients_mapper = IngredientsMapper(IngredientNormalizer())
+
         return Product(
             id=dict[id_field],
             product_name=dict[product_name_field].title(),
@@ -61,7 +65,7 @@ class ProductMapper:
             is_raw=None,  # TODO verifier si cest toujours cru ou pas
             brand_name=dict[brand_owner_field].title(),
             food_groups_en=[""],  # TODO compléter la liste si possible
-            ingredients=IngredientsMapper.map_fdc_dict_to_ingredients(dict["ingredients"]),
+            ingredients=ingredients_mapper.map_fdc_dict_to_ingredients(dict["ingredients"]),
             nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(dict["foodNutrients"]),
             allergens=[""],  # TODO compléter la liste si possible
             nutriscore_data=NutriscoreDataMapper.map_fdc_dict_to_nutriscore_data(dict["foodNutrients"]),
@@ -81,6 +85,8 @@ class ProductMapper:
         food_groups_en_field = header.index("food_groups_en")
         allergens_en_field = header.index("allergens_en")
 
+        nutriscore_data_mapper = NutriscoreDataMapper(NumberMapper())
+
         return Product(
             id=row[id_field],
             product_name=row[product_name_field],
@@ -91,7 +97,7 @@ class ProductMapper:
             ingredients=IngredientsMapper.map_off_row_to_ingredients(row, header),
             nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(row, header),
             allergens=[row[allergens_en_field]],
-            nutriscore_data=NutriscoreDataMapper.map_off_row_to_nutriscore_data(row, header),
+            nutriscore_data=nutriscore_data_mapper.map_off_row_to_nutriscore_data(row, header),
             ecoscore_data=EcoscoreDataMapper.map_off_row_to_ecoscore_data(row, header),
             nova_data=NovaDataMapper.map_off_row_to_nova_data(row, header),
         )
@@ -136,27 +142,27 @@ class ProductMapper:
         nova_idx = header.index("nova_group")
         nova_group = row[nova_idx]
         try:
-            if check_nova_raw_group(nova_group):
+            if NovaDataValidator.check_nova_raw_group(nova_group):
                 return True
-            if check_nova_transformed_group(nova_group):
+            if NovaDataValidator.check_nova_transformed_group(nova_group):
                 return False
         except ValueError:
             pass
 
         # Check the PNNS groups
         pnns_idx = header.index("pnns_groups_1")
-        if check_pnn_groups(row[pnns_idx]):
+        if ProductValidator.check_pnn_groups(row[pnns_idx]):
             return True
 
         # Check the categories
         cat_idx = header.index("categories_tags")
-        if check_string_categories(row[cat_idx]):
+        if ProductValidator.check_string_categories(row[cat_idx]):
             return True
 
         # Check the additives
         additives_idx = header.index("additives_n")
         try:
-            if check_additives(row[additives_idx], nova_group):
+            if ProductValidator.check_additives(row[additives_idx], nova_group):
                 return True
         except ValueError:
             pass
@@ -171,27 +177,27 @@ class ProductMapper:
         nova_group = product_dict[nova_field]
 
         try:
-            if check_nova_raw_group(nova_group):
+            if NovaDataValidator.check_nova_raw_group(nova_group):
                 return True
-            if check_nova_transformed_group(nova_group):
+            if NovaDataValidator.check_nova_transformed_group(nova_group):
                 return False
         except ValueError:
             pass
 
         # Check the PNNS groups
         pnns_field = "pnns_groups_1"
-        if check_pnn_groups(product_dict[pnns_field]):
+        if ProductValidator.check_pnn_groups(product_dict[pnns_field]):
             return True
 
         # Check the categories
         cat_field = "categories_tags"
-        if check_list_categories(product_dict[cat_field]):
+        if ProductValidator.check_list_categories(product_dict[cat_field]):
             return True
 
         # Check the additives
         additives_field = "additives_n"
         try:
-            if check_additives(product_dict[additives_field], nova_group):
+            if ProductValidator.check_additives(product_dict[additives_field], nova_group):
                 return True
         except ValueError:
             pass

@@ -14,7 +14,7 @@ class IngredientNormalizer:
         return ingredients_list
 
     @staticmethod
-    def __remove_unnecessary_text(self, ingredients_text: str) -> str:
+    def __remove_unnecessary_text(ingredients_text: str) -> str:
         """Removes text that is not essential information about the ingredients (e.g. "contains", ".", etc.)"""
         cleaned_text = re.sub(
             r"contains.*?of", "contains of", ingredients_text, flags=re.IGNORECASE
@@ -23,7 +23,7 @@ class IngredientNormalizer:
         return cleaned_text.strip()
 
     @staticmethod
-    def __segment_ingredients(self, ingredients_text: str) -> list[str]:
+    def __segment_ingredients(ingredients_text: str) -> list[str]:
         """Splits the text by commas, excluding the ones between '(' or '[' and ']' or ')'"""
         if ingredients_text.endswith(","):
             ingredients_text = ingredients_text[:-1]
@@ -34,7 +34,7 @@ class IngredientNormalizer:
         return ingredients_list
 
     @staticmethod
-    def __clean_ingredients(self, ingredients_list: list[str]) -> list[str]:
+    def __clean_ingredients(ingredients_list: list[str]) -> list[str]:
         """Removes everything before the last appearing colon for each ingredient in the list"""
         cleaned_ingredients_list = []
         for ingredient in ingredients_list:

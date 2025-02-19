@@ -1,8 +1,11 @@
+from domain.mapper.number_mapper import NumberMapper
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
-from scripts.utils import map_letter_to_number
 
 
 class NutriscoreDataMapper:
+    def __init__(self, number_mapper: NumberMapper):
+        self.number_mapper = number_mapper
+
     @staticmethod
     def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreData:
         energy_id = 1008
@@ -66,8 +69,7 @@ class NutriscoreDataMapper:
             is_beverage=None,
         )
 
-    @staticmethod
-    def map_off_row_to_nutriscore_data(row: list[str], header: list[str]) -> NutriscoreData:
+    def map_off_row_to_nutriscore_data(self, row: list[str], header: list[str]) -> NutriscoreData:
         nutriscore_score_field = header.index("nutriscore_grade")
         energy_field = header.index("energy_100g")
         fibers_field = header.index("fiber_100g")
@@ -79,7 +81,7 @@ class NutriscoreDataMapper:
 
         return NutriscoreData(
             score=(
-                map_letter_to_number(row[nutriscore_score_field])
+                self.number_mapper.map_letter_to_number(row[nutriscore_score_field])
                 if row[nutriscore_score_field]
                 else None
             ),
@@ -93,8 +95,7 @@ class NutriscoreDataMapper:
             is_beverage=None,
         )
 
-    @staticmethod
-    def map_off_dict_to_nutriscore_data(product_dict: dict) -> NutriscoreData:
+    def map_off_dict_to_nutriscore_data(self, product_dict: dict) -> NutriscoreData:
         nutriments_field = "nutriments"
         nutriscore_score_field = "nutriscore_grade"
         energy_field = "energy_100g"
@@ -107,7 +108,7 @@ class NutriscoreDataMapper:
 
         return NutriscoreData(
             score=(
-                map_letter_to_number(product_dict[nutriscore_score_field])
+                self.number_mapper.map_letter_to_number(product_dict[nutriscore_score_field])
                 if product_dict[nutriscore_score_field]
                 else None
             ),
