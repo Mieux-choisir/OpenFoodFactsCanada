@@ -27,8 +27,9 @@ jobs:
 
       - name: Run Black
         run: |
+          black --check ./domain
           black --check ./scripts
 
       - name: Run Flake8
         run: |
-          flake8 ./scripts --max-line-length=160
+          flake8 . --exclude=venv --max-line-length=160
