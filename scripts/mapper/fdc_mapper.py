@@ -21,8 +21,13 @@ def map_fdc_dict_to_product(dict: dict) -> Product:
     generic_name_field = "description"
     brand_owner_field = "brandOwner"
 
+    ean_code = dict[id_field]
+
+    if len(ean_code) == 14 and ean_code.startswith("0"):
+        ean_code = ean_code[1:]
+
     return Product(
-        id=dict[id_field],
+        id=ean_code,
         product_name=dict[product_name_field].title(),
         generic_name_en=dict[generic_name_field].title(),
         is_raw=None,  # TODO verifier si cest toujours cru ou pas

@@ -15,6 +15,8 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from product import Product
 from mapper.off_csv_mapper import *
 from mapper.off_jsonl_mapper import *
+from mapper.fdc_mapper import map_fdc_dict_to_product
+from utils import normalise_ingredients_list
 
 # URL of the off csv file
 off_csv_url = (
@@ -393,7 +395,7 @@ def main():
     download_and_decompress_data(fdc_json_url, fdc_zip_file, ".zip", fdc_file)
 
     # Load data and transform it
-    off_products = import_csv_off_data(off_csv_file, 10)
+    off_products = import_csv_off_data(off_csv_file)
     fdc_products = import_json_fdc_data(fdc_file)
     off_products = complete_products_data(off_products, fdc_products)
 
