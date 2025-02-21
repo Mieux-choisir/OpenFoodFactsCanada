@@ -5,7 +5,6 @@ from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.product import Product
-from domain.utils.ingredient_normalizer import IngredientNormalizer
 from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
 
@@ -41,11 +40,11 @@ class ProductMapper:
                 dict["foodNutrients"]
             ),
             ecoscore_data=None,
-            nova_data=None
+            nova_data=None,
         )
 
     def map_off_row_to_product(
-            self, row: list[str], header: list[str]
+        self, row: list[str], header: list[str]
     ) -> Product | None:
         country_field = header.index("countries_en")
         if row[country_field] != ProductMapper.WANTED_COUNTRY:
@@ -104,7 +103,9 @@ class ProductMapper:
                     else ""
                 )
             ],
-            ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(product_dict),
+            ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(
+                product_dict
+            ),
             nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
@@ -181,7 +182,7 @@ class ProductMapper:
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                    product_dict[additives_field], nova_group
+                product_dict[additives_field], nova_group
             ):
                 return True
         except ValueError:

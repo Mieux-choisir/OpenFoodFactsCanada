@@ -45,7 +45,9 @@ def main():
         fdc_json_url, fdc_zip_file, ".zip", fdc_file
     )
 
-    data_importer = DataImporter(ProductMapper(IngredientsMapper(IngredientNormalizer())))
+    data_importer = DataImporter(
+        ProductMapper(IngredientsMapper(IngredientNormalizer()))
+    )
 
     off_products = data_importer.import_csv_off_data(off_csv_file, 10)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
