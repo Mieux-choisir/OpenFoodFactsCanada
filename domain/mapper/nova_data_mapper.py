@@ -2,9 +2,6 @@ from domain.product.complexFields.nova_data import NovaData
 
 
 class NovaDataMapper:
-    @staticmethod
-    def map_fdc_dict_to_nova_data() -> NovaData:
-        return NovaData(score=None, group_markers={})
 
     @staticmethod
     def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:

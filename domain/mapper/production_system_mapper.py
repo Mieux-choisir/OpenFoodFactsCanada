@@ -3,7 +3,7 @@ from domain.product.complexFields.production_system import ProductionSystem
 
 class ProductionSystemMapper:
     @staticmethod
-    def map_dict_to_production_system(product_dict: dict) -> ProductionSystem:
+    def map_off_dict_to_production_system(product_dict: dict) -> ProductionSystem:
         labels_field = "labels_tags"
 
         return ProductionSystem(
@@ -17,7 +17,7 @@ class ProductionSystemMapper:
         )
 
     @staticmethod
-    def map_row_to_production_system(
+    def map_off_row_to_production_system(
         row: list[str], header: list[str]
     ) -> ProductionSystem:
         labels_field = header.index("labels")

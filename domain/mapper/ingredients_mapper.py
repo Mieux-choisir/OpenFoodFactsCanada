@@ -15,20 +15,20 @@ class IngredientsMapper:
             ingredients_list=ingredients_list, ingredients_text=ingredients.title()
         )
 
-    @staticmethod
-    def map_off_row_to_ingredients(row: list[str], header: list[str]) -> Ingredients:
+    def map_off_row_to_ingredients(self, row: list[str], header: list[str]) -> Ingredients:
         ingredients_text_field = header.index("ingredients_text")
+        ingredients_text = row[ingredients_text_field]
 
         return Ingredients(
-            ingredients_list=[],
-            ingredients_text=row[ingredients_text_field],
+            ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(ingredients_text),
+            ingredients_text=ingredients_text,
         )
 
-    @staticmethod
-    def map_off_dict_to_ingredients(product_dict: dict) -> Ingredients:
+    def map_off_dict_to_ingredients(self, product_dict: dict) -> Ingredients:
         ingredients_text_field = "ingredients_text"
+        ingredients_text = product_dict[ingredients_text_field]
 
         return Ingredients(
-            ingredients_list=[],
-            ingredients_text=product_dict[ingredients_text_field],
+            ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(ingredients_text),
+            ingredients_text=ingredients_text,
         )

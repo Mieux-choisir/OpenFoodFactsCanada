@@ -3,7 +3,7 @@ from domain.product.complexFields.packaging import Packaging
 
 class PackagingMapper:
     @staticmethod
-    def map_row_to_packaging(row: list[str], header: list[str]) -> Packaging:
+    def map_off_row_to_packaging(row: list[str], header: list[str]) -> Packaging:
         packaging_field = header.index("packaging")
 
         return Packaging(
@@ -12,7 +12,7 @@ class PackagingMapper:
         )
 
     @staticmethod
-    def map_dict_to_packaging(product_dict: dict) -> Packaging:
+    def map_off_dict_to_packaging(product_dict: dict) -> Packaging:
         packaging_tags_field = "packaging_tags"
 
         return Packaging(
