@@ -16,7 +16,8 @@ class DataLoader:
             logging.info("Loading products to MongoDB...")
 
             # Connect to MongoDB (default localhost:27017)
-            client = MongoClient("localhost:37017")
+            # client = MongoClient("localhost:37017")
+            client = MongoClient("mongodb://mongo:27017/")
             db = client[db_name]
             collection = db[collection_name]
             logging.info("Connected to client")
