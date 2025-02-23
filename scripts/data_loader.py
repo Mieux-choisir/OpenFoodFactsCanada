@@ -11,13 +11,16 @@ class DataLoader:
         products: list[Product],
         db_name: str = "openfoodfacts",
         collection_name: str = "products",
+        use_docker: bool = True,
     ) -> None:
         try:
             logging.info("Loading products to MongoDB...")
 
-            # Connect to MongoDB (default localhost:27017)
-            # client = MongoClient("localhost:37017")
-            client = MongoClient("mongodb://mongo:27017/")
+            # Connect to MongoDB
+            connection_string = (
+                "mongodb://mongo:27017/" if use_docker else "localhost:37017"
+            )
+            client = MongoClient(connection_string)
             db = client[db_name]
             collection = db[collection_name]
             logging.info("Connected to client")
