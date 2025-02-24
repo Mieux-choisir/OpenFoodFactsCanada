@@ -22,13 +22,11 @@ class ProductMapper:
         generic_name_field = "description"
         brand_owner_field = "brandOwner"
 
-        ean_code = dict[id_field]
-
-        if len(ean_code) == 14 and ean_code.startswith("0"):
-            ean_code = ean_code[1:]
+        id_match = dict[id_field].lstrip("0")
 
         return Product(
-            id=ean_code,
+            id_match=id_match,
+            id_original=dict[id_field],
             product_name=dict[product_name_field].title(),
             generic_name_en=dict[generic_name_field].title(),
             is_raw=None,  # TODO verifier si cest toujours cru ou pas
@@ -64,8 +62,11 @@ class ProductMapper:
 
         nutriscore_data_mapper = NutriscoreDataMapper(NumberMapper())
 
+        id_match = row[id_field].lstrip("0")
+
         return Product(
-            id=row[id_field],
+            id_match=id_match,
+            id_original=row[id_field],
             product_name=row[product_name_field],
             generic_name_en=row[generic_name_field],
             is_raw=self.off_csv_is_raw_aliment(row, header),
@@ -95,8 +96,11 @@ class ProductMapper:
         food_groups_en_field = "food_groups"
         allergens_en_field = "allergens"
 
+        id_match = dict[id_field].lstrip("0")
+
         return Product(
-            id=product_dict[id_field],
+            id_match=id_match,
+            id_original=product_dict[id_field],
             product_name=product_dict[product_name_field],
             generic_name_en=product_dict[generic_name_field],
             is_raw=self.off_json_is_raw_aliment(product_dict),
