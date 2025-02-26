@@ -19,15 +19,20 @@ def show_field_description(field_name):
     field_description = f"Information about {field_name}:"
     with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
-        fields = data.get('fields', [])
+        fields = data.get("fields", [])
 
-        field = next((document for document in fields if document.get("name") == field_name), None)
+        field = next(
+            (document for document in fields if document.get("name") == field_name),
+            None,
+        )
 
         if field:
             for item in field.keys():
                 field_description += f"\n\t{item}: {field[item]}"
         else:
-            field_description += f"\n\tnot found: {field_name} is not a field in the CSV file"
+            field_description += (
+                f"\n\tnot found: {field_name} is not a field in the CSV file"
+            )
 
         logging.info(field_description)
 
