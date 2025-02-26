@@ -168,15 +168,7 @@ def analyze_fdc_data(filename: str, nonetype_included: bool, limit: int = None) 
 
 def analyze_obj(obj: dict, fields_types: dict, fields_can_be_none: set, nonetype_included: bool) -> (dict, set):
     for key in obj.keys():
-        if nonetype_included or obj[key] is not None:
-            if key not in fields_types.keys():
-                fields_types[key] = {type(obj[key]).__name__: 1}
-            elif not type(obj[key]).__name__ in fields_types[key].keys():
-                fields_types[key][type(obj[key]).__name__] = 1
-            else:
-                fields_types[key][type(obj[key]).__name__] += 1
-        elif key not in fields_types.keys():
-            fields_types[key] = {}
+        fields_types = add_type_to_dict(fields_types, key, obj[key], nonetype_included)
 
         if obj[key] is None:
             fields_can_be_none.add(key)
@@ -184,8 +176,22 @@ def analyze_obj(obj: dict, fields_types: dict, fields_can_be_none: set, nonetype
     return fields_types, fields_can_be_none
 
 
+def add_type_to_dict(fields_types, key, value, nonetype_included: bool):
+    if nonetype_included or value is not None:
+        if key not in fields_types.keys():
+            fields_types[key] = {type(value).__name__: 1}
+        elif not type(value).__name__ in fields_types[key].keys():
+            fields_types[key][type(value).__name__] = 1
+        else:
+            fields_types[key][type(value).__name__] += 1
+    elif key not in fields_types.keys():
+        fields_types[key] = {}
+
+    return fields_types
+
+
 def show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
-    types = ""
+    types = "Analyzed fields types:"
     for field in fields_types:
         types += f"\n\t{field}: {fields_types[field]}"
     logging.info(f"{types}\n")
@@ -232,10 +238,7 @@ def record_values_for_field_off_csv(field_name: str, show_values: bool, filename
                 break
 
     if show_values:
-        values_list = ""
-        for value in values:
-            values_list += f"\n\t{value}"
-        logging.info(f"Values found:{values_list}")
+        show_set_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
@@ -266,10 +269,7 @@ def record_values_for_field_off_jsonl(field_name: str, show_values: bool, filena
                 logging.info(f"Error parsing line: {line}. Error: {e}")
 
     if show_values:
-        values_list = ""
-        for value in values:
-            values_list += f"\n\t{value}"
-        logging.info(f"Values found:{values_list}")
+        show_set_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
@@ -295,13 +295,17 @@ def record_values_for_field_fdc(field_name: str, show_values: bool, filename: st
                 break
 
     if show_values:
-        values_list = ""
-        for value in values:
-            values_list += f"\n\t{value}"
-        logging.info(f"Values found:{values_list}")
+        show_set_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
+
+
+def show_set_values(set_values: set) -> None:
+    values_list = ""
+    for value in set_values:
+        values_list += f"\n\t{value}"
+    logging.info(f"Values found:{values_list}")
 
 
 if __name__ == "__main__":
