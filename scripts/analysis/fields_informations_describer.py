@@ -4,6 +4,7 @@ import json
 
 
 def show_all_fields():
+    """Shows the names of all the fields in the documentation"""
     filename = r"../../off_csv_fields_descriptions.json"
 
     fields_list = "Fields of the csv file for Open Food Facts:"
@@ -14,6 +15,7 @@ def show_all_fields():
 
 
 def show_field_description(field_name):
+    """Shows the description of a given field name in the documentation"""
     filename = r"../../off_csv_fields_descriptions.json"
 
     field_description = f"Information about {field_name}:"
@@ -38,6 +40,7 @@ def show_field_description(field_name):
 
 
 def show_all_fields_descriptions():
+    """Shows the descriptions of all the fields in the documentation"""
     filename = r"../../off_csv_fields_descriptions.json"
 
     fields_descriptions = ""

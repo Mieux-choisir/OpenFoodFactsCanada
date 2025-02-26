@@ -1,13 +1,23 @@
 import logging
 import csv
 import json
-from datetime import datetime
 import ijson
+
+from scripts.analysis.fields_types_analyzer import FieldsTypesAnalyzer
 
 
 def analyze_off_csv_data(
     filename: str, nonetype_included: bool, limit: int = None
 ) -> (dict, set):
+    """Analyzes and counts the different types appearing in each field of the CSV dataset.
+    Args:
+        filename (str): the path of the CSV file
+        nonetype_included (bool): whether the None values are counted and presented in the analysis
+        limit (int): the number of products (ie lines in the csv) to analyze
+    Returns:
+        (fields_types, fields_none) (dict, set):
+            - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
+            - fields_none: the set of fields that can have the value None"""
     if limit is not None:
         logging.info(
             f"Analyzing the data of {limit} products from Open Food Facts csv dataset..."
@@ -33,7 +43,8 @@ def analyze_off_csv_data(
             for field_index in range(len(header)):
                 field, field_value = header[field_index], row[field_index]
 
-                field_type = get_field_type(field, field_value)
+                fields_analyzer = FieldsTypesAnalyzer()
+                field_type = fields_analyzer.get_field_type(field, field_value)
 
                 if nonetype_included or field_type != 'NoneType':
                     if field not in fields_types.keys():
@@ -59,65 +70,18 @@ def analyze_off_csv_data(
     return fields_types, fields_can_be_none
 
 
-def get_field_type(field: str, field_value: str) -> str:
-    field_type = get_particular_cases_type(field, field_value)
-
-    if not field_type:
-        field_type = type(None).__name__
-
-        if value_is_int(field_value):
-            field_type = int.__name__
-        elif value_is_float(field_value):
-            field_type = float.__name__
-        elif value_is_list(field_value):
-            field_type = list.__name__
-        elif value_is_string(field_value):
-            field_type = str.__name__
-
-    return field_type
-
-
-def get_particular_cases_type(field: str, field_value: str) -> str:
-    if field_value == "":
-        return type(None).__name__
-    if field == "code" or "_name" in field:
-        return str.__name__
-    if "_tags" in field:
-        return list.__name__
-    if "_100g" in field:
-        return float.__name__
-    if "_t" in field[:-2]:
-        return int.__name__
-    if "_datetime" in field:
-        return datetime.__name__
-    return None
-
-
-def value_is_float(field_value: str) -> bool:
-    is_float = False
-    try:
-        float(field_value)
-        is_float = True
-    except ValueError:
-        pass
-    return is_float
-
-
-def value_is_int(field_value: str) -> bool:
-    return field_value.isdigit()
-
-
-def value_is_list(field_value: str) -> bool:
-    return "," in field_value
-
-
-def value_is_string(field_value: str) -> bool:
-    return field_value != ""
-
-
 def analyze_off_jsonl_data(
     filename: str, nonetype_included: bool, limit: int = None
 ) -> (dict, set):
+    """Analyzes and counts the different types appearing in each field of the jsonl dataset.
+        Args:
+            filename (str): the path of the CSV file
+            nonetype_included (bool): whether the None values are counted and presented in the analysis
+            limit (int): the number of products (ie lines in the csv) to analyze
+        Returns:
+            (fields_types, fields_none) (dict, set):
+                - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
+                - fields_none: the set of fields that can have the value None"""
     if limit is not None:
         logging.info(
             f"Analyzing the data of {limit} products from Open Food Facts jsonl dataset..."
@@ -157,6 +121,15 @@ def analyze_off_jsonl_data(
 def analyze_fdc_data(
     filename: str, nonetype_included: bool, limit: int = None
 ) -> (dict, set):
+    """Analyzes and counts the different types appearing in each field of the json dataset.
+        Args:
+            filename (str): the path of the CSV file
+            nonetype_included (bool): whether the None values are counted and presented in the analysis
+            limit (int): the number of products (ie lines in the csv) to analyze
+        Returns:
+            (fields_types, fields_none) (dict, set):
+                - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
+                - fields_none: the set of fields that can have the value None"""
     if limit is not None:
         logging.info(
             f"Analyzing the data of {limit} products from Food Data Central dataset..."
@@ -191,6 +164,10 @@ def analyze_fdc_data(
 def analyze_obj(
     obj: dict, fields_types: dict, fields_can_be_none: set, nonetype_included: bool
 ) -> (dict, set):
+    """Analyzes and counts the different types appearing in each field of the CSV dataset.
+    Returns (updated_fields_types, updated_fields_can_be_none) (dict, set) where:
+    - updated_fields_types is the updated dict that contains the types appearing and the number of their occurrences for each field
+    - updated_fields_can_be_none is the new set of fields that can have the value None"""
     for key in obj.keys():
         fields_types = add_type_to_dict(fields_types, key, obj[key], nonetype_included)
 
@@ -201,6 +178,8 @@ def analyze_obj(
 
 
 def add_type_to_dict(fields_types, key, value, nonetype_included: bool):
+    """Adds the registered occurence to the fields_types dictionary that counts the appearing types for each field
+    and returns the updated dictionary."""
     if nonetype_included or value is not None:
         if key not in fields_types.keys():
             fields_types[key] = {type(value).__name__: 1}
@@ -215,6 +194,10 @@ def add_type_to_dict(fields_types, key, value, nonetype_included: bool):
 
 
 def show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
+    """Shows the report for the analysis of the types of each field of the dataset in two parts :
+    - first it shows the appearing types and the number of their occurrences for each field in the dataset
+    - them it lists all the fields in the dataset that were None at least once
+    """
     types = "Analyzed fields types:"
     for field in fields_types:
         types += f"\n\t{field}: {fields_types[field]}"
@@ -229,6 +212,7 @@ def show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
 
 
 def show_inconsistent_fields(field_types: dict) -> None:
+    """Lists all the given fields that have inconsistent types (expect for NoneType)"""
     inconsistent_fields = {}
     for field in field_types.keys():
         if len([key for key in field_types[field].keys() if key != "NoneType"]) > 1:
@@ -240,6 +224,7 @@ def show_inconsistent_fields(field_types: dict) -> None:
 def record_values_for_field_off_csv(
     field_name: str, show_values: bool, filename: str, limit: int = None
 ) -> set:
+    """Keeps track of all the appearing values in a given field of a csv dataset and shows them"""
     if limit is not None:
         logging.info(
             f"Recording values from {limit} items for {field_name} field from Open Food Facts csv dataset..."
@@ -277,6 +262,7 @@ def record_values_for_field_off_csv(
 def record_values_for_field_off_jsonl(
     field_name: str, show_values: bool, filename: str, limit: int = None
 ) -> set:
+    """Keeps track of all the appearing values in a given field of a jsonl dataset and shows them"""
     if limit is not None:
         logging.info(
             f"Recording values from {limit} items for {field_name} field from Open Food Facts jsonl dataset..."
@@ -314,6 +300,7 @@ def record_values_for_field_off_jsonl(
 def record_values_for_field_fdc(
     field_name: str, show_values: bool, filename: str, limit: int = None
 ) -> set:
+    """Keeps track of all the appearing values in a given field of a json dataset and shows them"""
     if limit is not None:
         logging.info(
             f"Recording values from {limit} items for {field_name} field from Food Data Central dataset..."
@@ -344,6 +331,7 @@ def record_values_for_field_fdc(
 
 
 def show_set_values(set_values: set) -> None:
+    """Lists all the values appearing in the given set"""
     values_list = ""
     for value in set_values:
         values_list += f"\n\t{value}"
