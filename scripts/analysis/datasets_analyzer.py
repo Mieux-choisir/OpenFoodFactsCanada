@@ -205,9 +205,9 @@ def show_inconsistent_fields(field_types: dict) -> None:
     logging.info(f"Inconsistent fields: {inconsistent_fields}")
 
 
-def record_values_for_field(field_name: str, show_values: bool, filename: str, limit: int = None) -> set:
+def record_values_for_field_off_csv(field_name: str, show_values: bool, filename: str, limit: int = None) -> set:
     if limit is not None:
-        logging.info(f"Recording {limit} values for {field_name} field from Open Food Facts csv dataset...")
+        logging.info(f"Recording values from {limit} items for {field_name} field from Open Food Facts csv dataset...")
     else:
         logging.info(f"Recording all values for {field_name} field from Open Food Facts csv dataset...")
 
@@ -241,6 +241,69 @@ def record_values_for_field(field_name: str, show_values: bool, filename: str, l
     return values
 
 
+def record_values_for_field_off_jsonl(field_name: str, show_values: bool, filename: str, limit: int = None) -> set:
+    if limit is not None:
+        logging.info(f"Recording values from {limit} items for {field_name} field from Open Food Facts jsonl dataset...")
+    else:
+        logging.info(f"Recording all values for {field_name} field from Open Food Facts jsonl dataset...")
+
+    n = 0
+    with open(filename, "r", encoding="utf-8") as file:
+        values = set()
+        for line in file:
+            try:
+                obj = json.loads(line.strip())
+                value = obj[field_name]
+                if value != '' and value is not None:
+                    values.add(value)
+
+                n += 1
+
+                if limit is not None and n > limit:
+                    break
+
+            except json.JSONDecodeError as e:
+                logging.info(f"Error parsing line: {line}. Error: {e}")
+
+    if show_values:
+        values_list = ""
+        for value in values:
+            values_list += f"\n\t{value}"
+        logging.info(f"Values found:{values_list}")
+
+    logging.info(f"values for {field_name} field recorded")
+    return values
+
+
+def record_values_for_field_fdc(field_name: str, show_values: bool, filename: str, limit: int = None) -> set:
+    if limit is not None:
+        logging.info(f"Recording values from {limit} items for {field_name} field from Food Data Central dataset...")
+    else:
+        logging.info(f"Recording all values for {field_name} field from Food Data Central dataset...")
+
+    n = 0
+    with open(filename, "r", encoding="utf-8") as file:
+        values = set()
+        for obj in ijson.items(file, "BrandedFoods.item"):
+            value = obj[field_name]
+            if value != '' and value is not None:
+                values.add(value)
+
+            n += 1
+
+            if limit is not None and n > limit:
+                break
+
+    if show_values:
+        values_list = ""
+        for value in values:
+            values_list += f"\n\t{value}"
+        logging.info(f"Values found:{values_list}")
+
+    logging.info(f"values for {field_name} field recorded")
+    return values
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
@@ -261,5 +324,7 @@ if __name__ == "__main__":
     show_inconsistent_fields(off_jsonl_field_types)
     show_inconsistent_fields(fdc_field_types)
 
-    record_values_for_field("nutriscore_grade", True,
-                            r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv")
+    record_values_for_field_off_csv("nutriscore_grade", True,
+                            r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv", 100)
+    record_values_for_field_off_jsonl("nutriscore_grade", True, r"C:\Users\estre\Documents\stage\bds\off\full\filtered_canada_products.json", 100)
+    record_values_for_field_fdc("brandOwner", True, r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json", 100)
