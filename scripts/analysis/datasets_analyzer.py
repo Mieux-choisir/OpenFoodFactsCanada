@@ -249,8 +249,6 @@ def record_values_for_field_off_csv(
             f"Recording all values for {field_name} field from Open Food Facts csv dataset..."
         )
 
-    # Increase the CSV field size limit to avoid the error:
-    # _csv.Error: field larger than field limit (131072)
     csv.field_size_limit(2**30)
 
     n = 0
@@ -350,56 +348,3 @@ def show_set_values(set_values: set) -> None:
     for value in set_values:
         values_list += f"\n\t{value}"
     logging.info(f"Values found:{values_list}")
-
-
-if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler()],
-    )
-
-    off_csv_field_types, off_csv_none = analyze_off_csv_data(
-        r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv",
-        False,
-        1000,
-    )
-    off_jsonl_field_types, off_jsonl_none = analyze_off_jsonl_data(
-        r"C:\Users\estre\Documents\stage\bds\off\full\filtered_canada_products.json",
-        False,
-        1000,
-    )
-    fdc_field_types, fdc_none = analyze_fdc_data(
-        r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json",
-        False,
-        1000,
-    )
-
-    fdc_field_types, fdc_none = analyze_fdc_data(
-        r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json",
-        False,
-        1000,
-    )
-
-    show_inconsistent_fields(off_csv_field_types)
-    show_inconsistent_fields(off_jsonl_field_types)
-    show_inconsistent_fields(fdc_field_types)
-
-    record_values_for_field_off_csv(
-        "nutriscore_grade",
-        True,
-        r"C:\Users\estre\Documents\stage\bds\off\full\en.openfoodfacts.org.products.csv\en.openfoodfacts.org.products.csv",
-        100,
-    )
-    record_values_for_field_off_jsonl(
-        "nutriscore_grade",
-        True,
-        r"C:\Users\estre\Documents\stage\bds\off\full\filtered_canada_products.json",
-        100,
-    )
-    record_values_for_field_fdc(
-        "brandOwner",
-        True,
-        r"C:\Users\estre\Documents\stage\bds\fdc\FoodData_Central_branded_food_json_2024-10-31\brandedDownload.json",
-        100,
-    )
