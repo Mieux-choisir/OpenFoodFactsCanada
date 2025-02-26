@@ -46,7 +46,7 @@ def analyze_off_csv_data(
                 fields_analyzer = FieldsTypesAnalyzer()
                 field_type = fields_analyzer.get_field_type(field, field_value)
 
-                if nonetype_included or field_type != 'NoneType':
+                if nonetype_included or field_type != "NoneType":
                     if field not in fields_types.keys():
                         fields_types[field] = {field_type: 1}
                     elif field_type not in fields_types[field].keys():
@@ -56,7 +56,7 @@ def analyze_off_csv_data(
                 elif field not in fields_types.keys():
                     fields_types[field] = {}
 
-                if field_type == 'NoneType':
+                if field_type == "NoneType":
                     fields_can_be_none.add(field)
 
             n += 1
@@ -74,14 +74,14 @@ def analyze_off_jsonl_data(
     filename: str, nonetype_included: bool, limit: int = None
 ) -> (dict, set):
     """Analyzes and counts the different types appearing in each field of the jsonl dataset.
-        Args:
-            filename (str): the path of the CSV file
-            nonetype_included (bool): whether the None values are counted and presented in the analysis
-            limit (int): the number of products (ie lines in the csv) to analyze
-        Returns:
-            (fields_types, fields_none) (dict, set):
-                - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
-                - fields_none: the set of fields that can have the value None"""
+    Args:
+        filename (str): the path of the CSV file
+        nonetype_included (bool): whether the None values are counted and presented in the analysis
+        limit (int): the number of products (ie lines in the csv) to analyze
+    Returns:
+        (fields_types, fields_none) (dict, set):
+            - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
+            - fields_none: the set of fields that can have the value None"""
     if limit is not None:
         logging.info(
             f"Analyzing the data of {limit} products from Open Food Facts jsonl dataset..."
@@ -122,14 +122,14 @@ def analyze_fdc_data(
     filename: str, nonetype_included: bool, limit: int = None
 ) -> (dict, set):
     """Analyzes and counts the different types appearing in each field of the json dataset.
-        Args:
-            filename (str): the path of the CSV file
-            nonetype_included (bool): whether the None values are counted and presented in the analysis
-            limit (int): the number of products (ie lines in the csv) to analyze
-        Returns:
-            (fields_types, fields_none) (dict, set):
-                - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
-                - fields_none: the set of fields that can have the value None"""
+    Args:
+        filename (str): the path of the CSV file
+        nonetype_included (bool): whether the None values are counted and presented in the analysis
+        limit (int): the number of products (ie lines in the csv) to analyze
+    Returns:
+        (fields_types, fields_none) (dict, set):
+            - fields_types: a dict that contains the types appearing and the number of their occurrences for each field
+            - fields_none: the set of fields that can have the value None"""
     if limit is not None:
         logging.info(
             f"Analyzing the data of {limit} products from Food Data Central dataset..."
@@ -167,7 +167,8 @@ def analyze_obj(
     """Analyzes and counts the different types appearing in each field of the CSV dataset.
     Returns (updated_fields_types, updated_fields_can_be_none) (dict, set) where:
     - updated_fields_types is the updated dict that contains the types appearing and the number of their occurrences for each field
-    - updated_fields_can_be_none is the new set of fields that can have the value None"""
+    - updated_fields_can_be_none is the new set of fields that can have the value None
+    """
     for key in obj.keys():
         fields_types = add_type_to_dict(fields_types, key, obj[key], nonetype_included)
 
