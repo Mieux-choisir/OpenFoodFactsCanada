@@ -254,7 +254,7 @@ def record_values_for_field_off_csv(
                 break
 
     if show_values:
-        show_set_values(values)
+        show_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
@@ -292,7 +292,7 @@ def record_values_for_field_off_jsonl(
                 logging.info(f"Error parsing line: {line}. Error: {e}")
 
     if show_values:
-        show_set_values(values)
+        show_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
@@ -300,7 +300,7 @@ def record_values_for_field_off_jsonl(
 
 def record_values_for_field_fdc(
     field_name: str, show_values: bool, filename: str, limit: int = None
-) -> set:
+) -> (set, list):
     """Keeps track of all the appearing values in a given field of a json dataset and shows them"""
     if limit is not None:
         logging.info(
@@ -313,27 +313,35 @@ def record_values_for_field_fdc(
 
     n = 0
     with open(filename, "r", encoding="utf-8") as file:
-        values = set()
+        hashable_values = set()
+        non_hashable_values = []
         for obj in ijson.items(file, "BrandedFoods.item"):
-            value = obj[field_name]
-            if value != "" and value is not None:
-                values.add(value)
+            if field_name in obj.keys():
+                value = obj[field_name]
+                if value != "" and value is not None:
+                    if not isinstance(value, list) and not isinstance(value, dict):
+                        hashable_values.add(value)
+                    else:
+                        if value not in non_hashable_values:
+                            non_hashable_values.append(value)
 
-            n += 1
+                n += 1
 
-            if limit is not None and n > limit:
-                break
+                if limit is not None and n >= limit:
+                    break
 
     if show_values:
-        show_set_values(values)
+        show_recorded_values(hashable_values, non_hashable_values)
 
     logging.info(f"values for {field_name} field recorded")
-    return values
+    return hashable_values, non_hashable_values
 
 
-def show_set_values(set_values: set) -> None:
+def show_recorded_values(set_values: set, list_values: list) -> None:
     """Lists all the values appearing in the given set"""
     values_list = ""
     for value in set_values:
+        values_list += f"\n\t{value}"
+    for value in list_values:
         values_list += f"\n\t{value}"
     logging.info(f"Values found:{values_list}")
