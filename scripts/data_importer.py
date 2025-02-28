@@ -48,7 +48,7 @@ class DataImporter:
                     if prod is not None:
                         products.append(prod)
                     n += 1
-                    if limit is not None and n > limit:
+                    if limit is not None and n >= limit:
                         break
                 except json.JSONDecodeError as e:
                     logging.info(f"Error parsing line: {line}. Error: {e}")
