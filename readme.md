@@ -88,5 +88,34 @@ python ./scripts/import.py
 
 ---
 
+## 🧪 Exécuter les tests
+
+### 📌 Installation des dépendances pour les tests
+Si ce n'est pas encore fait, assurez-vous d'installer les dépendances requises dans un environnement virtuel Python.
+
+1️⃣ **Créer et activer l’environnement virtuel** :
+```bash
+# Sous Linux/macOS
+python -m venv venv
+source venv/bin/activate
+
+# Sous Windows
+python -m venv venv
+venv\Scripts\activate
+```
+2️⃣ **Installer les dépendances** :
+```bash
+pip install -r requirements.txt
+```
+
+---
+## ✅ Lancer les tests Pytest
+
+### 📌 Exécuter tous les tests :
+```bash
+pytest tests/
+```
+---
+
 ## 📜 License
 

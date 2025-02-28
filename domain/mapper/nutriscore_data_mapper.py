@@ -125,10 +125,3 @@ class NutriscoreDataMapper:
             sugar=product_dict[nutriments_field][sugar_field],
             is_beverage=None,
         )
-
-    @staticmethod
-    def __map_letter_to_number(letter: str) -> int | None:
-        try:
-            return ord(letter.lower()) - 96
-        except TypeError:
-            return None
