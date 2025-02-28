@@ -135,7 +135,7 @@ class ProductMapper:
 
         # Check the PNNS groups
         pnns_idx = header.index("pnns_groups_1")
-        if ProductValidator.check_pnn_groups(row[pnns_idx]):
+        if ProductValidator.check_pnns_groups(row[pnns_idx]):
             return True
 
         # Check the categories
@@ -170,7 +170,7 @@ class ProductMapper:
 
         # Check the PNNS groups
         pnns_field = "pnns_groups_1"
-        if ProductValidator.check_pnn_groups(product_dict[pnns_field]):
+        if ProductValidator.check_pnns_groups(product_dict[pnns_field]):
             return True
 
         # Check the categories
