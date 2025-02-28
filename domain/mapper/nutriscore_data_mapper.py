@@ -125,4 +125,3 @@ class NutriscoreDataMapper:
             sugar=product_dict[nutriments_field][sugar_field],
             is_beverage=None,
         )
-

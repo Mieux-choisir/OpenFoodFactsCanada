@@ -32,6 +32,7 @@ jobs:
         run: |
           black --check ./domain
           black --check ./scripts
+          black --check ./tests
 
       - name: Run Flake8
         run: |
