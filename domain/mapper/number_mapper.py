@@ -3,7 +3,7 @@ class NumberMapper:
 
     @staticmethod
     def map_letter_to_number(letter: str) -> int | None:
-        try:
-            return ord(letter.lower()) - NumberMapper.letter_to_number_ascii_code
-        except TypeError:
+        if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
             return None
+
+        return ord(letter.lower()) - NumberMapper.letter_to_number_ascii_code
