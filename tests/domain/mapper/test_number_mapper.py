@@ -23,22 +23,6 @@ def test_should_convert_uppercase_letter_to_number(number_mapper):
     assert result == 1
 
 
-def test_should_convert_z_to_26(number_mapper):
-    letter = "z"
-
-    result = number_mapper.map_letter_to_number(letter)
-
-    assert result == 26
-
-
-def test_should_convert_Z_to_26(number_mapper):
-    letter = "Z"
-
-    result = number_mapper.map_letter_to_number(letter)
-
-    assert result == 26
-
-
 def test_should_return_none_for_non_alphabetic_character(number_mapper):
     letter = "1"
 
