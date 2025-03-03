@@ -140,7 +140,9 @@ class ProductMapper:
             nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
-            allergens=AllergensMapper.map_off_dict_to_allergens(product_dict, allergens_en_field),
+            allergens=AllergensMapper.map_off_dict_to_allergens(
+                product_dict, allergens_en_field
+            ),
             nutriscore_data=self.nutriscore_data_mapper.map_off_dict_to_nutriscore_data(
                 product_dict
             ),
