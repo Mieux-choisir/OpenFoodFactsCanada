@@ -20,10 +20,10 @@ class ProductionSystemMapper:
     def map_off_row_to_production_system(
         row: list[str], header: list[str]
     ) -> ProductionSystem:
-        labels_field = header.index("labels")
+        labels_index = header.index("labels")
 
         return ProductionSystem(
-            labels=row[labels_field].split(","),
+            labels=row[labels_index].split(","),
             value=None,
             warning=None,
         )
