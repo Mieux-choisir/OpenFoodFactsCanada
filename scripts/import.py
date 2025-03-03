@@ -48,7 +48,10 @@ def main():
     )
 
     data_importer = DataImporter(
-        ProductMapper(IngredientsMapper(IngredientNormalizer()), NutriscoreDataMapper(NumberMapper()))
+        ProductMapper(
+            IngredientsMapper(IngredientNormalizer()),
+            NutriscoreDataMapper(NumberMapper()),
+        )
     )
 
     off_products = data_importer.import_csv_off_data(off_csv_file, 10)

@@ -15,7 +15,11 @@ class NutritionFactsMapper:
         sugar_field = 2000
 
         fat_level = next(
-            (item["amount"] for item in food_nutrients if item["nutrient"]["id"] == fat_id),
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == fat_id
+            ),
             None,
         )
         sodium_level = next(
@@ -96,7 +100,7 @@ class NutritionFactsMapper:
 
     @staticmethod
     def map_off_row_to_nutrition_facts(
-            row: list[str], header: list[str]
+        row: list[str], header: list[str]
     ) -> NutritionFacts:
         fat_index = header.index("fat_100g")
         salt_index = header.index("salt_100g")

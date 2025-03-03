@@ -11,7 +11,7 @@ class FoodGroupsMapper:
 
     @staticmethod
     def map_off_dict_to_food_groups(
-            product_dict: dict, food_groups_en_field: str
+        product_dict: dict, food_groups_en_field: str
     ) -> list[str]:
         food_groups = []
         if product_dict[food_groups_en_field] is not None:

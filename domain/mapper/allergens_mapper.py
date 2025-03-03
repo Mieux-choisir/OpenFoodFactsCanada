@@ -10,7 +10,9 @@ class AllergensMapper:
         return allergens
 
     @staticmethod
-    def map_off_dict_to_allergens(product_dict: dict, allergens_en_field: str) -> list[str]:
+    def map_off_dict_to_allergens(
+        product_dict: dict, allergens_en_field: str
+    ) -> list[str]:
         allergens_value = []
         if product_dict[allergens_en_field] != "":
             allergens_value = product_dict[allergens_en_field].split(",")

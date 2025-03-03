@@ -4,7 +4,6 @@ from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
 from domain.mapper.ingredients_mapper import IngredientsMapper
 from domain.mapper.nova_data_mapper import NovaDataMapper
-from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.product import Product
@@ -15,7 +14,11 @@ from domain.validator.product_validator import ProductValidator
 class ProductMapper:
     WANTED_COUNTRY = "Canada"
 
-    def __init__(self, ingredients_mapper: IngredientsMapper, nutriscore_data_mapper: NutriscoreDataMapper):
+    def __init__(
+        self,
+        ingredients_mapper: IngredientsMapper,
+        nutriscore_data_mapper: NutriscoreDataMapper,
+    ):
         self.ingredients_mapper = ingredients_mapper
         self.nutriscore_data_mapper = nutriscore_data_mapper
 
@@ -45,16 +48,22 @@ class ProductMapper:
             ),
             brand_owner=product_dict[brand_owner_field].title(),
             food_groups_en=product_dict[food_groups_en_field].split(","),
-            ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(product_dict["ingredients"]),
-            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(product_dict["foodNutrients"]),
+            ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
+                product_dict["ingredients"]
+            ),
+            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(
+                product_dict["foodNutrients"]
+            ),
             allergens=[],
-            nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(product_dict["foodNutrients"]),
+            nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
+                product_dict["foodNutrients"]
+            ),
             ecoscore_data=None,
             nova_data=None,
         )
 
     def map_off_row_to_product(
-            self, row: list[str], header: list[str]
+        self, row: list[str], header: list[str]
     ) -> Product | None:
         country_index = header.index("countries_en")
         if row[country_index] != ProductMapper.WANTED_COUNTRY:
@@ -113,23 +122,25 @@ class ProductMapper:
                 else None
             ),
             generic_name_en=(
-            product_dict[generic_name_field].strip()
-            if product_dict[generic_name_field] is not None
-            else None
-        ),
+                product_dict[generic_name_field].strip()
+                if product_dict[generic_name_field] is not None
+                else None
+            ),
             is_raw=self.off_json_is_raw_aliment(product_dict),
-            brands=map_off_dict_to_brands(product_dict, brands_field),
-            brand_owner=map_off_dict_to_brand_owner(
+            brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
+            brand_owner=BrandsMapper.map_off_dict_to_brand_owner(
                 product_dict, brand_owner_field, brands_field
             ),
-            food_groups_en=map_off_dict_to_food_groups(product_dict, food_groups_en_field),
+            food_groups_en=FoodGroupsMapper.map_off_dict_to_food_groups(
+                product_dict, food_groups_en_field
+            ),
             ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(
                 product_dict
             ),
             nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
-            allergens=map_off_dict_to_allergens(product_dict, allergens_en_field),
+            allergens=AllergensMapper.map_off_dict_to_allergens(product_dict, allergens_en_field),
             nutriscore_data=self.nutriscore_data_mapper.map_off_dict_to_nutriscore_data(
                 product_dict
             ),
@@ -202,7 +213,7 @@ class ProductMapper:
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                    product_dict[additives_field], nova_group
+                product_dict[additives_field], nova_group
             ):
                 return True
         except ValueError:

@@ -30,7 +30,7 @@ class BrandsMapper:
 
     @staticmethod
     def map_off_dict_to_brand_owner(
-            product_dict: dict, brand_owner_field: str, brands_field: str
+        product_dict: dict, brand_owner_field: str, brands_field: str
     ) -> str | None:
         brand_owner_value = None
         if product_dict[brand_owner_field] is not None:
