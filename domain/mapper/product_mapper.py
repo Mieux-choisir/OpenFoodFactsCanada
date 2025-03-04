@@ -39,12 +39,9 @@ class ProductMapper:
             generic_name_en=product_dict[generic_name_field].title(),
             is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
             brands=(
-                [
-                    product_dict[brand_owner_field].title(),
-                    product_dict[brands_field].title(),
-                ]
+                product_dict[brands_field].title()
                 if brands_field in product_dict.keys()
-                else [product_dict[brand_owner_field].title()]
+                else []
             ),
             brand_owner=product_dict[brand_owner_field].title(),
             food_groups_en=product_dict[food_groups_en_field].split(","),
