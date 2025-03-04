@@ -254,7 +254,7 @@ def record_values_for_field_off_csv(
                 break
 
     if show_values:
-        show_values(values)
+        show_recorded_values(values, [])
 
     logging.info(f"values for {field_name} field recorded")
     return values
@@ -292,7 +292,7 @@ def record_values_for_field_off_jsonl(
                 logging.info(f"Error parsing line: {line}. Error: {e}")
 
     if show_values:
-        show_values(values)
+        show_recorded_values(values)
 
     logging.info(f"values for {field_name} field recorded")
     return values
