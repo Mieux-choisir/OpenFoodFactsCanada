@@ -21,7 +21,6 @@ class Product(ComplexField):
     food_groups_en: List[str] = []
     ingredients: Optional[Ingredients] = None
     nutrition_facts: Optional[NutritionFacts] = None
-    allergens: List = []
     nutriscore_data: Optional[NutriscoreData] = NutriscoreData()
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()
     nova_data: Optional[NovaData] = NovaData()

@@ -102,9 +102,9 @@ class NutritionFactsMapper:
         sugar_field = header.index("sugars_100g")
 
         nutrient_level = NutrientLevel(
-            fat=row[fat_field],
+            fat=row[fat_field] if isinstance(row[fat_field], float) else None,
             salt=row[salt_field],
-            saturated_fats=row[saturated_fats_field],
+            saturated_fats=row[saturated_fats_field] if isinstance(row[saturated_fats_field], float) else None,
             sugar=row[sugar_field],
         )
 
@@ -115,11 +115,11 @@ class NutritionFactsMapper:
 
         nutrients = Nutrients(
             carbohydrates_100g=row[carbohydrates_100g_field],
-            energy_100g=row[energy_100g_field],
-            energy_kcal_100g=row[energy_kcal_100g_field],
+            energy_100g=row[energy_100g_field] if isinstance(row[energy_100g_field], float) else None,
+            energy_kcal_100g=row[energy_kcal_100g_field] if isinstance(row[energy_kcal_100g_field], float) else None,
             vitamin_a_100g=row[vitamin_a_100g_field],
         )
-
+      
         return NutritionFacts(
             nutrient_level=nutrient_level,
             nutrients=nutrients,

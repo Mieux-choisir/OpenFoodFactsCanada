@@ -19,7 +19,7 @@ class EcoscoreDataMapper:
         )
 
         return EcoscoreData(
-            score=int(row[score_field]) if row[score_field] else None,
+            score=int(row[score_field]) if not isinstance(row[score_field], str) else None,
             origin_of_ingredients=origin_of_ingredients,
             packaging=packaging,
             production_system=production_system,
