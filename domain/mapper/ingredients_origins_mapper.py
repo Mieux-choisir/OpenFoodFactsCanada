@@ -1,25 +1,25 @@
-from domain.product.complexFields.ingredients_origin import IngredientsOrigin
+from domain.product.complexFields.ingredients_origins import IngredientsOrigins
 
 
 class IngredientsOriginMapper:
     @staticmethod
     def map_off_row_to_ingredients_origin(
         row: list[str], header: list[str]
-    ) -> IngredientsOrigin:
+    ) -> IngredientsOrigins:
         origin_field = header.index("origins")
 
-        return IngredientsOrigin(
-            origin=row[origin_field],
+        return IngredientsOrigins(
+            origins=row[origin_field].split(','),
             percent=None,
             transportation_score=None,
         )
 
     @staticmethod
-    def map_off_dict_to_ingredients_origin(product_dict: dict) -> IngredientsOrigin:
+    def map_off_dict_to_ingredients_origin(product_dict: dict) -> IngredientsOrigins:
         origin_field = "origins"
 
-        return IngredientsOrigin(
-            origin=product_dict[origin_field],
+        return IngredientsOrigins(
+            origins=product_dict[origin_field],
             percent=None,
             transportation_score=None,
         )
