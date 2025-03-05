@@ -70,7 +70,7 @@ class NutriscoreDataMapper:
         )
 
     def map_off_row_to_nutriscore_data(
-        self, row: list[str], header: list[str]
+            self, row: list[str], header: list[str]
     ) -> NutriscoreData:
         nutriscore_score_field = header.index("nutriscore_grade")
         energy_field = header.index("energy_100g")
@@ -87,13 +87,13 @@ class NutriscoreDataMapper:
                 if row[nutriscore_score_field]
                 else None
             ),
-            energy=row[energy_field],
-            fibers=row[fibers_field],
-            fruit_percentage=row[fruit_percentage_field],
-            proteins=row[proteins_field],
-            saturated_fats=row[saturated_fats_field],
-            sodium=row[sodium_field],
-            sugar=row[sugar_field],
+            energy=self.__get_value(row[energy_field]),
+            fibers=self.__get_value(row[fibers_field]),
+            fruit_percentage=self.__get_value(row[fruit_percentage_field]),
+            proteins=self.__get_value(row[proteins_field]),
+            saturated_fats=self.__get_value(row[saturated_fats_field]),
+            sodium=self.__get_value(row[sodium_field]),
+            sugar=self.__get_value(row[sugar_field]),
             is_beverage=None,
         )
 
@@ -125,3 +125,12 @@ class NutriscoreDataMapper:
             sugar=product_dict[nutriments_field][sugar_field],
             is_beverage=None,
         )
+
+    @staticmethod
+    def __get_value(string_value):
+        value = None
+        try:
+            value = float(string_value)
+        except ValueError:
+            pass
+        return value
