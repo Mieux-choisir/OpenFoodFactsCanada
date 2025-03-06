@@ -8,7 +8,7 @@ class PackagingMapper:
 
         return Packaging(
             non_recyclable_and_non_biodegradable_materials=None,
-            packaging=row[packaging_field].split(","),
+            packaging=list(filter(None, map(str.strip, row[packaging_field].split(",")))),
         )
 
     @staticmethod
