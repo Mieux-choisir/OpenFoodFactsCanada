@@ -87,18 +87,18 @@ class NutriscoreDataMapper:
                 if row[nutriscore_score_field]
                 else None
             ),
-            energy=self.__get_value(row[energy_field]),
-            fibers=self.__get_value(row[fibers_field]),
-            fruit_percentage=self.__get_value(row[fruit_percentage_field]),
-            proteins=self.__get_value(row[proteins_field]),
-            saturated_fats=self.__get_value(row[saturated_fats_field]),
-            sodium=self.__get_value(row[sodium_field]),
-            sugar=self.__get_value(row[sugar_field]),
+            energy=self.__get_float_value(row[energy_field]),
+            fibers=self.__get_float_value(row[fibers_field]),
+            fruit_percentage=self.__get_float_value(row[fruit_percentage_field]),
+            proteins=self.__get_float_value(row[proteins_field]),
+            saturated_fats=self.__get_float_value(row[saturated_fats_field]),
+            sodium=self.__get_float_value(row[sodium_field]),
+            sugar=self.__get_float_value(row[sugar_field]),
             is_beverage=None,
         )
 
     def map_off_dict_to_nutriscore_data(self, product_dict: dict) -> NutriscoreData:
-        nutriments_field = "nutriments"
+        nutrients_field = "nutriments"
         nutriscore_score_field = "nutriscore_grade"
         energy_field = "energy_100g"
         fibers_field = "fiber_100g"
@@ -116,21 +116,22 @@ class NutriscoreDataMapper:
                 if product_dict[nutriscore_score_field]
                 else None
             ),
-            energy=product_dict[nutriments_field][energy_field],
-            fibers=product_dict[nutriments_field][fibers_field],
-            fruit_percentage=product_dict[nutriments_field][fruit_percentage_field],
-            proteins=product_dict[nutriments_field][proteins_field],
-            saturated_fats=product_dict[nutriments_field][saturated_fats_field],
-            sodium=product_dict[nutriments_field][sodium_field],
-            sugar=product_dict[nutriments_field][sugar_field],
+            energy=self.__get_float_value(product_dict[nutrients_field][energy_field]),
+            fibers=self.__get_float_value(product_dict[nutrients_field][fibers_field]),
+            fruit_percentage=self.__get_float_value(product_dict[nutrients_field][fruit_percentage_field]),
+            proteins=self.__get_float_value(product_dict[nutrients_field][proteins_field]),
+            saturated_fats=self.__get_float_value(product_dict[nutrients_field][saturated_fats_field]),
+            sodium=self.__get_float_value(product_dict[nutrients_field][sodium_field]),
+            sugar=self.__get_float_value(product_dict[nutrients_field][sugar_field]),
             is_beverage=None,
         )
 
     @staticmethod
-    def __get_value(string_value):
+    def __get_float_value(given_value):
         value = None
-        try:
-            value = float(string_value)
-        except ValueError:
-            pass
+        if given_value is not None:
+            try:
+                value = float(given_value)
+            except ValueError:
+                pass
         return value

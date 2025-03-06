@@ -53,6 +53,21 @@ def off_invalid_rows():
     return row, header
 
 
+@pytest.fixture
+def off_valid_dict():
+    off_dict = {"nutriscore_grade": "a", "nutriments": {"energy_100g": 45.2, "fiber_100g": 54, "fruits-vegetables-nuts_100g": 75, "proteins_100g": 20,
+                "saturated-fat_100g": 63.78, "sodium_100g": 0.5, "sugars_100g": 45.14}}
+
+    return off_dict
+
+
+@pytest.fixture
+def off_invalid_dict():
+    off_dict = {"nutriscore_grade": None,  "nutriments": {"energy_100g": None, "fiber_100g": "other", "fruits-vegetables-nuts_100g": "75g", "proteins_100g": None,
+                "saturated-fat_100g": None, "sodium_100g": None, "sugars_100g": None}}
+
+    return off_dict
+
 # ----------------------------------------------------------------
 # Tests map_fdc_dict_to_nutriscore_data
 # ----------------------------------------------------------------
@@ -196,6 +211,90 @@ def test_should_return_empty_is_beverage_field_in_nutriscore_data_for_given_off_
     row, header = off_valid_rows
 
     result = nutriscore_data_mapper.map_off_row_to_nutriscore_data(row, header)
+
+    assert (
+            result.is_beverage is None
+    ), f"Expected is beverage field to be {None}, got {result.is_beverage}"
+
+
+# ----------------------------------------------------------------
+# Tests map_off_dict_to_nutriscore_data
+# ----------------------------------------------------------------
+
+def test_should_return_score_from_number_mapper_for_given_score_in_nutriscore_data_for_given_off_dict(nutriscore_data_mapper, off_valid_dict):
+    nutriscore_data_mapper.number_mapper.map_letter_to_number.return_value = 1
+
+    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
+
+    assert (
+            result.score == 1
+    ), f"Expected nutriscore to be {1}, got {result.score}"
+
+
+def test_should_return_empty_score_for_absent_score_in_nutriscore_data_for_given_off_dict(nutriscore_data_mapper, off_invalid_dict):
+    nutriscore_data_mapper.number_mapper.map_letter_to_number.return_value = 1
+
+    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_invalid_dict)
+
+    assert (
+            result.score is None
+    ), f"Expected nutriscore to be {None}, got {result.score}"
+
+
+def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_off_dict(nutriscore_data_mapper, off_valid_dict):
+    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
+
+    assert (
+            result.energy == off_valid_dict["nutriments"]["energy_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["energy_100g"]}, got {result.energy}"
+    assert (
+            result.fibers == off_valid_dict["nutriments"]["fiber_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["fiber_100g"]}, got {result.fibers}"
+    assert (
+            result.fruit_percentage == off_valid_dict["nutriments"]["fruits-vegetables-nuts_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["fruits-vegetables-nuts_100g"]}, got {result.fruit_percentage}"
+    assert (
+            result.proteins == off_valid_dict["nutriments"]["proteins_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["proteins_100g"]}, got {result.proteins}"
+    assert (
+            result.saturated_fats == off_valid_dict["nutriments"]["saturated-fat_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["saturated-fat_100g"]}, got {result.saturated_fats}"
+    assert (
+            result.sodium == off_valid_dict["nutriments"]["sodium_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["sodium_100g"]}, got {result.sodium}"
+    assert (
+            result.sugar == off_valid_dict["nutriments"]["sugars_100g"]
+    ), f"Expected energy value to be {off_valid_dict["nutriments"]["sugars_100g"]}, got {result.sugar}"
+
+
+def test_should_return_empty_nutrient_values_for_invalid_values_in_nutriscore_data_for_given_off_dict(nutriscore_data_mapper, off_invalid_dict):
+    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_invalid_dict)
+
+    assert (
+            result.energy is None
+    ), f"Expected energy value to be {None}, got {result.energy}"
+    assert (
+            result.fibers is None
+    ), f"Expected energy value to be {None}, got {result.fibers}"
+    assert (
+            result.fruit_percentage is None
+    ), f"Expected energy value to be {None}, got {result.fruit_percentage}"
+    assert (
+            result.proteins is None
+    ), f"Expected energy value to be {None}, got {result.proteins}"
+    assert (
+            result.saturated_fats is None
+    ), f"Expected energy value to be {None}, got {result.saturated_fats}"
+    assert (
+            result.sodium is None
+    ), f"Expected energy value to be {None}, got {result.sodium}"
+    assert (
+            result.sugar is None
+    ), f"Expected energy value to be {None}, got {result.sugar}"
+
+
+def test_should_return_empty_is_beverage_field_in_nutriscore_data_for_given_off_dict(nutriscore_data_mapper, off_valid_dict):
+    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
 
     assert (
             result.is_beverage is None
