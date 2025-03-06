@@ -9,7 +9,7 @@ class NutritionFactsMapper:
         fat_id = 1004
         sodium_id = 1093  # TODO convertir sodium en sel
         saturated_fats_id = 1258
-        sugar_field = 2000
+        sugar_id = 2000
 
         nutrient_level = NutrientLevel(
             fat=next(
@@ -41,23 +41,23 @@ class NutritionFactsMapper:
                 (
                     item["nutrient"]["number"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == sugar_field
+                    if item["nutrient"]["id"] == sugar_id
                 ),
                 None,
             ),
         )
 
-        carbohydrates_100g_field = 1005
-        energy_100g_field = None  # TODO voir si on peut lui trouver quelque chose
-        energy_kcal_100g_field = 1008
-        vitamin_a_100g_field = 1104
+        carbohydrates_100g_id = 1005
+        energy_100g_id = None  # TODO voir si on peut lui trouver quelque chose
+        energy_kcal_100g_id = 1008
+        vitamin_a_100g_id = 1104
 
         nutrients = Nutrients(
             carbohydrates_100g=next(
                 (
                     item["nutrient"]["number"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == carbohydrates_100g_field
+                    if item["nutrient"]["id"] == carbohydrates_100g_id
                 ),
                 None,
             ),
@@ -65,7 +65,7 @@ class NutritionFactsMapper:
                 (
                     item["nutrient"]["number"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == energy_100g_field
+                    if item["nutrient"]["id"] == energy_100g_id
                 ),
                 None,
             ),
@@ -73,7 +73,7 @@ class NutritionFactsMapper:
                 (
                     item["nutrient"]["number"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == energy_kcal_100g_field
+                    if item["nutrient"]["id"] == energy_kcal_100g_id
                 ),
                 None,
             ),
@@ -81,7 +81,7 @@ class NutritionFactsMapper:
                 (
                     item["nutrient"]["number"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == vitamin_a_100g_field
+                    if item["nutrient"]["id"] == vitamin_a_100g_id
                 ),
                 None,
             ),
