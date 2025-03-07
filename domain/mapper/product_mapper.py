@@ -21,23 +21,25 @@ class ProductMapper:
         product_name_field = "description"
         generic_name_field = "description"
         brand_owner_field = "brandOwner"
+        ingredients_field = "ingredients"
+        food_nutrients_field = "foodNutrients"
 
         return Product(
-            id=dict[id_field],
-            product_name=dict[product_name_field].title(),
-            generic_name_en=dict[generic_name_field].title(),
+            id=dict[id_field].strip(),
+            product_name=dict[product_name_field].strip().title(),
+            generic_name_en=dict[generic_name_field].strip().title(),
             is_raw=None,  # TODO verifier si cest toujours cru ou pas
-            brand_name=dict[brand_owner_field].title(),
-            food_groups_en=[""],  # TODO compléter la liste si possible
+            brand_name=dict[brand_owner_field].strip().title(),
+            food_groups_en=[],  # TODO compléter la liste si possible
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
-                dict["ingredients"]
+                dict[ingredients_field]
             ),
             nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(
-                dict["foodNutrients"]
+                dict[food_nutrients_field]
             ),
-            allergens=[""],  # TODO compléter la liste si possible
+            allergens=[],  # TODO compléter la liste si possible
             nutriscore_data=NutriscoreDataMapper.map_fdc_dict_to_nutriscore_data(
-                dict["foodNutrients"]
+                dict[food_nutrients_field]
             ),
             ecoscore_data=None,
             nova_data=None,
@@ -47,7 +49,7 @@ class ProductMapper:
         self, row: list[str], header: list[str]
     ) -> Product | None:
         country_field = header.index("countries_en")
-        if row[country_field] != ProductMapper.WANTED_COUNTRY:
+        if ProductMapper.WANTED_COUNTRY not in row[country_field]:
             return None
 
         id_field = header.index("code")
@@ -60,17 +62,17 @@ class ProductMapper:
         nutriscore_data_mapper = NutriscoreDataMapper(NumberMapper())
 
         return Product(
-            id=row[id_field],
-            product_name=row[product_name_field],
-            generic_name_en=row[generic_name_field],
-            is_raw=self.off_csv_is_raw_aliment(row, header),
-            brand_name=row[brand_owner_field],
-            food_groups_en=[row[food_groups_en_field]],
+            id=row[id_field].strip(),
+            product_name=row[product_name_field].strip().title(),
+            generic_name_en=row[generic_name_field].strip().title(),
+            is_raw=self.__off_csv_is_raw_aliment(row, header),
+            brand_name=row[brand_owner_field].strip().title(),
+            food_groups_en=list(filter(None, map(str.strip, row[food_groups_en_field].split(",")))),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
             nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
                 row, header
             ),
-            allergens=[row[allergens_en_field]],
+            allergens=list(filter(None, map(str.strip, row[allergens_en_field].split(",")))),
             nutriscore_data=nutriscore_data_mapper.map_off_row_to_nutriscore_data(
                 row, header
             ),
@@ -80,7 +82,7 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-        if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
+        if ProductMapper.WANTED_COUNTRY not in product_dict[country_field]:
             return None
 
         id_field = "code"
@@ -91,25 +93,19 @@ class ProductMapper:
         allergens_en_field = "allergens"
 
         return Product(
-            id=product_dict[id_field],
-            product_name=product_dict[product_name_field],
-            generic_name_en=product_dict[generic_name_field],
-            is_raw=self.off_json_is_raw_aliment(product_dict),
-            brand_name=product_dict[brand_owner_field],
-            food_groups_en=[
-                (
-                    product_dict[food_groups_en_field]
-                    if product_dict[food_groups_en_field] is not None
-                    else ""
-                )
-            ],
+            id=product_dict[id_field].strip(),
+            product_name=product_dict[product_name_field].strip().title(),
+            generic_name_en=product_dict[generic_name_field].strip().title(),
+            is_raw=self.__off_json_is_raw_aliment(product_dict),
+            brand_name=product_dict[brand_owner_field].strip().title(),
+            food_groups_en=list(filter(None, map(str.strip, product_dict[food_groups_en_field].split(",")))),
             ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(
                 product_dict
             ),
             nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
-            allergens=[product_dict[allergens_en_field]],
+            allergens=list(filter(None, map(str.strip, product_dict[allergens_en_field].split(",")))),
             nutriscore_data=NutriscoreDataMapper.map_off_dict_to_nutriscore_data(
                 product_dict
             ),
@@ -120,7 +116,7 @@ class ProductMapper:
         )
 
     @staticmethod
-    def off_csv_is_raw_aliment(row: list[str], header: list[str]):
+    def __off_csv_is_raw_aliment(row: list[str], header: list[str]):
         """Checks if the aliment is raw based on its row values"""
         # Check the NOVA group
         nova_idx = header.index("nova_group")
@@ -154,7 +150,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def off_json_is_raw_aliment(product_dict: dict) -> bool:
+    def __off_json_is_raw_aliment(product_dict: dict) -> bool:
         """Checks if the aliment is raw based on its dict values"""
         # Check the NOVA group
         nova_field = "nova_group"
