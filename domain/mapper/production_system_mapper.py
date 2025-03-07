@@ -23,7 +23,7 @@ class ProductionSystemMapper:
         labels_field = header.index("labels")
 
         return ProductionSystem(
-            labels=row[labels_field].split(","),
+            labels=list(filter(None, map(str.strip, row[labels_field].split(",")))),
             value=None,
             warning=None,
         )
