@@ -26,7 +26,8 @@ class ProductValidator:
 
     @staticmethod
     def check_pnns_groups(pnn: str) -> bool:
-        """Returns True if the given pnn group is either cereals or legumes, False otherwise"""
+        """Returns True if the given pnns group is either cereals or legumes, False otherwise"""
+
         if pnn in ["cereals", "legumes"]:
             return True
         return False
