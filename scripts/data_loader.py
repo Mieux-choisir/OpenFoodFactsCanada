@@ -34,7 +34,13 @@ class DataLoader:
 
             # Insert products into MongoDB
             logging.info("Inserting data into MongoDB...")
-            collection.insert_many([product.model_dump() for product in products])
+            BATCH_SIZE = 5000 
+
+            for i in range(0, len(products), BATCH_SIZE):
+                batch = products[i : i + BATCH_SIZE]
+                collection.insert_many([product.model_dump() for product in batch])
+                logging.info(f"Inserted batch {i//BATCH_SIZE + 1}")
+    
             logging.info(f"Data loading complete into {db_name}.{collection_name}")
         except Exception as e:
             logging.info(

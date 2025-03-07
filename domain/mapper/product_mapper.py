@@ -10,7 +10,7 @@ from domain.validator.product_validator import ProductValidator
 
 
 class ProductMapper:
-    #WANTED_COUNTRY = "Canada"
+    WANTED_COUNTRY = "Canada"
 
     def __init__(self, ingredients_mapper: IngredientsMapper):
         self.ingredients_mapper = ingredients_mapper
@@ -50,7 +50,7 @@ class ProductMapper:
     ) -> Product | None:
         country_field = header.index("countries_en")
         #if row[country_field] != ProductMapper.WANTED_COUNTRY:
-          #  return None
+           # return None
 
         id_field = header.index("code")
         product_name_field = header.index("product_name")
@@ -83,8 +83,8 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-       # if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
-         #   return None
+        #if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
+           #return None
 
         id_field = "code"
         product_name_field = "product_name"
