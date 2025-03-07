@@ -36,7 +36,7 @@ class DataLoader:
             BATCH_SIZE = 5000
 
             for i in range(0, len(products), BATCH_SIZE):
-                batch = products[i: i + BATCH_SIZE]
+                batch = products[i : i + BATCH_SIZE]
                 collection.insert_many([product.model_dump() for product in batch])
                 logging.info(f"Inserted batch {i//BATCH_SIZE + 1}")
 
