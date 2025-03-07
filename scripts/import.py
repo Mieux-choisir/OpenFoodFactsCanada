@@ -3,6 +3,8 @@ import sys
 import logging
 
 from domain.mapper.ingredients_mapper import IngredientsMapper
+from domain.mapper.number_mapper import NumberMapper
+from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.product_mapper import ProductMapper
 from domain.utils.ingredient_normalizer import IngredientNormalizer
 from scripts.data_downloader import DataDownloader
@@ -46,7 +48,10 @@ def main():
     )
 
     data_importer = DataImporter(
-        ProductMapper(IngredientsMapper(IngredientNormalizer()))
+        ProductMapper(
+            IngredientsMapper(IngredientNormalizer()),
+            NutriscoreDataMapper(NumberMapper()),
+        )
     )
 
     off_products = data_importer.import_csv_off_data(off_csv_file, 10)

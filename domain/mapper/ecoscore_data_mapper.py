@@ -8,7 +8,7 @@ from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 class EcoscoreDataMapper:
     @staticmethod
     def map_off_row_to_ecoscore_data(row: list[str], header: list[str]) -> EcoscoreData:
-        score_field = header.index("environmental_score_score")
+        score_index = header.index("environmental_score_score")
 
         origin_of_ingredients: list[IngredientsOrigin] = [
             IngredientsOriginMapper.map_off_row_to_ingredients_origin(row, header)

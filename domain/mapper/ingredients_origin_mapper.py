@@ -6,10 +6,10 @@ class IngredientsOriginMapper:
     def map_off_row_to_ingredients_origin(
         row: list[str], header: list[str]
     ) -> IngredientsOrigin:
-        origin_field = header.index("origins")
+        origin_index = header.index("origins")
 
         return IngredientsOrigin(
-            origin=row[origin_field],
+            origin=row[origin_index],
             percent=None,
             transportation_score=None,
         )

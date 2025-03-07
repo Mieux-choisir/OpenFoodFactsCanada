@@ -5,7 +5,7 @@ class NovaDataMapper:
 
     @staticmethod
     def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:
-        score_field = header.index("nova_group")
+        score_index = header.index("nova_group")
 
         return NovaData(
             score=int(row[score_field]) if not isinstance(row[score_field], str) else None, group_markers={}
