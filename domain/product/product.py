@@ -16,7 +16,8 @@ class Product(ComplexField):
     product_name: Optional[str] = None
     category_en: CategoryEnum = CategoryEnum.OTHER
     is_raw: Optional[bool] = None
-    brand_name: Optional[str] = None
+    brands: List[str] = []
+    brand_owner: Optional[str] = None
     food_groups_en: List[str] = []
     ingredients: Optional[Ingredients] = None
     nutrition_facts: Optional[NutritionFacts] = None

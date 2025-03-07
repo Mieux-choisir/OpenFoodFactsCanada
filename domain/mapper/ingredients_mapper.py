@@ -18,8 +18,8 @@ class IngredientsMapper:
     def map_off_row_to_ingredients(
         self, row: list[str], header: list[str]
     ) -> Ingredients:
-        ingredients_text_field = header.index("ingredients_text")
-        ingredients_text = row[ingredients_text_field]
+        ingredients_text_index = header.index("ingredients_text")
+        ingredients_text = row[ingredients_text_index]
 
         return Ingredients(
             ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
