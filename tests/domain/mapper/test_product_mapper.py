@@ -46,8 +46,26 @@ def off_rows():
 
 
 @pytest.fixture
+def off_rows_without_canada():
+    header = ["countries_en", "code", "product_name", "generic_name", "brands", "food_groups_en", "allergens_en", "nova_group", "pnns_groups_1",
+              "categories_tags", "additives_n"]
+    row = ["Spain, United Kingdom ", " 455612222", " GRANOLA, CINNAMON BAR", "granola and cinnamon bar ", " Michele's, Cliff", " cereals, snacks , ",
+           " allergen 1, , allergen 2", "2", "cereals again", "en:cereals", "5"]
+
+    return row, header
+
+
+@pytest.fixture
 def off_dict():
     off_dict = {"countries": ["Canada", "United Kingdom "], "code": " 455612222", "product_name": " GRANOLA, CINNAMON BAR", "generic_name": "granola and cinnamon bar ", "brands": " Michele's, Cliff", "food_groups": " cereals, snacks , ", "allergens": " allergen 1, , allergen 2", "nova_group": "2", "pnns_groups_1": ["cereals again"],
+              "categories_tags": ["en:cereals", "en:snacks"], "additives_n": 5}
+
+    return off_dict
+
+
+@pytest.fixture
+def off_dict_without_canada():
+    off_dict = {"countries": ["Spain", "United Kingdom "], "code": " 455612222", "product_name": " GRANOLA, CINNAMON BAR", "generic_name": "granola and cinnamon bar ", "brands": " Michele's, Cliff", "food_groups": " cereals, snacks , ", "allergens": " allergen 1, , allergen 2", "nova_group": "2", "pnns_groups_1": ["cereals again"],
               "categories_tags": ["en:cereals", "en:snacks"], "additives_n": 5}
 
     return off_dict
@@ -254,6 +272,16 @@ def test_should_return_empty_nova_data_field_in_product_for_given_fdc_dict(produ
 # ----------------------------------------------------------------
 # Tests map_off_row_to_product
 # ----------------------------------------------------------------
+
+def test_should_return_no_product_if_canada_not_in_countries_for_given_off_row(product_mapper, off_rows_without_canada):
+    row, header = off_rows_without_canada
+
+    result = product_mapper.map_off_row_to_product(row, header)
+
+    assert (
+            result is None
+    ), f"Expected no product returned, got {result}"
+
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(product_mapper, off_rows):
     product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = Ingredients()
@@ -643,6 +671,15 @@ def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(produ
 # ----------------------------------------------------------------
 # Tests map_off_dict_to_product
 # ----------------------------------------------------------------
+
+
+def test_should_return_no_product_if_canada_not_in_countries_for_given_off_dict(product_mapper, off_dict_without_canada):
+    result = product_mapper.map_off_dict_to_product(off_dict_without_canada)
+
+    assert (
+            result is None
+    ), f"Expected no product returned, got {result}"
+
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict(product_mapper, off_dict):
     product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = Ingredients()
