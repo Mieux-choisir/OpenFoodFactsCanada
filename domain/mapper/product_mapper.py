@@ -29,6 +29,17 @@ class ProductMapper:
         generic_name_field = "description"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
+        if len(dict[id_field]) == 14 and dict[id_field][0] == "0":
+            id_match = dict[id_field][1:]
+        elif len(dict[id_field]) == 12 or len(dict[id_field]) == 11 or len(dict[id_field]) == 10:
+            id_match = dict[id_field].zfill(13)
+        elif len(dict[id_field]) == 9:
+            if dict[id_field][0] == "0":
+                id_match = dict[id_field][1:]
+            else:
+                id_match = dict[id_field].zfill(13)
+        else:
+            id_match = dict[id_field]
 
         id_match = dict[id_field].lstrip("0")
         food_groups_en_field = (
@@ -62,18 +73,16 @@ class ProductMapper:
         )
 
     def map_off_row_to_product(
-        self, row: list[str], header: list[str]
+            self, row: list[str], header: list[str]
     ) -> Product | None:
         country_index = header.index("countries_en")
-        if row[country_index] != ProductMapper.WANTED_COUNTRY:
-            return None
-
         id_index = header.index("code")
         product_name_index = header.index("product_name")
         generic_name_index = header.index("generic_name")
 
         return Product(
-            id=row[id_index],
+            id_match=row[id_index],
+            id_original=row[id_index],
             product_name=(
                 row[product_name_index].strip()
                 if row[product_name_index] is not None
@@ -101,9 +110,6 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-        #if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
-           #return None
-
         id_field = "code"
         product_name_field = "product_name"
         generic_name_field = "generic_name"
@@ -111,10 +117,9 @@ class ProductMapper:
         brand_owner_field = "brand_owner"
         food_groups_en_field = "food_groups"
 
-        id_match = dict[id_field].lstrip("0")
-
         return Product(
-            id=product_dict[id_field],
+            id_match=product_dict[id_field],
+            id_original=product_dict[id_field],
             product_name=(
                 product_dict[product_name_field].strip()
                 if product_dict[product_name_field] is not None
@@ -211,7 +216,7 @@ class ProductMapper:
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                product_dict[additives_field], nova_group
+                    product_dict[additives_field], nova_group
             ):
                 return True
         except ValueError:

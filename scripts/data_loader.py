@@ -1,6 +1,7 @@
 import logging
 
 from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 
 from domain.product.product import Product
 
@@ -8,21 +9,22 @@ from domain.product.product import Product
 class DataLoader:
     @staticmethod
     def load_products_to_mongo(
-        products: list[Product],
-        db_name: str = "openfoodfacts",
-        collection_name: str = "products",
-        use_docker: bool = True,
+            products: list[Product],
+            db_name: str = "openfoodfacts",
+            collection_name: str = "products",
+            use_docker: bool = True,
     ) -> None:
         try:
             logging.info("Loading products to MongoDB...")
 
             # Connect to MongoDB
             connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "localhost:37017"
+                "localhost:37017"
             )
             client = MongoClient(connection_string)
             db = client[db_name]
             collection = db[collection_name]
+
             logging.info("Connected to client")
 
             # Check if the collection already contains data
@@ -42,6 +44,10 @@ class DataLoader:
                 logging.info(f"Inserted batch {i//BATCH_SIZE + 1}")
     
             logging.info(f"Data loading complete into {db_name}.{collection_name}")
+
+            #collection.insert_many([product.model_dump() for product in products])
+            #logging.info(f"Data loading complete into {db_name}.{collection_name}")
+
         except Exception as e:
             logging.info(
                 f"Problem while loading the products in {db_name}.{collection_name}: {e}"

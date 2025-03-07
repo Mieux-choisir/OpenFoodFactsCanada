@@ -9,6 +9,7 @@ from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
 from scripts.product_completer import ProductCompleter
+from scripts.product_matcher import ProductMatcher
 
 ########################################################################################################################
 ##### VARIABLES GLOBALES ###############################################################################################
@@ -22,6 +23,7 @@ off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.js
 
 # URL of the fdc file
 fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
+
 
 def main():
     logging.basicConfig(
@@ -60,6 +62,10 @@ def main():
 
     data_loader.load_products_to_mongo(off_products, collection_name="off_products")
     data_loader.load_products_to_mongo(fdc_products, collection_name="fdc_products")
+
+    product_matcher = ProductMatcher()
+
+    product_matcher.match_products()
 
 
 if __name__ == "__main__":

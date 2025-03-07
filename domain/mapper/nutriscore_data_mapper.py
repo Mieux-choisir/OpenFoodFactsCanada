@@ -87,13 +87,13 @@ class NutriscoreDataMapper:
                 if row[nutriscore_score_index]
                 else None
             ),
-            energy=row[energy_field] if isinstance(row[energy_field], float) else None,
-            fibers=row[fibers_field],
-            fruit_percentage = row[fruit_percentage_field] if fruit_percentage_field < len(row) else None,
-            proteins=row[proteins_field],
-            saturated_fats=row[saturated_fats_field] if isinstance(row[saturated_fats_field], float) else None,
-            sodium=row[sodium_field],
-            sugar=row[sugar_field],
+            energy=row[energy_index] if isinstance(row[energy_index], float) else None,
+            fibers=row[fibers_index],
+            fruit_percentage = row[fruit_percentage_index] if fruit_percentage_index < len(row) else None,
+            proteins=row[proteins_index],
+            saturated_fats=row[saturated_fats_index] if isinstance(row[saturated_fats_index], float) else None,
+            sodium=row[sodium_index],
+            sugar=row[sugar_index],
             is_beverage=None,
         )
 
