@@ -1,4 +1,3 @@
-from domain.mapper.allergens_mapper import AllergensMapper
 from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
@@ -31,7 +30,11 @@ class ProductMapper:
         brand_owner_field = "brandOwner"
         if len(dict[id_field]) == 14 and dict[id_field][0] == "0":
             id_match = dict[id_field][1:]
-        elif len(dict[id_field]) == 12 or len(dict[id_field]) == 11 or len(dict[id_field]) == 10:
+        elif (
+            len(dict[id_field]) == 12
+            or len(dict[id_field]) == 11
+            or len(dict[id_field]) == 10
+        ):
             id_match = dict[id_field].zfill(13)
         elif len(dict[id_field]) == 9:
             if dict[id_field][0] == "0":
@@ -73,7 +76,7 @@ class ProductMapper:
         )
 
     def map_off_row_to_product(
-            self, row: list[str], header: list[str]
+        self, row: list[str], header: list[str]
     ) -> Product | None:
         id_index = header.index("code")
         product_name_index = header.index("product_name")
@@ -108,7 +111,6 @@ class ProductMapper:
         )
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
-        country_field = "countries"
         id_field = "code"
         product_name_field = "product_name"
         generic_name_field = "generic_name"
@@ -215,7 +217,7 @@ class ProductMapper:
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                    product_dict[additives_field], nova_group
+                product_dict[additives_field], nova_group
             ):
                 return True
         except ValueError:

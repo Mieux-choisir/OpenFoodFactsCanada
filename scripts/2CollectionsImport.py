@@ -12,18 +12,12 @@ from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
 from scripts.product_matcher import ProductMatcher
 
+off_csv_url = (
+    "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
+)
 
-########################################################################################################################
-##### VARIABLES GLOBALES ###############################################################################################
-########################################################################################################################
-
-# URL of the off csv file
-off_csv_url = "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
-
-# URL of the off json file
 off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
-# URL of the fdc file
 fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
 
 
@@ -54,7 +48,10 @@ def main():
     )
 
     data_importer = DataImporter(
-        ProductMapper(IngredientsMapper(IngredientNormalizer()), NutriscoreDataMapper(NumberMapper()))
+        ProductMapper(
+            IngredientsMapper(IngredientNormalizer()),
+            NutriscoreDataMapper(NumberMapper()),
+        )
     )
 
     off_products = data_importer.import_csv_off_data(off_csv_file)

@@ -1,4 +1,3 @@
-import json
 import dask.dataframe as dd
 import pandas as pd
 from pymongo import MongoClient
@@ -28,10 +27,14 @@ class ProductMatcher:
         matched_off_collection = db["matched_off_products"]
         matched_fdc_collection = db["matched_fdc_products"]
 
-        matched_off_products = off_collection.find({"id_match": {"$in": list(matched_ids)}})
+        matched_off_products = off_collection.find(
+            {"id_match": {"$in": list(matched_ids)}}
+        )
         matched_off_collection.insert_many(matched_off_products)
 
-        matched_fdc_products = fdc_collection.find({"id_match": {"$in": list(matched_ids)}})
+        matched_fdc_products = fdc_collection.find(
+            {"id_match": {"$in": list(matched_ids)}}
+        )
         matched_fdc_collection.insert_many(matched_fdc_products)
 
         print(f"{len(matched_ids)} produits matchés entre les deux collections.")

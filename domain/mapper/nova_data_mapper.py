@@ -8,7 +8,10 @@ class NovaDataMapper:
         score_index = header.index("nova_group")
 
         return NovaData(
-            score=int(row[score_index]) if not isinstance(row[score_index], str) else None, group_markers={}
+            score=(
+                int(row[score_index]) if not isinstance(row[score_index], str) else None
+            ),
+            group_markers={},
         )
 
     @staticmethod
