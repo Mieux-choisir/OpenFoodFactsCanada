@@ -21,8 +21,17 @@ class ProductMapper:
         product_name_field = "description"
         generic_name_field = "description"
         brand_owner_field = "brandOwner"
-
-        id_match = dict[id_field].lstrip("0")
+        if len(dict[id_field]) == 14 and dict[id_field][0] == "0":
+            id_match = dict[id_field][1:]
+        elif len(dict[id_field]) == 12 or len(dict[id_field]) == 11 or len(dict[id_field]) == 10:
+            id_match = dict[id_field].zfill(13)
+        elif len(dict[id_field]) == 9:
+            if dict[id_field][0] == "0":
+                id_match = dict[id_field][1:]
+            else:
+                id_match = dict[id_field].zfill(13)
+        else:
+            id_match = dict[id_field]
 
         return Product(
             id_match=id_match,
@@ -46,11 +55,11 @@ class ProductMapper:
         )
 
     def map_off_row_to_product(
-        self, row: list[str], header: list[str]
+            self, row: list[str], header: list[str]
     ) -> Product | None:
         country_field = header.index("countries_en")
         #if row[country_field] != ProductMapper.WANTED_COUNTRY:
-          #  return None
+        #    return None
 
         id_field = header.index("code")
         product_name_field = header.index("product_name")
@@ -60,10 +69,8 @@ class ProductMapper:
 
         nutriscore_data_mapper = NutriscoreDataMapper(NumberMapper())
 
-        id_match = row[id_field].lstrip("0")
-
         return Product(
-            id_match=id_match,
+            id_match=row[id_field],
             id_original=row[id_field],
             product_name=row[product_name_field],
             generic_name_en=row[generic_name_field],
@@ -83,8 +90,8 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-       # if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
-         #   return None
+        #if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
+        #    return None
 
         id_field = "code"
         product_name_field = "product_name"
@@ -92,10 +99,8 @@ class ProductMapper:
         brand_owner_field = "brands"
         food_groups_en_field = "food_groups"
 
-        id_match = dict[id_field].lstrip("0")
-
         return Product(
-            id_match=id_match,
+            id_match=product_dict[id_field],
             id_original=product_dict[id_field],
             product_name=product_dict[product_name_field],
             generic_name_en=product_dict[generic_name_field],
@@ -186,7 +191,7 @@ class ProductMapper:
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                product_dict[additives_field], nova_group
+                    product_dict[additives_field], nova_group
             ):
                 return True
         except ValueError:
