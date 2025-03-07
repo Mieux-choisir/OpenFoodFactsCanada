@@ -75,7 +75,6 @@ class ProductMapper:
     def map_off_row_to_product(
             self, row: list[str], header: list[str]
     ) -> Product | None:
-        country_index = header.index("countries_en")
         id_index = header.index("code")
         product_name_index = header.index("product_name")
         generic_name_index = header.index("generic_name")

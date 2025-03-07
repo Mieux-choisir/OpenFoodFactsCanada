@@ -16,7 +16,7 @@ class BrandsMapper:
 
         brand_owner = None
         if row[brand_owner_index] is not None and row[brand_owner_index] != "":
-            brand_owner = row
+            brand_owner = row[brand_owner_index]
         elif row[brands_index] is not None and row[brands_index] != "":
             brand_owner = row[brands_index]
         return brand_owner
