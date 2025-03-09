@@ -3,7 +3,7 @@ import ijson
 import json
 
 
-def show_all_off_csv_fields(dataset: str):
+def show_all_fields(dataset: str):
     """Shows the names of all the fields in the documentation"""
     files = {'OFF': r"../../off_csv_fields_descriptions.json", 'FDC': r"../../fdc_fields_descriptions.json"}
 
@@ -71,11 +71,3 @@ def show_all_fields_descriptions(dataset: str):
     except KeyError:
         logging.info(f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}")
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()],
-)
-
-show_field_description("FDC", "foodAttributes")

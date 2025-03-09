@@ -5,3 +5,5 @@ ijson
 tenacity
 black
 flake8
+pytest
+pathlib

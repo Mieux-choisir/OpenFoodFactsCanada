@@ -11,32 +11,32 @@
   "desc":"url of the product page on Open Food Facts",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product"]
 },
-{ "name":"creator", 
+{ "name":"creator",
   "type":"general information",
   "schema":"string",
   "desc":"contributor who first added the product",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product"]
 },
-{ "name":"created_t", 
-  "type":"general information", 
+{ "name":"created_t",
+  "type":"general information",
   "schema":"integer",
   "desc":"date that the product was added (UNIX timestamp format)",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product"]
 },
 { "name":"created_datetime",
-  "type":"general information", 
+  "type":"general information",
   "schema":"datetime",
   "desc":"date that the product was added (iso8601 format: yyyy-mm-ddThh:mn:ssZ)",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"]
 },
 { "name":"last_modified_t",
-  "type":"general information", 
+  "type":"general information",
   "schema":"integer",
   "desc":"date that the product page was last modified (UNIX timestamp format)",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product"]
 },
-{ "name":"last_modified_datetime", 
-  "type":"general information", 
+{ "name":"last_modified_datetime",
+  "type":"general information",
   "schema":"datetime",
   "desc":"date that the product page was last modified (iso8601 format: yyyy-mm-ddThh:mn:ssZ)",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"]
@@ -72,7 +72,7 @@
   "sources":["https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product", "analysis with python script"]
 },
 { "name":"generic_name",
-  "type":"general information", 
+  "type":"general information",
   "schema":"string",
   "desc":"common name or generic description of the product, used to define the product when the specific product name is not available or when a more general term is needed",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/#cmp--schemas-product", "analysis with python script"]
@@ -360,7 +360,7 @@
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"],
   "comment":"Each element has the format [ additive -> additive_tag ] or [ additive -> additive_tag -> exists -- ok ]"
 },
-{ "name":"additives_tags", 
+{ "name":"additives_tags",
   "type":"misc. data",
   "schema":"[string]",
   "desc":"list of tags that categorize the additives present in the product",
@@ -1227,7 +1227,7 @@
   "desc":"Nutri-Score - Nutrition score derived from the UK FSA score and adapted for the French market (formula defined by the team of Professor Hercberg)",
   "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"]
 },
-{ "name":"nutrition-score-uk_100g", 
+{ "name":"nutrition-score-uk_100g",
   "type":"nutrition facts",
   "schema":"number",
   "desc":"nutrition score defined by the UK Food Standards Administration (FSA)",
