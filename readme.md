@@ -13,7 +13,31 @@ Ce projet a pour but de **créer une base de données enrichie à partir d'Open 
 Les données sont importées, nettoyées et stockées dans une **base MongoDB**, le tout étant orchestré via **Docker Compose**.
 
 ---
+## 📃 Documentation
 
+### Fichiers JSON
+
+Ce projet comprend deux fichiers JSON, chacun fournissant des informations sur des datasets différents :
+- off_csv_fields_descriptions.json : informations sur le dataset utilisé en format csv d'Open Food Facts
+- fdc_fields_descriptions.json : informations sur le dataset utilisé de Food Data Central
+
+
+Chaque fichier JSON comprend la liste des champs présents dans le dataset et donne les informations suivantes pour chaque champ :
+- name : le nom du champ
+- schema : le type de données contenu par le champ
+- desc : la description des valeurs contenues par le champ
+- sources : les sources depuis lesquelles les informations sur le champ ont été obtenues
+- comment (optionnel) : un commentaire qui donne des informations supplémentaires quand cela est nécessaire
+
+
+### Fonctions d'analyse des datasets
+
+Dans le répertoire scripts/analysis il y a plusieurs fichiers servant à l'analyse et à la compréhension des datasets utilisés :
+- datasets_analyzer.py : analyse les types des données observés dans chaque champ et quels champs peuvent être vides pour chaque dataset (Open Food Facts csv, Open Food Facts jsonl, Food Data Central)
+- fields_informations_describer.py : donne des informations sur les champs du dataset demandé en utilisant les fichiers JSON de documentation des champs
+- fields_type_analyzer.py : fonctions utilisées par datasets_analyzer.py
+
+---
 ## 🚀 Démarrage rapide
 
 L’ensemble de l’application est **démarré via Docker Compose**.
@@ -86,35 +110,6 @@ pip install -r requirements.txt
 python ./scripts/import.py
 ```
 
----
-
-## 🧪 Exécuter les tests
-
-### 📌 Installation des dépendances pour les tests
-Si ce n'est pas encore fait, assurez-vous d'installer les dépendances requises dans un environnement virtuel Python.
-
-1️⃣ **Créer et activer l’environnement virtuel** :
-```bash
-# Sous Linux/macOS
-python -m venv venv
-source venv/bin/activate
-
-# Sous Windows
-python -m venv venv
-venv\Scripts\activate
-```
-2️⃣ **Installer les dépendances** :
-```bash
-pip install -r requirements.txt
-```
-
----
-## ✅ Lancer les tests Pytest
-
-### 📌 Exécuter tous les tests :
-```bash
-pytest tests/
-```
 ---
 
 ## 📜 License
