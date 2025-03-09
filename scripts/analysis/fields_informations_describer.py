@@ -5,7 +5,10 @@ import json
 
 def show_all_fields(dataset: str):
     """Shows the names of all the fields in the documentation"""
-    files = {'OFF': r"../../off_csv_fields_descriptions.json", 'FDC': r"../../fdc_fields_descriptions.json"}
+    files = {
+        "OFF": r"../../off_csv_fields_descriptions.json",
+        "FDC": r"../../fdc_fields_descriptions.json",
+    }
 
     try:
         filename = files[dataset]
@@ -17,13 +20,18 @@ def show_all_fields(dataset: str):
         logging.info(fields_list)
 
     except KeyError:
-        logging.info(f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}")
+        logging.info(
+            f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}"
+        )
         return
 
 
 def show_field_description(dataset: str, field_name: str):
     """Shows the description of a given field name in the documentation"""
-    files = {'OFF': r"../../off_csv_fields_descriptions.json", 'FDC': r"../../fdc_fields_descriptions.json"}
+    files = {
+        "OFF": r"../../off_csv_fields_descriptions.json",
+        "FDC": r"../../fdc_fields_descriptions.json",
+    }
 
     try:
         filename = files[dataset]
@@ -49,13 +57,18 @@ def show_field_description(dataset: str, field_name: str):
             logging.info(field_description)
 
     except KeyError:
-        logging.info(f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}")
+        logging.info(
+            f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}"
+        )
         return
 
 
 def show_all_fields_descriptions(dataset: str):
     """Shows the descriptions of all the fields in the chosen documentation"""
-    files = {'OFF': r"../../off_csv_fields_descriptions.json", 'FDC': r"../../fdc_fields_descriptions.json"}
+    files = {
+        "OFF": r"../../off_csv_fields_descriptions.json",
+        "FDC": r"../../fdc_fields_descriptions.json",
+    }
 
     try:
         filename = files[dataset]
@@ -69,5 +82,6 @@ def show_all_fields_descriptions(dataset: str):
         logging.info(fields_descriptions)
 
     except KeyError:
-        logging.info(f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}")
-
+        logging.info(
+            f"The dataset {dataset} is not available. Available datasets: {list(files.keys())}"
+        )
