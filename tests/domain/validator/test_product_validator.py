@@ -7,18 +7,18 @@ def product_validator():
     return ProductValidator()
 
 
-def test_should_return_true_for_valid_pnn_group(product_validator):
+def test_should_return_true_for_valid_pnns_group(product_validator):
     pnn = "cereals"
 
-    result = product_validator.check_pnn_groups(pnn)
+    result = product_validator.check_pnns_groups(pnn)
 
     assert result is True
 
 
-def test_should_return_false_for_invalid_pnn_group(product_validator):
+def test_should_return_false_for_invalid_pnns_group(product_validator):
     pnn = "meat"
 
-    result = product_validator.check_pnn_groups(pnn)
+    result = product_validator.check_pnns_groups(pnn)
 
     assert result is False
 

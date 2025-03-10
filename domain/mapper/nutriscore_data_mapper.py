@@ -19,7 +19,7 @@ class NutriscoreDataMapper:
             score=None,
             energy=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == energy_id
                 ),
@@ -27,7 +27,7 @@ class NutriscoreDataMapper:
             ),
             fibers=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == fibers_id
                 ),
@@ -36,7 +36,7 @@ class NutriscoreDataMapper:
             fruit_percentage=None,
             proteins=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == proteins_id
                 ),
@@ -44,7 +44,7 @@ class NutriscoreDataMapper:
             ),
             saturated_fats=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == saturated_fats_id
                 ),
@@ -52,7 +52,7 @@ class NutriscoreDataMapper:
             ),
             sodium=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == sodium_id
                 ),
@@ -60,7 +60,7 @@ class NutriscoreDataMapper:
             ),
             sugar=next(
                 (
-                    item["nutrient"]["number"]
+                    item["amount"]
                     for item in food_nutrients
                     if item["nutrient"]["id"] == sugar_id
                 ),
@@ -72,28 +72,28 @@ class NutriscoreDataMapper:
     def map_off_row_to_nutriscore_data(
             self, row: list[str], header: list[str]
     ) -> NutriscoreData:
-        nutriscore_score_field = header.index("nutriscore_grade")
-        energy_field = header.index("energy_100g")
-        fibers_field = header.index("fiber_100g")
-        fruit_percentage_field = header.index("fruits-vegetables-nuts_100g")
-        proteins_field = header.index("proteins_100g")
-        saturated_fats_field = header.index("saturated-fat_100g")
-        sodium_field = header.index("sodium_100g")
-        sugar_field = header.index("sugars_100g")
+        nutriscore_score_index = header.index("nutriscore_grade")
+        energy_index = header.index("energy_100g")
+        fibers_index = header.index("fiber_100g")
+        fruit_percentage_index = header.index("fruits-vegetables-nuts_100g")
+        proteins_index = header.index("proteins_100g")
+        saturated_fats_index = header.index("saturated-fat_100g")
+        sodium_index = header.index("sodium_100g")
+        sugar_index = header.index("sugars_100g")
 
         return NutriscoreData(
             score=(
-                self.number_mapper.map_letter_to_number(row[nutriscore_score_field])
-                if row[nutriscore_score_field]
+                self.number_mapper.map_letter_to_number(row[nutriscore_score_index])
+                if row[nutriscore_score_index]
                 else None
             ),
-            energy=self.__get_float_value(row[energy_field]),
-            fibers=self.__get_float_value(row[fibers_field]),
-            fruit_percentage=self.__get_float_value(row[fruit_percentage_field]),
-            proteins=self.__get_float_value(row[proteins_field]),
-            saturated_fats=self.__get_float_value(row[saturated_fats_field]),
-            sodium=self.__get_float_value(row[sodium_field]),
-            sugar=self.__get_float_value(row[sugar_field]),
+            energy=self.__get_float_value(row[energy_index]),
+            fibers=self.__get_float_value(row[fibers_index]),
+            fruit_percentage=self.__get_float_value(row[fruit_percentage_index]),
+            proteins=self.__get_float_value(row[proteins_index]),
+            saturated_fats=self.__get_float_value(row[saturated_fats_index]),
+            sodium=self.__get_float_value(row[sodium_index]),
+            sugar=self.__get_float_value(row[sugar_index]),
             is_beverage=None,
         )
 
