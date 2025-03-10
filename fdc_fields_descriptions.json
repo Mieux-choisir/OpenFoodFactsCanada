@@ -1,0 +1,403 @@
+{
+  "fields": [
+    {
+      "name": "foodClass",
+      "schema": "string",
+      "desc": "always branded for branded foods dataset (for internal use only)",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "description",
+      "schema": "string",
+      "desc": "description of the food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "foodNutrients",
+      "schema": [
+        {
+          "type": "string",
+          "id": "integer",
+          "nutrient": {
+            "id": "integer",
+            "number": "string",
+            "name": "string",
+            "rank": "integer",
+            "unitName": "string"
+          },
+          "foodNutrientDerivation": {
+            "code": "string",
+            "description": "string",
+            "foodNutrientSource": {
+              "id": "integer",
+              "code": "string",
+              "description": "string"
+            }
+          },
+          "amount": "float"
+        }
+      ],
+      "desc": "list of nutrient values for a food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Each element is a document."
+    },
+    {
+      "name": "foodAttributes",
+      "schema": [
+        {
+          "id": "integer",
+          "name": "string",
+          "value": "string",
+          "foodAttributeType": {
+            "id": "integer",
+            "name": "string",
+            "description": "string"
+          }
+        }
+      ],
+      "desc": "list of values for generic properties of a food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf"
+      ],
+      "comment": "Each element is a document."
+    },
+    {
+      "name": "modifiedDate",
+      "schema": "string",
+      "desc": "the date when the product data was last modified by the data provider",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/USDA%20GBFPD%20Data%20Quality%20Overview%202024.pdf",
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "availableDate",
+      "schema": "string",
+      "desc": "the date when the product record was provided by the data provider (i.e. the manufacturer) to 1WorldSync, ie the date when the product record was available for inclusion in the database",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/USDA%20GBFPD%20Data%20Quality%20Overview%202024.pdf",
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "marketCountry",
+      "schema": "string",
+      "desc": "the primary country where the product is marketed",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "brandOwner",
+      "schema": "string",
+      "desc": "brand owner for the food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "This is the company that owns the brand."
+    },
+    {
+      "name": "brandName",
+      "schema": "string",
+      "desc": "the primary brand name under which the product is marketed and sold",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "gtinUpc",
+      "schema": "string",
+      "desc": "GTIN or UPC code identifying the food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Duplicate codes signify an update to the product, use the publication_date found in the food table to distinguish when each update was published, e.g. the latest publication date will be the most recent update of the product)"
+    },
+    {
+      "name": "dataSource",
+      "schema": "string",
+      "desc": "the source of the data for this food",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "GDSN (for GS1) or LI (for Label Insight)."
+    },
+    {
+      "name": "ingredients",
+      "schema": "string",
+      "desc": "the list of ingredients (as it appears on the product label)",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "servingSize",
+      "schema": "number",
+      "desc": "the amount of the serving size when expressed as gram or ml",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "servingSizeUnit",
+      "schema": "string",
+      "desc": "the unit used to express the serving size (gram or ml)",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "householdServingFullText",
+      "schema": "string",
+      "desc": "the amount and the unit of serving size when expressed in household units)",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_Doc.pdf",
+        "analysis with python script"
+      ],
+      "comment": "i.e., the number of cups, tablespoons, teaspoons in a serving followed by the unit. May be a fraction, such as 0.25 or 0.50."
+    },
+    {
+      "name": "labelNutrients",
+      "schema": {
+        "fat": {
+          "value": "Decimal"
+        },
+        "saturatedFat": {
+          "value": "Decimal"
+        },
+        "transFat": {
+          "value": "Decimal"
+        },
+        "cholesterol": {
+          "value": "Decimal"
+        },
+        "sodium": {
+          "value": "Decimal"
+        },
+        "carbohydrates": {
+          "value": "Decimal"
+        },
+        "fiber": {
+          "value": "Decimal"
+        },
+        "sugars": {
+          "value": "Decimal"
+        },
+        "protein": {
+          "value": "Decimal"
+        },
+        "calcium": {
+          "value": "Decimal"
+        },
+        "iron": {
+          "value": "Decimal"
+        },
+        "calories": {
+          "value": "Decimal"
+        },
+        "potassium": {
+          "value": "Decimal",
+          "optional": true
+        },
+        "addedSugar": {
+          "value": "Decimal",
+          "optional": true
+        }
+      },
+      "desc": "document with the value for each nutriment. des données sont présentes dans foodAttributes mais pas dans labelNutrients",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "packageWeight",
+      "schema": "string",
+      "desc": "weight or volume of the food item while in the packaging followed by the unit",
+      "sources": [
+        "analysis with python script"
+      ],
+      "comment": "Several units can be used, separated by '/' (e.g. '20 oz/1 1/4 LB/567 G' or '481 g/17 oz')"
+    },
+    {
+      "name": "tradeChannels",
+      "schema": "[string]",
+      "desc": "the different sales or distribution channels (e.g., grocery, online, food service) through which the food item is marketed or sold",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "microbes",
+      "schema": [
+        {
+          "microbeCode": "string",
+          "method": "string",
+          "minValue": "number",
+          "uom": "string"
+        }
+      ],
+      "desc": "information about microbial data related to the food item",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "brandedFoodCategory",
+      "schema": "string",
+      "desc": "the category of the branded food, assigned by GDSN or Label Insight",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Observed values: 'Beer' ; 'Cooked & Prepared' ; 'Frozen Foods' ; 'Snack Foods - Chips' ; 'Weight Control' ; 'Herbs/Spices/Extracts' ; 'Vegetarian' ; 'Vinegars/Cooking Wines' ; 'Frozen Prepared Sides' ; 'Wrapped Snacks - Muesli Bars' ; 'Frozen Patties and Burgers' ; 'Specialty Formula Supplements' ; 'Vegetables  Unprepared/Unprocessed (Frozen)' ; 'Plant Based Milk' ; 'Rice & Grains' ; 'Canned Tuna' ; 'Baking/Cooking Mixes (Perishable)' ; 'Children's Nutritional Supplements' ; 'Breads & Buns' ; 'Biscuits Cracker' ; 'Breakfast Cereals - Hot And Cold' ; 'Water' ; 'Fruit - Prepared/Processed (Shelf Stable)' ; 'Meal Replacement Supplements' ; 'Biscuits/Cookies' ; 'Snack Foods - Nuts' ; 'Fish Substitutes' ; 'Taco Shells' ; 'Baking Needs' ; 'Vegetable and Lentil Mixes' ; 'Vegetables' ; 'Granulated, Brown & Powdered Sugar' ; 'Pickles, Olives, Peppers & Relishes' ; 'Bread & Muffin Mixes' ; 'Desserts & Custard' ; 'Other Frozen Desserts' ; 'Pasta by Shape & Type' ; 'Fresh Chicken - Portions' ; 'Prepared Subs & Sandwiches' ; 'Frozen Sausages, Hotdogs & Brats' ; 'Baking Decorations & Dessert Toppings' ; 'Aquatic Invertebrates/Fish/Shellfish/Seafood Combination' ; 'Antioxidant Supplements' ; 'Nuts/Seeds - Prepared/Processed' ; 'Soups - Prepared (Shelf Stable)' ; 'Fruit  Prepared/Processed' ; 'Salad Dressings' ; 'Entrees, Sides & Small Meals' ; 'Drinks - Powdered' ; 'Flour - Cereal/Pulse (Shelf Stable)' ; 'Fruit' ; 'Oriental, Mexican & Ethnic Sauces' ; 'Canned & Bottled Beans' ; 'Snacks' ; 'Nuts/Seeds - Unprepared/Unprocessed (In Shell)' ; 'Bread/Bakery Products Variety Packs' ; 'Non Alcoholic Beverages  Not Ready to Drink' ; 'Snack Foods - Corn Chips' ; 'Pre-Packaged Fruit & Vegetables' ; 'Wrapped Snacks - Fruit Bars' ; 'Snack Foods - Dried Fruit' ; 'Soda' ; 'Pastries/Pies/Pizzas' ; 'Frozen Desserts' ; 'Frozen Potato' ; 'Vegetables - Prepared/Processed (Shelf Stable)' ; 'Bacon' ; 'Coffee' ; 'Pasta/Noodles' ; 'Pepperoni, Salami & Cold Cuts' ; 'Candy' ; 'Pancakes, Waffles, French Toast & Crepes' ; 'Sauces - Cooking (Shelf Stable)' ; 'Meat/Poultry/Other Animals  Unprepared/Unprocessed' ; 'Syrups & Molasses' ; 'Peppers' ; 'Chili & Stew' ; 'Nut & Seed Butters' ; 'Other Grains & Seeds' ; 'Other Frozen Meats' ; 'Yogurt/Yogurt Substitutes (Perishable)' ; 'Cakes, Cupcakes, Snack Cakes' ; 'Sushi' ; 'Pies/Pastries/Pizzas/Quiches - Savoury (Frozen)' ; 'Turkey - Unprepared/Unprocessed' ; 'Frozen Breakfast Sandwiches, Biscuits & Meals' ; 'Media' ; 'Sausages/Smallgoods' ; 'Energy, Protein & Muscle Recovery Drinks' ; 'Mussels' ; 'Salad Dressing & Mayonnaise' ; 'Sweet Bakery Products' ; 'Wholesome Snacks' ; 'Breakfast Foods' ; 'Dough Based Products / Meals' ; 'Margarine/Butter' ; 'Vegetables - Prepared/Processed' ; 'Vegetables - Unprepared/Unprocessed (Shelf Stable)' ; 'Crusts & Dough' ; 'Fresh Meat' ; 'Vitamins/Minerals/Nutritional Supplements' ; 'Confectionery' ; 'Fish  Prepared/Processed' ; 'Frozen Chicken - Portions' ; 'Milk Additives' ; 'Dough Based Products / Meals - Not Ready to Eat - Savoury (Frozen)' ; 'Dough Based Products / Meals - Not Ready to Eat - Savoury (Shelf Stable)' ; 'Frozen Vegetables' ; 'Tea and Infusions/Tisanes' ; 'Baking/Cooking Mixes (Shelf Stable)' ; 'Herbs And Spices' ; 'Alcohol' ; 'Wrapped Snacks - Nut Bars' ; 'Potato - Instant Meals' ; 'Gelatin, Gels, Pectins & Desserts' ; 'Breakfast Drinks' ; 'Baking Additives & Extracts' ; 'Baking/Cooking Mixes/Supplies Variety Packs' ; 'Frozen Meals' ; 'Cheese' ; 'Salami / Cured Meat' ; 'Lunch Snacks & Combinations' ; 'Frozen Chicken - Processed' ; 'Chocolate' ; 'Fresh Pasta' ; 'Non Alcoholic Beverages - Ready to Drink' ; 'Plant Based Water' ; 'Sugar And Flour' ; 'Drinks - Energy Drinks' ; 'Deli Salads' ; 'Ice Cream/Ice Novelties (Shelf Stable)' ; 'Chewing Gum & Mints' ; 'All Noodles' ; 'Frozen Dinners & Entrees' ; 'Digestive & Fiber Supplements' ; 'Ready To Drink' ; 'Bread' ; 'Savoury Bakery Products' ; 'Flavored Snack Crackers' ; 'Health Care' ; 'Ice Cream & Frozen Yogurt' ; 'Egg Based Products / Meals - Not Ready to Eat (Frozen)' ; 'Pork - Prepared/Processed' ; 'Cheese - Speciality ' ; 'Meat/Poultry/Other Animals Sausages - Prepared/Processed' ; 'Cream/Cream Substitutes' ; 'Gravy Mix' ; 'Prepared/Preserved Foods Variety Packs' ; 'Sweet Spreads' ; 'Nuts/Seeds  Prepared/Processed' ; 'Gardening' ; 'Cereals Products - Ready to Eat (Shelf Stable)' ; 'Cakes - Sweet (Shelf Stable)' ; 'Beef - Prepared/Processed' ; 'Sport Drinks' ; 'Prepared Soups' ; 'Fresh Meat, Poultry and Seafood' ; 'Milk/Cream - Shelf Stable' ; 'Canned Condensed Soup' ; 'Biscuits/Cookies (Shelf Stable)' ; 'Green Supplements' ; 'Shellfish Unprepared/Unprocessed' ; 'Pizza Mixes & Other Dry Dinners' ; 'Sauces/Spreads/Dips/Condiments' ; 'Meat/Poultry/Other Animals - Prepared/Processed' ; 'Cream' ; 'Other Drinks' ; 'Baking Accessories' ; 'Canned Vegetables' ; 'Fish - Prepared/Processed' ; 'Fruit & Vegetable Juice, Nectars & Fruit Drinks' ; 'Chips, Pretzels & Snacks' ; 'Shellfish Prepared/Processed' ; 'Drinks - Soft Drinks' ; 'Infant Formula' ; 'Pickles/Relishes/Chutneys/Olives' ; 'Frozen Pancakes, Waffles, French Toast & Crepes' ; 'Grains/Flour' ; 'Frozen Fish & Seafood' ; 'Milk/Milk Substitutes' ; 'Dressings/Dips (Shelf Stable)' ; 'Vegetables  Prepared/Processed' ; 'Canned Seafood' ; 'Meat/Poultry/Other Animals  Prepared/Processed' ; 'Milk' ; 'Nuts/Seeds - Prepared/Processed (Shelf Stable)' ; 'Ice-Cream/Ice-Block Multi Pack' ; 'Fatty Acid Supplements' ; 'Health Supplements and Vitamins' ; 'Fresh Chicken - Processed' ; 'Honey' ; 'Frozen Bacon, Sausages & Ribs' ; 'Sauces- Cooking' ; 'Cookies & Biscuits' ; 'Cakes and Slices' ; 'Fruits, Vegetables & Produce' ; 'Eggs & Egg Substitutes' ; 'Popcorn (Shelf Stable)' ; 'S/O Fresh Fish Fillets/Steaks' ; 'Frozen Snack' ; 'Cakes - Sweet (Frozen)' ; 'Bacon, Sausages & Ribs' ; 'Cake, Cookie & Cupcake Mixes' ; 'Frozen Pies/Savouries' ; 'Pork Sausages - Prepared/Processed' ; 'Chickpeas' ; 'Dips - Shelf Stable' ; 'Fish & Seafood' ; 'Flours & Corn Meal' ; 'Frozen Poultry, Chicken & Turkey' ; 'Butter & Spread' ; 'Eggs' ; 'Biscuits Kids' ; 'Cakes/Slices/Biscuits' ; 'Desserts/Dessert Sauces/Toppings' ; 'Grain Based Products / Meals' ; 'Fruit - Prepared/Processed' ; 'Prepared Pasta & Pizza Sauces' ; 'Frozen Appetizers & Hors D'oeuvres' ; 'Coffee - Instant, Roast and Ground' ; 'Deli and Chilled Foods' ; 'Dips/Hummus/Pate' ; 'Other Cooking Sauces' ; 'Other Soups' ; 'Croissants, Sweet Rolls, Muffins & Other Pastries' ; 'Minerals' ; 'Liquid Water Enhancer' ; 'Sandwiches/Filled Rolls/Wraps' ; 'Breakfast Sandwiches, Biscuits & Meals' ; 'Ice-Cream Take Home' ; 'Grain Based Products / Meals - Not Ready to Eat - Savoury (Shelf Stable)' ; 'Dairy Foods/Yoghurts' ; 'Cooking Oils and Fats' ; 'Meat/Poultry/Other Animals Sausages  Prepared/Processed' ; 'Butter/Butter Substitutes' ; 'Yogurt/Yogurt Substitutes' ; 'Bread - Incl. Buns And Rolls' ; 'Frozen Bread & Dough' ; 'Food/Beverage/Tobacco Variety Packs' ; 'Ketchup, Mustard, BBQ & Cheese Sauce' ; 'Pastry' ; 'Other Deli' ; 'Fresh Chicken - Whole' ; 'Canned Fruit' ; 'Chips/Crisps/Snack Mixes - Natural/Extruded (Shelf Stable)' ; 'Cereals Products - Not Ready to Eat (Shelf Stable)' ; 'Fruits - Unprepared/Unprocessed (Shelf Stable)' ; 'Tofu' ; 'Baby/Infant  Foods/Beverages' ; 'Snack Foods - Cereal Snacks' ; 'Coffee/Tea/Substitutes' ; 'Fruits - Unprepared/Unprocessed (Frozen)' ; 'Cheese/Cheese Substitutes' ; 'Prepared Meals' ; 'Fruits/Vegetables/Nuts/Seeds Variety Packs' ; 'Sausages, Hotdogs & Brats' ; 'Vegetable Based Products / Meals - Not Ready to Eat (Frozen)' ; 'Other Meats' ; 'Confectionery Products' ; 'Pork - Unprepared/Unprocessed' ; 'Seasonings/Preservatives/Extracts Variety Packs' ; 'Snack, Energy & Granola Bars' ; 'Herbs & Spices' ; 'Canned Fish and Meat' ; 'Frozen Fruit & Fruit Juice Concentrates' ; 'Drinks - Juices, Drinks and Cordials' ; 'Biscuits Plain/Sweet' ; 'Berries/Small Fruit' ; 'Baking/Cooking Mixes/Supplies' ; 'Prepared Wraps and Burittos' ; 'Non Alcoholic Beverages - Not Ready to Drink' ; 'Snack Foods - Multi Packs' ; 'Fresh Fruit and Vegetables' ; 'Mexican Dinner Mixes' ; 'Fruit/Nuts/Seeds Combination' ; 'Dairy/Egg Based Products / Meals' ; 'Amino Acid Supplements' ; 'Oral Hygiene Products' ; 'Other Snacks' ; 'Puddings and desserts' ; 'Frozen Fruit' ; 'Pasta' ; 'Vitamins' ; 'Baking/Cooking Supplies (Shelf Stable)' ; 'Tea - Bags, Loose Leaf, Speciality' ; 'Salads' ; 'Ready-Made Combination Meals' ; 'Biscuits Chocolate' ; 'Vegetable Based Products / Meals' ; 'Cereal' ; 'Antipasto' ; 'Powdered Drinks' ; 'Tomatoes' ; 'Vegetarian Frozen Meats' ; 'Sports and Weight Management' ; 'Alcoholic Beverages' ; 'Fish  Unprepared/Unprocessed' ; 'Smoked fish' ; 'Crackers & Biscotti' ; 'Sauces' ; 'Milk/Cream' ; 'Jam, Jelly & Fruit Spreads' ; 'Coffee/Coffee Substitutes' ; 'Pastry Shells & Fillings' ; 'Ice-Cream/Block Single' ; 'French Fries, Potatoes & Onion Rings' ; 'Cheese - Block' ; 'Fats Edible' ; 'Canned Soup' ; 'Pies/Pastries - Sweet (Shelf Stable)' ; 'Rice' ; 'Stuffing' ; 'Frozen Fish/Seafood' ; 'Noodles' ; 'Pasta - Instant Meals' ; 'Processed Cereal Products' ; 'Flavored Rice Dishes' ; 'Dips & Salsa' ; 'Snack Foods - Other' ; 'Cereal/Muesli Bars' ; 'Other Condiments' ; 'Yogurt' ; 'Poultry, Chicken & Turkey' ; 'Canned/Dried Veges' ; 'Pasta Dinners' ; 'Ham/Cold Meats' ; 'Spreads' ; 'Meat/Poultry/Other Animals - Unprepared/Unprocessed' ; 'Vegetable & Cooking Oils' ; 'Popcorn, Peanuts, Seeds & Related Snacks' ; 'Baking' ; 'Miscellanious' ; 'Sugars/Sugar Substitute Products' ; 'Canned Meat' ; 'Oils Edible' ; 'Processed Cheese & Cheese Novelties' ; 'Herbal Supplements' ; 'Pizza' ; 'Eggs/Eggs Substitutes' ; 'Children's Natural Remedies' ; 'Puddings & Custards' ; 'Iced & Bottle Tea' ; 'Tea Bags' ; 'Frozen Meat' ; 'Non Alcoholic Beverages  Ready to Drink' ; 'Drinks Flavoured - Ready to Drink' ; 'Pickles, Relishes and Vinegar' ; 'Seafood Miscellaneous' ; 'Wrapped Snacks - Cereal' ; 'Vegetables - Unprepared/Unprocessed (Frozen)' ; 'Seasoning Mixes, Salts, Marinades & Tenderizers'"
+    },
+    {
+      "name": "fdcId",
+      "schema": "integer",
+      "desc": "ID of the food in the food table",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "dataType",
+      "schema": "string",
+      "desc": "type of food data (see Files tab for possible values))",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Always 'Branded' for products in the branded foods dataset."
+    },
+    {
+      "name": "publicationDate",
+      "schema": "string",
+      "desc": "the date the product record was added (ie published) to the USDA Global Branded Food Products Database in FoodData Central",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/USDA%20GBFPD%20Data%20Quality%20Overview%202024.pdf",
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "The format is mm/dd/yyyy."
+    },
+    {
+      "name": "foodUpdateLog",
+      "schema": [
+        {
+          "foodClass": "string",
+          "description": "string",
+          "foodAttributes": [
+            {
+              "id": "integer",
+              "name": "string",
+              "value": "string",
+              "foodAttributeType": {
+                "id": "integer"
+              }
+            }
+          ],
+          "fdcId": "integer",
+          "dataType": "string",
+          "publicationDate": "string"
+        }
+      ],
+      "desc": "historical record of an update of food data",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf"
+      ]
+    },
+    {
+      "name": "footnote",
+      "schema": "string",
+      "desc": "comments on any unusual aspects of the food nutrient",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Examples might include why a nutrient value is different than typically expected."
+    },
+    {
+      "name": "preparationStateCode",
+      "schema": "string",
+      "desc": "code indicating if the information from the Nutrition Facts Panel is for the prepared or unprepared food",
+      "sources": [
+        "https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_Doc.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Only included if supplied."
+    },
+    {
+      "name": "subbrandName",
+      "schema": "string",
+      "desc": "specific product or sub-brand within the main brandName",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "discontinuedDate",
+      "schema": "string",
+      "desc": "the date the data provider indicated the product was discontinued",
+      "sources": [
+        "https://fdc.nal.usda.gov/docs/USDA%20GBFPD%20Data%20Quality%20Overview%202024.pdf",
+        "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
+        "analysis with python script"
+      ],
+      "comment": "Discontinued items may still be available in the market and be searched by database users; as such, these items are not removed from the GBFPD."
+    },
+    {
+      "name": "gpcClassCode",
+      "schema": "integer",
+      "desc": "Global Product Classification (GPC) code assigned to the food product",
+      "sources": [
+        "analysis with python script"
+      ],
+      "comment": "To learn more about gpc codes : https://gpc-browser.gs1.org/"
+    },
+    {
+      "name": "shortDescription",
+      "schema": "string",
+      "desc": "more concise version of the description, providing a brief summary of the product",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "caffeineStatement",
+      "schema": "[string]",
+      "desc": "information about the presence and amount of caffeine in the food product as written on the package",
+      "sources": [
+        "analysis with python script"
+      ]
+    },
+    {
+      "name": "materialCode",
+      "schema": "string",
+      "desc": "",
+      "sources": [
+        "analysis with python script"
+      ],
+      "comment": "Could not find what this field means."
+    }
+  ]
+}
