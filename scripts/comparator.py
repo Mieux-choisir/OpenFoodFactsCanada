@@ -1,4 +1,5 @@
 import json
+import logging
 import dask.dataframe as dd
 import pandas as pd
 import Levenshtein
@@ -59,7 +60,9 @@ def store_mismatched_products(mismatches):
 
     if mismatches:
         collection.insert_many(mismatches)
-        print(f"{len(mismatches)} produits enregistrés dans mismatched_products.")
+        logging.info(
+            f"{len(mismatches)} produits enregistrés dans mismatched_products."
+        )
 
 
 def main():
@@ -85,9 +88,9 @@ def main():
 
     merged_df = merged.compute()
     avg = merged_df["similarity"].mean()
-    print(f"Average similarity: {avg:.2f}%")
+    logging.info(f"Average similarity: {avg:.2f}%")
 
-    print("Comparaison des valeurs :")
+    logging.info("Comparaison des valeurs :")
     comparison_results = []
     mismatches = []
 
@@ -121,7 +124,7 @@ def main():
         if row["similarity"] < 100:
             mismatches.append(entry)
 
-    print(json.dumps(comparison_results, indent=4, ensure_ascii=False))
+    logging.info(json.dumps(comparison_results, indent=4, ensure_ascii=False))
 
     # store_mismatched_products(mismatches)
 

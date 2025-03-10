@@ -3,6 +3,7 @@ from decimal import Decimal
 from domain.product.complexFields.nutrient_facts import NutritionFacts
 from domain.product.complexFields.nutrient_level import NutrientLevel
 from domain.product.complexFields.nutrients import Nutrients
+from domain.utils.converter import Converter
 
 
 class NutritionFactsMapper:
@@ -108,13 +109,9 @@ class NutritionFactsMapper:
         sugar_index = header.index("sugars_100g")
 
         nutrient_level = NutrientLevel(
-            fat=row[fat_index] if isinstance(row[fat_index], float) else None,
+            fat=Converter.safe_float(row[fat_index]),
             salt=row[salt_index],
-            saturated_fats=(
-                row[saturated_fats_index]
-                if isinstance(row[saturated_fats_index], float)
-                else None
-            ),
+            saturated_fats=Converter.safe_float(row[saturated_fats_index]),
             sugar=row[sugar_index],
         )
 
@@ -125,16 +122,8 @@ class NutritionFactsMapper:
 
         nutrients = Nutrients(
             carbohydrates_100g=row[carbohydrates_100g_index],
-            energy_100g=(
-                row[energy_100g_index]
-                if isinstance(row[energy_100g_index], float)
-                else None
-            ),
-            energy_kcal_100g=(
-                row[energy_kcal_100g_index]
-                if isinstance(row[energy_kcal_100g_index], float)
-                else None
-            ),
+            energy_100g=Converter.safe_float(row[energy_100g_index]),
+            energy_kcal_100g=Converter.safe_float(row[energy_kcal_100g_index]),
             vitamin_a_100g=row[vitamin_a_100g_index],
         )
 

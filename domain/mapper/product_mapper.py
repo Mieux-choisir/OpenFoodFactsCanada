@@ -11,8 +11,6 @@ from domain.validator.product_validator import ProductValidator
 
 
 class ProductMapper:
-    WANTED_COUNTRY = "Canada"
-
     def __init__(
         self,
         ingredients_mapper: IngredientsMapper,

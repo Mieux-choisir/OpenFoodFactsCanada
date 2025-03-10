@@ -1,5 +1,6 @@
 from domain.mapper.number_mapper import NumberMapper
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
+from domain.utils.converter import Converter
 
 
 class NutriscoreDataMapper:
@@ -87,7 +88,7 @@ class NutriscoreDataMapper:
                 if row[nutriscore_score_index]
                 else None
             ),
-            energy=row[energy_index] if isinstance(row[energy_index], float) else None,
+            energy=Converter.safe_float(row[energy_index]),
             fibers=row[fibers_index],
             fruit_percentage=(
                 row[fruit_percentage_index]
@@ -95,11 +96,7 @@ class NutriscoreDataMapper:
                 else None
             ),
             proteins=row[proteins_index],
-            saturated_fats=(
-                row[saturated_fats_index]
-                if isinstance(row[saturated_fats_index], float)
-                else None
-            ),
+            saturated_fats=Converter.safe_float(row[saturated_fats_index]),
             sodium=row[sodium_index],
             sugar=row[sugar_index],
             is_beverage=None,
