@@ -13,7 +13,7 @@ class ProductMatcher:
         off_collection = db["off_products"]
         fdc_collection = db["fdc_products"]
 
-        df1, df2 = self.__extract_data(db)
+        #df1, df2 = self.__extract_data(db)
 
         ddf1 = dd.from_pandas(df1, npartitions=1)
         ddf2 = dd.from_pandas(df2, npartitions=1)

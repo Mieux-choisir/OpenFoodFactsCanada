@@ -11,6 +11,8 @@ from domain.validator.product_validator import ProductValidator
 
 
 class ProductMapper:
+    WANTED_COUNTRIES = ["Canada", "United States"]
+
     def __init__(
         self,
         ingredients_mapper: IngredientsMapper,
@@ -26,30 +28,30 @@ class ProductMapper:
         generic_name_field = "description"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
-        if len(dict[id_field]) == 14 and dict[id_field][0] == "0":
+        if len(product_dict[id_field]) == 14 and product_dict[id_field][0] == "0":
             id_match = dict[id_field][1:]
         elif (
-            len(dict[id_field]) == 12
-            or len(dict[id_field]) == 11
-            or len(dict[id_field]) == 10
+            len(product_dict[id_field]) == 12
+            or len(product_dict[id_field]) == 11
+            or len(product_dict[id_field]) == 10
         ):
-            id_match = dict[id_field].zfill(13)
-        elif len(dict[id_field]) == 9:
-            if dict[id_field][0] == "0":
-                id_match = dict[id_field][1:]
+            id_match = product_dict[id_field].zfill(13)
+        elif len(product_dict[id_field]) == 9:
+            if product_dict[id_field][0] == "0":
+                id_match = product_dict[id_field][1:]
             else:
-                id_match = dict[id_field].zfill(13)
+                id_match = product_dict[id_field].zfill(13)
         else:
-            id_match = dict[id_field]
+            id_match = product_dict[id_field]
 
-        id_match = dict[id_field].lstrip("0")
+        id_match = product_dict[id_field].lstrip("0")
         food_groups_en_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
 
         return Product(
             id_match=id_match,
-            id_original=dict[id_field],
+            id_original=product_dict[id_field],
             product_name=product_dict[product_name_field].title(),
             generic_name_en=product_dict[generic_name_field].title(),
             is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
@@ -75,7 +77,11 @@ class ProductMapper:
 
     def map_off_row_to_product(
         self, row: list[str], header: list[str]
-    ) -> Product | None:
+    ) -> Product | None:   
+        country_index = header.index("countries_en")
+        if not any(country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES):
+            return None
+        
         id_index = header.index("code")
         product_name_index = header.index("product_name")
         generic_name_index = header.index("generic_name")
@@ -109,6 +115,10 @@ class ProductMapper:
         )
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
+        country_field = "countries"
+        if not any(country in product_dict[country_field] for country in ProductMapper.WANTED_COUNTRIES):
+            return None
+        
         id_field = "code"
         product_name_field = "product_name"
         generic_name_field = "generic_name"
