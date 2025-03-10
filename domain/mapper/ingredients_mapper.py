@@ -10,7 +10,6 @@ class IngredientsMapper:
         ingredients_list = self.ingredient_normalizer.normalise_ingredients_list(
             ingredients
         )
-        print(ingredients_list)
 
         return Ingredients(
             ingredients_list=ingredients_list, ingredients_text=ingredients.title()
