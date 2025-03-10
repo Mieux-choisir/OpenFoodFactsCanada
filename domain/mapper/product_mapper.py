@@ -29,7 +29,7 @@ class ProductMapper:
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
         if len(product_dict[id_field]) == 14 and product_dict[id_field][0] == "0":
-            id_match = dict[id_field][1:]
+            id_match = product_dict[id_field][1:]
         elif (
             len(product_dict[id_field]) == 12
             or len(product_dict[id_field]) == 11
