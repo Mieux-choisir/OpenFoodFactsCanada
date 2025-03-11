@@ -16,22 +16,24 @@ def ecoscore_data_mapper():
 
 @pytest.fixture
 def mock_off_row_functions(ecoscore_data_mapper):
-    origins = IngredientsOrigins(origins=["Canada"], percent="50", transportation_score="4")
+    origins = IngredientsOrigins(
+        origins=["Canada"], percent="50", transportation_score="4"
+    )
     packaging = MagicMock(spec=Packaging)
     production_system = MagicMock(spec=ProductionSystem)
 
     with patch.object(
-            IngredientsOriginMapper,
-            "map_off_row_to_ingredients_origin",
-            return_value=origins,
+        IngredientsOriginMapper,
+        "map_off_row_to_ingredients_origin",
+        return_value=origins,
     ):
         with patch.object(
-                PackagingMapper, "map_off_row_to_packaging", return_value=packaging
+            PackagingMapper, "map_off_row_to_packaging", return_value=packaging
         ):
             with patch.object(
-                    ProductionSystemMapper,
-                    "map_off_row_to_production_system",
-                    return_value=production_system,
+                ProductionSystemMapper,
+                "map_off_row_to_production_system",
+                return_value=production_system,
             ):
                 yield {
                     "origins": origins,
@@ -49,17 +51,17 @@ def mock_off_dict_functions(ecoscore_data_mapper):
     production_system = MagicMock(spec=ProductionSystem)
 
     with patch.object(
-            IngredientsOriginMapper,
-            "map_off_dict_to_ingredients_origin",
-            return_value=origins,
+        IngredientsOriginMapper,
+        "map_off_dict_to_ingredients_origin",
+        return_value=origins,
     ):
         with patch.object(
-                PackagingMapper, "map_off_dict_to_packaging", return_value=packaging
+            PackagingMapper, "map_off_dict_to_packaging", return_value=packaging
         ):
             with patch.object(
-                    ProductionSystemMapper,
-                    "map_off_dict_to_production_system",
-                    return_value=production_system,
+                ProductionSystemMapper,
+                "map_off_dict_to_production_system",
+                return_value=production_system,
             ):
                 yield {
                     "origins": origins,
