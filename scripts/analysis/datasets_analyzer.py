@@ -65,7 +65,7 @@ def analyze_off_csv_data(
                 break
 
     logging.info("OFF data analyzed.")
-    show_fields_report(fields_types, fields_can_be_none)
+    __show_fields_report(fields_types, fields_can_be_none)
 
     return fields_types, fields_can_be_none
 
@@ -100,7 +100,7 @@ def analyze_off_jsonl_data(
             try:
                 obj = json.loads(line.strip())
 
-                fields_types, fields_can_be_none = analyze_obj(
+                fields_types, fields_can_be_none = __analyze_obj(
                     obj, fields_types, fields_can_be_none, nonetype_included
                 )
 
@@ -113,7 +113,7 @@ def analyze_off_jsonl_data(
                 logging.info(f"Error parsing line: {line}. Error: {e}")
 
     logging.info("OFF data analyzed.")
-    show_fields_report(fields_types, fields_can_be_none)
+    __show_fields_report(fields_types, fields_can_be_none)
 
     return fields_types, fields_can_be_none
 
@@ -146,7 +146,7 @@ def analyze_fdc_data(
         fields_can_be_none = set()
 
         for obj in ijson.items(file, "BrandedFoods.item"):
-            fields_types, fields_can_be_none = analyze_obj(
+            fields_types, fields_can_be_none = __analyze_obj(
                 obj, fields_types, fields_can_be_none, nonetype_included
             )
 
@@ -156,12 +156,12 @@ def analyze_fdc_data(
                 break
 
     logging.info("FDC data analyzed.")
-    show_fields_report(fields_types, fields_can_be_none)
+    __show_fields_report(fields_types, fields_can_be_none)
 
     return fields_types, fields_can_be_none
 
 
-def analyze_obj(
+def __analyze_obj(
     obj: dict, fields_types: dict, fields_can_be_none: set, nonetype_included: bool
 ) -> (dict, set):
     """Analyzes and counts the different types appearing in each field of the CSV dataset.
@@ -170,7 +170,9 @@ def analyze_obj(
     - updated_fields_can_be_none is the new set of fields that can have the value None
     """
     for key in obj.keys():
-        fields_types = add_type_to_dict(fields_types, key, obj[key], nonetype_included)
+        fields_types = __add_type_to_dict(
+            fields_types, key, obj[key], nonetype_included
+        )
 
         if obj[key] is None:
             fields_can_be_none.add(key)
@@ -178,7 +180,7 @@ def analyze_obj(
     return fields_types, fields_can_be_none
 
 
-def add_type_to_dict(fields_types, key, value, nonetype_included: bool):
+def __add_type_to_dict(fields_types, key, value, nonetype_included: bool):
     """Adds the registered occurence to the fields_types dictionary that counts the appearing types for each field
     and returns the updated dictionary."""
     if nonetype_included or value is not None:
@@ -194,7 +196,7 @@ def add_type_to_dict(fields_types, key, value, nonetype_included: bool):
     return fields_types
 
 
-def show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
+def __show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
     """Shows the report for the analysis of the types of each field of the dataset in two parts :
     - first it shows the appearing types and the number of their occurrences for each field in the dataset
     - them it lists all the fields in the dataset that were None at least once
@@ -212,7 +214,7 @@ def show_fields_report(fields_types: dict, fields_can_be_none: set) -> None:
     )
 
 
-def show_inconsistent_fields(field_types: dict) -> None:
+def __show_inconsistent_fields(field_types: dict) -> None:
     """Lists all the given fields that have inconsistent types (expect for NoneType)"""
     inconsistent_fields = {}
     for field in field_types.keys():
@@ -222,7 +224,7 @@ def show_inconsistent_fields(field_types: dict) -> None:
     logging.info(f"Inconsistent fields: {inconsistent_fields}")
 
 
-def record_values_for_field_off_csv(
+def __record_values_for_field_off_csv(
     field_name: str, show_values: bool, filename: str, limit: int = None
 ) -> set:
     """Keeps track of all the appearing values in a given field of a csv dataset and shows them"""
@@ -254,13 +256,13 @@ def record_values_for_field_off_csv(
                 break
 
     if show_values:
-        show_set_values(values)
+        __show_recorded_values(values, [])
 
     logging.info(f"values for {field_name} field recorded")
     return values
 
 
-def record_values_for_field_off_jsonl(
+def __record_values_for_field_off_jsonl(
     field_name: str, show_values: bool, filename: str, limit: int = None
 ) -> set:
     """Keeps track of all the appearing values in a given field of a jsonl dataset and shows them"""
@@ -275,32 +277,38 @@ def record_values_for_field_off_jsonl(
 
     n = 0
     with open(filename, "r", encoding="utf-8") as file:
-        values = set()
+        hashable_values = set()
+        non_hashable_values = []
         for line in file:
             try:
                 obj = json.loads(line.strip())
-                value = obj[field_name]
-                if value != "" and value is not None:
-                    values.add(value)
+                if field_name in obj.keys():
+                    value = obj[field_name]
+                    if value != "" and value is not None:
+                        if not isinstance(value, list) and not isinstance(value, dict):
+                            hashable_values.add(value)
+                        else:
+                            if value not in non_hashable_values:
+                                non_hashable_values.append(value)
 
-                n += 1
+                    n += 1
 
-                if limit is not None and n > limit:
-                    break
+                    if limit is not None and n > limit:
+                        break
 
             except json.JSONDecodeError as e:
                 logging.info(f"Error parsing line: {line}. Error: {e}")
 
     if show_values:
-        show_set_values(values)
+        __show_recorded_values(hashable_values, non_hashable_values)
 
     logging.info(f"values for {field_name} field recorded")
-    return values
+    return hashable_values
 
 
-def record_values_for_field_fdc(
+def __record_values_for_field_fdc(
     field_name: str, show_values: bool, filename: str, limit: int = None
-) -> set:
+) -> (set, list):
     """Keeps track of all the appearing values in a given field of a json dataset and shows them"""
     if limit is not None:
         logging.info(
@@ -313,27 +321,35 @@ def record_values_for_field_fdc(
 
     n = 0
     with open(filename, "r", encoding="utf-8") as file:
-        values = set()
+        hashable_values = set()
+        non_hashable_values = []
         for obj in ijson.items(file, "BrandedFoods.item"):
-            value = obj[field_name]
-            if value != "" and value is not None:
-                values.add(value)
+            if field_name in obj.keys():
+                value = obj[field_name]
+                if value != "" and value is not None:
+                    if not isinstance(value, list) and not isinstance(value, dict):
+                        hashable_values.add(value)
+                    else:
+                        if value not in non_hashable_values:
+                            non_hashable_values.append(value)
 
-            n += 1
+                n += 1
 
-            if limit is not None and n > limit:
-                break
+                if limit is not None and n >= limit:
+                    break
 
     if show_values:
-        show_set_values(values)
+        __show_recorded_values(hashable_values, non_hashable_values)
 
     logging.info(f"values for {field_name} field recorded")
-    return values
+    return hashable_values, non_hashable_values
 
 
-def show_set_values(set_values: set) -> None:
+def __show_recorded_values(set_values: set, list_values: list) -> None:
     """Lists all the values appearing in the given set"""
     values_list = ""
     for value in set_values:
+        values_list += f"\n\t{value}"
+    for value in list_values:
         values_list += f"\n\t{value}"
     logging.info(f"Values found:{values_list}")
