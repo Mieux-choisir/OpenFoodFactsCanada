@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock
 from domain.mapper.ingredients_mapper import IngredientsMapper
 from domain.utils.ingredient_normalizer import IngredientNormalizer
 

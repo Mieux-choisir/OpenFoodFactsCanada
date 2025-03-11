@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict
+from typing import Optional, Dict
 
 from domain.product.complexFields.complex_field import ComplexField
 from domain.product.complexFields.ingredients_origins import IngredientsOrigins

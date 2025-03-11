@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, patch
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.ingredients_origins_mapper import IngredientsOriginMapper
 from domain.mapper.packaging_mapper import PackagingMapper
