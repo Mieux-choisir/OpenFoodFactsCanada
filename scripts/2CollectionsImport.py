@@ -16,8 +16,6 @@ off_csv_url = (
     "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
 )
 
-off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
-
 fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
 
 

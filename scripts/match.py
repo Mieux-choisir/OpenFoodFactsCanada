@@ -1,7 +1,7 @@
 import pandas as pd
 from pymongo import MongoClient
 
-from scripts.product_matcher import ProductMatcher
+from product_matcher import ProductMatcher
 
 
 def extract_data():

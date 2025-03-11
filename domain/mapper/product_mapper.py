@@ -28,28 +28,13 @@ class ProductMapper:
         generic_name_field = "description"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
-        if len(product_dict[id_field]) == 14 and product_dict[id_field][0] == "0":
-            id_match = product_dict[id_field][1:]
-        elif (
-            len(product_dict[id_field]) == 12
-            or len(product_dict[id_field]) == 11
-            or len(product_dict[id_field]) == 10
-        ):
-            id_match = product_dict[id_field].zfill(13)
-        elif len(product_dict[id_field]) == 9:
-            if product_dict[id_field][0] == "0":
-                id_match = product_dict[id_field][1:]
-            else:
-                id_match = product_dict[id_field].zfill(13)
-        else:
-            id_match = product_dict[id_field]
 
         food_groups_en_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
 
         return Product(
-            id_match=id_match,
+            id_match=product_dict[id_field].lstrip("0"),
             id_original=product_dict[id_field],
             product_name=product_dict[product_name_field].title(),
             generic_name_en=product_dict[generic_name_field].title(),
@@ -88,7 +73,7 @@ class ProductMapper:
         generic_name_index = header.index("generic_name")
 
         return Product(
-            id_match=row[id_index],
+            id_match=row[id_index].lstrip("0"),
             id_original=row[id_index],
             product_name=(
                 row[product_name_index].strip()
@@ -131,7 +116,7 @@ class ProductMapper:
         food_groups_en_field = "food_groups"
 
         return Product(
-            id_match=product_dict[id_field],
+            id_match=product_dict[id_field].lstrip("0"),
             id_original=product_dict[id_field],
             product_name=(
                 product_dict[product_name_field].strip()
