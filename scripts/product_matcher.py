@@ -1,4 +1,3 @@
-import logging
 import dask.dataframe as dd
 import pandas as pd
 from pymongo import MongoClient
