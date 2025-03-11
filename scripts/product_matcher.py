@@ -1,8 +1,8 @@
+import logging
 import dask.dataframe as dd
 import pandas as pd
 from pymongo import MongoClient
 from pymongo.synchronous.database import Database
-
 
 class ProductMatcher:
     def match_products(self):
@@ -37,7 +37,7 @@ class ProductMatcher:
         )
         matched_fdc_collection.insert_many(matched_fdc_products)
 
-        print(f"{len(matched_ids)} produits matchés entre les deux collections.")
+        logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
 
     def __extract_data(self, db: Database):
 
@@ -48,10 +48,10 @@ class ProductMatcher:
         doublons_off = df1[df1.duplicated(subset="id_match", keep=False)]
 
         if doublons_off.empty:
-            print("Pas de doublons dans off_products.")
+            logging.info("Pas de doublons dans off_products.")
         else:
-            print(f"Il y a {len(doublons_off)} doublons dans off_products.")
-            print(doublons_off)
+            logging.warning(f"Il y a {len(doublons_off)} doublons dans off_products.")
+            logging.warning(doublons_off)
 
         collection = db["fdc_products"]
         df2 = pd.DataFrame(list(collection.find({}, {"id_match": 1, "_id": 0})))
@@ -59,8 +59,8 @@ class ProductMatcher:
         doublons_fdc = df2[df2.duplicated(subset="id_match", keep=False)]
 
         if doublons_fdc.empty:
-            print("Pas de doublons dans fdc_products.")
+            logging.info("Pas de doublons dans fdc_products.")
         else:
-            print(f"Il y a {len(doublons_fdc)} doublons dans fdc_products.")
-            print(doublons_fdc)
+            logging.warning(f"Il y a {len(doublons_fdc)} doublons dans fdc_products.")
+            logging.warning(doublons_fdc)
         return df1, df2

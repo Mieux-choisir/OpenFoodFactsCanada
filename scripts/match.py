@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from pymongo import MongoClient
 
@@ -18,6 +19,12 @@ def extract_data():
 
 
 def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+    
     product_matcher = ProductMatcher()
 
     product_matcher.match_products()
