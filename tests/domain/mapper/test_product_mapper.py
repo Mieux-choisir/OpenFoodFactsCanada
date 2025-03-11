@@ -11,6 +11,7 @@ from domain.mapper.nova_data_mapper import NovaDataMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.product_mapper import ProductMapper
+from domain.product.complexFields import ingredients
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
 from domain.product.complexFields.nutrient_facts import NutritionFacts
@@ -264,28 +265,162 @@ def off_dict_without_canada():
     return off_dict
 
 
-# ----------------------------------------------------------------
-# Tests map_fdc_dict_to_product
-# ----------------------------------------------------------------
+@pytest.fixture
+def mock_fdc_functions(product_mapper):
+    nutrition_facts = MagicMock(spec=NutritionFacts)
+    ingredients = MagicMock(spec=Ingredients)
+    nutriscore_data = MagicMock(spec=NutriscoreData)
 
-
-def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
-):
     product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        Ingredients()
+        ingredients
     )
     product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
+        nutriscore_data
     )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
 
     with patch.object(
         NutritionFactsMapper,
         "map_fdc_dict_to_nutrition_facts",
         return_value=nutrition_facts,
     ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+        yield {
+            "nutrition_facts": nutrition_facts,
+            "ingredients": ingredients,
+            "nutriscore_data": nutriscore_data,
+        }
+
+
+@pytest.fixture
+def mock_off_row_functions(product_mapper):
+    ingredients = MagicMock(spec=Ingredients)
+    nutriscore_data = MagicMock(spec=NutriscoreData)
+    nutrition_facts = MagicMock(spec=NutritionFacts)
+    ecoscore_data = MagicMock(spec=EcoscoreData)
+    nova_data = MagicMock(spec=NovaData)
+    brands = ["brand 1", "brand 2", "brand 3"]
+    brand_owner = "brand owner name"
+    food_groups = ["food group1", "food group 2"]
+    allergens = ["allergen1", "allergen 2"]
+
+    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
+        ingredients
+    )
+    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
+        nutriscore_data
+    )
+
+    with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=brands):
+        with patch.object(
+            BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_owner
+        ):
+            with patch.object(
+                FoodGroupsMapper,
+                "map_off_row_to_food_groups",
+                return_value=food_groups,
+            ):
+                with patch.object(
+                    NutritionFactsMapper,
+                    "map_off_row_to_nutrition_facts",
+                    return_value=nutrition_facts,
+                ):
+                    with patch.object(
+                        AllergensMapper,
+                        "map_off_row_to_allergens",
+                        return_value=allergens,
+                    ):
+                        with patch.object(
+                            EcoscoreDataMapper,
+                            "map_off_row_to_ecoscore_data",
+                            return_value=ecoscore_data,
+                        ):
+                            with patch.object(
+                                NovaDataMapper,
+                                "map_off_row_to_nova_data",
+                                return_value=nova_data,
+                            ):
+                                yield {
+                                    "ingredients": ingredients,
+                                    "nutriscore_data": nutriscore_data,
+                                    "nutrition_facts": nutrition_facts,
+                                    "ecoscore_data": ecoscore_data,
+                                    "brand_owner": brand_owner,
+                                    "brands": brands,
+                                    "allergens": allergens,
+                                    "food_groups": food_groups,
+                                    "nova_data": nova_data,
+                                }
+
+
+@pytest.fixture
+def mock_off_dict_functions(product_mapper):
+    ingredients = MagicMock(spec=Ingredients)
+    nutriscore_data = MagicMock(spec=NutriscoreData)
+    nutrition_facts = MagicMock(spec=NutritionFacts)
+    ecoscore_data = MagicMock(spec=EcoscoreData)
+    nova_data = MagicMock(spec=NovaData)
+    brands = ["brand 1", "brand 2", "brand 3"]
+    brand_owner = "brand owner name"
+    food_groups = ["food group1", "food group 2"]
+    allergens = ["allergen1", "allergen 2"]
+
+    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
+        ingredients
+    )
+    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
+        nutriscore_data
+    )
+
+    with patch.object(BrandsMapper, "map_off_dict_to_brands", return_value=brands):
+        with patch.object(
+            BrandsMapper, "map_off_dict_to_brand_owner", return_value=brand_owner
+        ):
+            with patch.object(
+                FoodGroupsMapper,
+                "map_off_dict_to_food_groups",
+                return_value=food_groups,
+            ):
+                with patch.object(
+                    NutritionFactsMapper,
+                    "map_off_dict_to_nutrition_facts",
+                    return_value=nutrition_facts,
+                ):
+                    with patch.object(
+                        AllergensMapper,
+                        "map_off_dict_to_allergens",
+                        return_value=allergens,
+                    ):
+                        with patch.object(
+                            EcoscoreDataMapper,
+                            "map_off_dict_to_ecoscore_data",
+                            return_value=ecoscore_data,
+                        ):
+                            with patch.object(
+                                NovaDataMapper,
+                                "map_off_dict_to_nova_data",
+                                return_value=nova_data,
+                            ):
+                                yield {
+                                    "ingredients": ingredients,
+                                    "nutriscore_data": nutriscore_data,
+                                    "ecoscore_data": ecoscore_data,
+                                    "nova_data": nova_data,
+                                    "nutrition_facts": nutrition_facts,
+                                    "brand_owner": brand_owner,
+                                    "brands": brands,
+                                    "food_groups": food_groups,
+                                    "allergens": allergens,
+                                }
+
+
+# ----------------------------------------------------------------
+# Tests map_fdc_dict_to_product
+# ----------------------------------------------------------------
+
+
+def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
         result.product_name == fdc_dict["description"].strip().title()
@@ -298,21 +433,10 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
     ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip().title()}, got {result.brand_name}"
 
 
-def test_should_return_given_id_in_product_for_given_fdc_dict(product_mapper, fdc_dict):
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+def test_should_return_given_id_in_product_for_given_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
         result.id == fdc_dict["gtinUpc"].strip()
@@ -320,22 +444,9 @@ def test_should_return_given_id_in_product_for_given_fdc_dict(product_mapper, fd
 
 
 def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert result.brands == [
         fdc_dict["brandName"].strip().title()
@@ -343,125 +454,47 @@ def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_
 
 
 def test_should_return_empty_brands_list_in_product_for_given_fdc_dict(
-    product_mapper, fdc_no_brand_name_dict
+    product_mapper, fdc_no_brand_name_dict, mock_fdc_functions
 ):
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_no_brand_name_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_no_brand_name_dict)
 
     assert result.brands == [], f"Expected brands field to be {[]}, got {result.brands}"
 
 
 def test_should_return_mapped_ingredients_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
-        result.ingredients == ingredients
-    ), f"Expected ingredients field to be {ingredients}, got {result.ingredients}"
+        result.ingredients == mock_fdc_functions["ingredients"]
+    ), f"Expected ingredients field to be {mock_fdc_functions["ingredients"]}, got {result.ingredients}"
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingredients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
-        result.nutrition_facts == nutrition_facts
-    ), f"Expected nutrition facts field to be {nutrition_facts}, got {result.nutrition_facts}"
+        result.nutrition_facts == mock_fdc_functions["nutrition_facts"]
+    ), f"Expected nutrition facts field to be {mock_fdc_functions["nutrition_facts"]}, got {result.nutrition_facts}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    nutriscore_data = NutriscoreData(energy=4.5, fibers=7.5, proteins=8.0)
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        nutriscore_data
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
-        result.nutriscore_data == nutriscore_data
-    ), f"Expected nutriscore data field to be {nutriscore_data}, got {result.nutriscore_data}"
+        result.nutriscore_data == mock_fdc_functions["nutriscore_data"]
+    ), f"Expected nutriscore data field to be {mock_fdc_functions["nutriscore_data"]}, got {result.nutriscore_data}"
 
 
 def test_should_return_correctly_split_list_for_food_groups_en_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     expected_result = [
         x.strip() for x in fdc_dict["brandedFoodCategory"].split(",") if x.strip() != ""
@@ -472,25 +505,9 @@ def test_should_return_correctly_split_list_for_food_groups_en_in_product_for_gi
 
 
 def test_should_return_empty_list_for_allergens_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
         result.allergens == []
@@ -498,27 +515,11 @@ def test_should_return_empty_list_for_allergens_in_product_for_given_fdc_dict(
 
 
 def test_should_return_empty_is_raw_field_when_not_enough_information_in_product_for_given_fdc_dict(
-    product_mapper, fdc_not_enough_information_for_raw_dict
+    product_mapper, fdc_not_enough_information_for_raw_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
+    result = product_mapper.map_fdc_dict_to_product(
+        fdc_not_enough_information_for_raw_dict
     )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(
-            fdc_not_enough_information_for_raw_dict
-        )
 
     assert (
         result.is_raw is None
@@ -526,49 +527,17 @@ def test_should_return_empty_is_raw_field_when_not_enough_information_in_product
 
 
 def test_should_return_true_is_raw_field_for_raw_product_in_product_for_given_fdc_dict(
-    product_mapper, fdc_raw_dict
+    product_mapper, fdc_raw_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_raw_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_raw_dict)
 
     assert result.is_raw, f"Expected is raw field to be {True}, got {result.is_raw}"
 
 
 def test_should_return_false_is_raw_field_for_not_raw_product_in_product_for_given_fdc_dict(
-    product_mapper, fdc_not_raw_dict
+    product_mapper, fdc_not_raw_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_not_raw_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_not_raw_dict)
 
     assert (
         not result.is_raw
@@ -576,25 +545,9 @@ def test_should_return_false_is_raw_field_for_not_raw_product_in_product_for_giv
 
 
 def test_should_return_empty_ecoscore_data_field_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
         result.ecoscore_data is None
@@ -602,25 +555,9 @@ def test_should_return_empty_ecoscore_data_field_in_product_for_given_fdc_dict(
 
 
 def test_should_return_empty_nova_data_field_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict
+    product_mapper, fdc_dict, mock_fdc_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingregients"]
-    )
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_fdc_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
         result.nova_data is None
@@ -643,37 +580,11 @@ def test_should_return_no_product_if_canada_not_in_countries_for_given_off_row(
 
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.product_name == row[header.index("product_name")].strip().title()
@@ -684,37 +595,11 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_row(
-    product_mapper, off_emtpy_strings_rows
+    product_mapper, off_emtpy_strings_rows, mock_off_row_functions
 ):
     row, header = off_emtpy_strings_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.product_name is None
@@ -725,73 +610,23 @@ def test_should_return_empty_string_fields_for_given_empty_strings_in_product_fo
 
 
 def test_should_return_mapped_brand_owner_name_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.brand_owner == brand_name
-    ), f"Expected brand name field to be {brand_name}, got {result.brand_name}"
+        result.brand_owner == mock_off_row_functions["brand_owner"]
+    ), f"Expected brand name field to be {mock_off_row_functions["brand_owner"]}, got {result.brand_owner}"
 
 
-def test_should_return_given_id_in_product_for_given_off_row(product_mapper, off_rows):
+def test_should_return_given_id_in_product_for_given_off_row(
+    product_mapper, off_rows, mock_off_row_functions
+):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.id == row[header.index("code")].strip()
@@ -799,40 +634,12 @@ def test_should_return_given_id_in_product_for_given_off_row(product_mapper, off
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            NovaDataValidator, "check_nova_raw_group", return_value=True
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    with patch.object(NovaDataValidator, "check_nova_raw_group", return_value=True):
+        result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.is_raw
@@ -840,42 +647,16 @@ def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given
 
 
 def test_should_return_false_is_raw_field_for_ultra_transformed_nova_group_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
     with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
+        NovaDataValidator,
+        "check_nova_raw_group",
+        return_value=False,
     ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            NovaDataValidator,
-                            "check_nova_raw_group",
-                            return_value=False,
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+        result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         not result.is_raw
@@ -883,40 +664,12 @@ def test_should_return_false_is_raw_field_for_ultra_transformed_nova_group_in_pr
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_and_raw_pnns_group_1_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            ProductValidator, "check_pnns_groups", return_value=True
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    with patch.object(ProductValidator, "check_pnns_groups", return_value=True):
+        result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.is_raw
@@ -924,42 +677,16 @@ def test_should_return_true_is_raw_field_for_other_nova_group_and_raw_pnns_group
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_and_pnns_group_1_and_raw_categories_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
     with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
+        ProductValidator,
+        "check_string_categories",
+        return_value=True,
     ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            ProductValidator,
-                            "check_string_categories",
-                            return_value=True,
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+        result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.is_raw
@@ -967,40 +694,12 @@ def test_should_return_true_is_raw_field_for_other_nova_group_and_pnns_group_1_a
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_pnns_group_1_and_categories_and_no_additives_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            ProductValidator, "check_additives", return_value=True
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    with patch.object(ProductValidator, "check_additives", return_value=True):
+        result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         result.is_raw
@@ -1008,37 +707,11 @@ def test_should_return_true_is_raw_field_for_other_nova_group_pnns_group_1_and_c
 
 
 def test_should_return_false_is_raw_field_for_other_nova_group_pnns_group_1_categories_and_additives_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
         not result.is_raw
@@ -1046,329 +719,99 @@ def test_should_return_false_is_raw_field_for_other_nova_group_pnns_group_1_cate
 
 
 def test_should_return_mapped_brands_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-    brands = ["brand 1", "brand 2", "brand 3"]
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                BrandsMapper, "map_off_row_to_brands", return_value=brands
-            ):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.brands == brands
-    ), f"Expected brands field to be {brands}, got {result.brands}"
+        result.brands == mock_off_row_functions["brands"]
+    ), f"Expected brands field to be {mock_off_row_functions["brands"]}, got {result.brands}"
 
 
 def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-    food_groups = ["food_group1", "food_group2"]
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            FoodGroupsMapper,
-                            "map_off_row_to_food_groups",
-                            return_value=food_groups,
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.food_groups_en == food_groups
-    ), f"Expected food groups en field to be {food_groups}, got {result.food_groups_en}"
+        result.food_groups_en == mock_off_row_functions["food_groups"]
+    ), f"Expected food groups en field to be {mock_off_row_functions["food_groups"]}, got {result.food_groups_en}"
 
 
 def test_should_return_mapped_ingredients_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingredients"]
-    )
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.ingredients == ingredients
-    ), f"Expected ingredients field to be {ingredients}, got {result.ingredients}"
+        result.ingredients == mock_off_row_functions["ingredients"]
+    ), f"Expected ingredients field to be {mock_off_row_functions["ingredients"]}, got {result.ingredients}"
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.nutrition_facts == nutrition_facts
-    ), f"Expected nutrition facts field to be {nutrition_facts}, got {result.nutrition_facts}"
+        result.nutrition_facts == mock_off_row_functions["nutrition_facts"]
+    ), f"Expected nutrition facts field to be {mock_off_row_functions["nutrition_facts"]}, got {result.nutrition_facts}"
 
 
 def test_should_return_mapped_allergens_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-    allergens = ["allergen1", "allergen 2"]
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper,
-                        "map_off_row_to_allergens",
-                        return_value=allergens,
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.allergens == allergens
-    ), f"Expected allergens field to be {allergens}, got {result.allergens}"
+        result.allergens == mock_off_row_functions["allergens"]
+    ), f"Expected allergens field to be {mock_off_row_functions["allergens"]}, got {result.allergens}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    nutriscore_data = NutriscoreData()
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        nutriscore_data
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.nutriscore_data == nutriscore_data
-    ), f"Expected nutriscore data field to be {nutriscore_data}, got {result.nutriscore_data}"
+        result.nutriscore_data == mock_off_row_functions["nutriscore_data"]
+    ), f"Expected nutriscore data field to be {mock_off_row_functions["nutriscore_data"]}, got {result.nutriscore_data}"
 
 
 def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.ecoscore_data == ecoscore_data
-    ), f"Expected ecoscore data field to be {ecoscore_data}, got {result.ecoscore_data}"
+        result.ecoscore_data == mock_off_row_functions["ecoscore_data"]
+    ), f"Expected ecoscore data field to be {mock_off_row_functions["ecoscore_data"]}, got {result.ecoscore_data}"
 
 
 def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(
-    product_mapper, off_rows
+    product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    nova_data = NovaData()
-    brand_name = "brand name"
 
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_row_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_row_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-                with patch.object(
-                    BrandsMapper, "map_off_row_to_brand_owner", return_value=brand_name
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            NovaDataMapper,
-                            "map_off_row_to_nova_data",
-                            return_value=nova_data,
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.nova_data == nova_data
-    ), f"Expected nova data field to be {nova_data}, got {result.nova_data}"
+        result.nova_data == mock_off_row_functions["nova_data"]
+    ), f"Expected nova data field to be {mock_off_row_functions["nova_data"]}, got {result.nova_data}"
 
 
 # ----------------------------------------------------------------
@@ -1385,34 +828,9 @@ def test_should_return_no_product_if_canada_not_in_countries_for_given_off_dict(
 
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    nutriscore_data = NutriscoreData()
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            NutriscoreDataMapper,
-            "map_off_dict_to_nutriscore_data",
-            return_value=nutriscore_data,
-        ):
-            with patch.object(
-                EcoscoreDataMapper,
-                "map_off_dict_to_ecoscore_data",
-                return_value=ecoscore_data,
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
         result.product_name == off_dict["product_name"].strip().title()
@@ -1423,34 +841,9 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_dict(
-    product_mapper, off_empty_strings_dict
+    product_mapper, off_empty_strings_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    nutriscore_data = NutriscoreData()
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            NutriscoreDataMapper,
-            "map_off_dict_to_nutriscore_data",
-            return_value=nutriscore_data,
-        ):
-            with patch.object(
-                EcoscoreDataMapper,
-                "map_off_dict_to_ecoscore_data",
-                return_value=ecoscore_data,
-            ):
-                result = product_mapper.map_off_dict_to_product(off_empty_strings_dict)
+    result = product_mapper.map_off_dict_to_product(off_empty_strings_dict)
 
     assert (
         result.product_name is None
@@ -1461,75 +854,19 @@ def test_should_return_empty_string_fields_for_given_empty_strings_in_product_fo
 
 
 def test_should_return_mapped_brand_owner_name_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    nutriscore_data = NutriscoreData()
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            NutriscoreDataMapper,
-            "map_off_dict_to_nutriscore_data",
-            return_value=nutriscore_data,
-        ):
-            with patch.object(
-                EcoscoreDataMapper,
-                "map_off_dict_to_ecoscore_data",
-                return_value=ecoscore_data,
-            ):
-                with patch.object(
-                    BrandsMapper, "map_off_dict_to_brand_owner", return_value=brand_name
-                ):
-                    result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.brand_owner == brand_name
-    ), f"Expected brand owner field to be {brand_name}, got {result.brand_name}"
+        result.brand_owner == mock_off_dict_functions["brand_owner"]
+    ), f"Expected brand owner field to be {mock_off_dict_functions["brand_owner"]}, got {result.brand_name}"
 
 
-def test_should_return_given_id_in_product_for_given_off_dict(product_mapper, off_dict):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    nutriscore_data = NutriscoreData()
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            NutriscoreDataMapper,
-            "map_off_dict_to_nutriscore_data",
-            return_value=nutriscore_data,
-        ):
-            with patch.object(
-                EcoscoreDataMapper,
-                "map_off_dict_to_ecoscore_data",
-                return_value=ecoscore_data,
-            ):
-                with patch.object(
-                    BrandsMapper, "map_off_dict_to_brand_owner", return_value=brand_name
-                ):
-                    result = product_mapper.map_off_dict_to_product(off_dict)
+def test_should_return_given_id_in_product_for_given_off_dict(
+    product_mapper, off_dict, mock_off_dict_functions
+):
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
         result.id == off_dict["code"].strip()
@@ -1537,65 +874,21 @@ def test_should_return_given_id_in_product_for_given_off_dict(product_mapper, of
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brand_name = "brand name"
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                BrandsMapper, "map_off_dict_to_brand_owner", return_value=brand_name
-            ):
-                with patch.object(
-                    NovaDataValidator, "check_nova_raw_group", return_value=True
-                ):
-                    result = product_mapper.map_off_dict_to_product(off_dict)
+    with patch.object(NovaDataValidator, "check_nova_raw_group", return_value=True):
+        result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.is_raw, f"Expected is raw field to be {True}, got {result.is_raw}"
 
 
 def test_should_return_false_is_raw_field_for_ultra_transformed_nova_group_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
     with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
+        NovaDataValidator, "check_nova_transformed_group", return_value=True
     ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                NovaDataValidator, "check_nova_transformed_group", return_value=True
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+        result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
         not result.is_raw
@@ -1603,114 +896,36 @@ def test_should_return_false_is_raw_field_for_ultra_transformed_nova_group_in_pr
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_and_raw_pnns_group_1_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(ProductValidator, "check_pnns_groups", return_value=True):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    with patch.object(ProductValidator, "check_pnns_groups", return_value=True):
+        result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.is_raw, f"Expected is raw field to be {True}, got {result.is_raw}"
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_and_pnns_group_1_and_raw_categories_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                NovaDataValidator, "check_nova_raw_group", return_value=True
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    with patch.object(NovaDataValidator, "check_nova_raw_group", return_value=True):
+        result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.is_raw, f"Expected is raw field to be {True}, got {result.is_raw}"
 
 
 def test_should_return_true_is_raw_field_for_other_nova_group_pnns_group_1_and_categories_and_no_additives_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(ProductValidator, "check_additives", return_value=True):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    with patch.object(ProductValidator, "check_additives", return_value=True):
+        result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.is_raw, f"Expected is raw field to be {True}, got {result.is_raw}"
 
 
 def test_should_return_false_is_raw_field_for_other_nova_group_pnns_group_1_categories_and_additives_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
         not result.is_raw
@@ -1718,256 +933,80 @@ def test_should_return_false_is_raw_field_for_other_nova_group_pnns_group_1_cate
 
 
 def test_should_return_mapped_brands_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    brands = ["brand 1", "brand 2", "brand 3"]
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                BrandsMapper, "map_off_dict_to_brands", return_value=brands
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.brands == brands
-    ), f"Expected brands field to be {brands}, got {result.brands}"
+        result.brands == mock_off_dict_functions["brands"]
+    ), f"Expected brands field to be {mock_off_dict_functions["brands"]}, got {result.brands}"
 
 
 def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    food_groups = ["food_group1", "food_group2"]
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                FoodGroupsMapper,
-                "map_off_dict_to_food_groups",
-                return_value=food_groups,
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.food_groups_en == food_groups
-    ), f"Expected food groups en field to be {food_groups}, got {result.food_groups_en}"
+        result.food_groups_en == mock_off_dict_functions["food_groups"]
+    ), f"Expected food groups en field to be {mock_off_dict_functions["food_groups"]}, got {result.food_groups_en}"
 
 
 def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    ingredients = Ingredients(
-        ingredients_text="given ingredients", ingredients_list=["given ingredients"]
-    )
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        ingredients
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.ingredients == ingredients
-    ), f"Expected ingredients field to be {ingredients}, got {result.ingredients}"
+        result.ingredients == mock_off_dict_functions["ingredients"]
+    ), f"Expected ingredients field to be {mock_off_dict_functions["ingredients"]}, got {result.ingredients}"
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.nutrition_facts == nutrition_facts
-    ), f"Expected nutrition facts field to be {nutrition_facts}, got {result.nutrition_facts}"
+        result.nutrition_facts == mock_off_dict_functions["nutrition_facts"]
+    ), f"Expected nutrition facts field to be {mock_off_dict_functions["nutrition_facts"]}, got {result.nutrition_facts}"
 
 
 def test_should_return_correctly_split_allergens_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        NutriscoreData()
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    allergens = ["allergen1", "allergen 2"]
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                AllergensMapper, "map_off_dict_to_allergens", return_value=allergens
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.allergens == allergens
-    ), f"Expected allergens field to be {allergens}, got {result.allergens}"
+        result.allergens == mock_off_dict_functions["allergens"]
+    ), f"Expected allergens field to be {mock_off_dict_functions["allergens"]}, got {result.allergens}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    nutriscore_data = NutriscoreData()
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        nutriscore_data
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.nutriscore_data == nutriscore_data
-    ), f"Expected nutrition facts field to be {nutriscore_data}, got {result.nutriscore_data}"
+        result.nutriscore_data == mock_off_dict_functions["nutriscore_data"]
+    ), f"Expected nutrition facts field to be {mock_off_dict_functions["nutriscore_data"]}, got {result.nutriscore_data}"
 
 
 def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    nutriscore_data = NutriscoreData()
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        nutriscore_data
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.ecoscore_data == ecoscore_data
-    ), f"Expected ecoscore data field to be {ecoscore_data}, got {result.ecoscore_data}"
+        result.ecoscore_data == mock_off_dict_functions["ecoscore_data"]
+    ), f"Expected ecoscore data field to be {mock_off_dict_functions["ecoscore_data"]}, got {result.ecoscore_data}"
 
 
 def test_should_return_mapped_nova_data_field_in_product_for_given_off_dict(
-    product_mapper, off_dict
+    product_mapper, off_dict, mock_off_dict_functions
 ):
-    nutriscore_data = NutriscoreData()
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
-        Ingredients()
-    )
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        nutriscore_data
-    )
-    nutrition_facts = MagicMock(spec=NutritionFacts)
-    ecoscore_data = EcoscoreData()
-    nova_data = NovaData()
-
-    with patch.object(
-        NutritionFactsMapper,
-        "map_off_dict_to_nutrition_facts",
-        return_value=nutrition_facts,
-    ):
-        with patch.object(
-            EcoscoreDataMapper,
-            "map_off_dict_to_ecoscore_data",
-            return_value=ecoscore_data,
-        ):
-            with patch.object(
-                NovaDataMapper, "map_off_dict_to_nova_data", return_value=nova_data
-            ):
-                result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.nova_data == nova_data
-    ), f"Expected nova data field to be {nova_data}, got {result.nova_data}"
+        result.nova_data == mock_off_dict_functions["nova_data"]
+    ), f"Expected nova data field to be {mock_off_dict_functions["nova_data"]}, got {result.nova_data}"
