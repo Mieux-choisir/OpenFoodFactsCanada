@@ -70,7 +70,7 @@ class NutriscoreDataMapper:
         )
 
     def map_off_row_to_nutriscore_data(
-            self, row: list[str], header: list[str]
+        self, row: list[str], header: list[str]
     ) -> NutriscoreData:
         nutriscore_score_index = header.index("nutriscore_grade")
         energy_index = header.index("energy_100g")
@@ -118,9 +118,15 @@ class NutriscoreDataMapper:
             ),
             energy=self.__get_float_value(product_dict[nutrients_field][energy_field]),
             fibers=self.__get_float_value(product_dict[nutrients_field][fibers_field]),
-            fruit_percentage=self.__get_float_value(product_dict[nutrients_field][fruit_percentage_field]),
-            proteins=self.__get_float_value(product_dict[nutrients_field][proteins_field]),
-            saturated_fats=self.__get_float_value(product_dict[nutrients_field][saturated_fats_field]),
+            fruit_percentage=self.__get_float_value(
+                product_dict[nutrients_field][fruit_percentage_field]
+            ),
+            proteins=self.__get_float_value(
+                product_dict[nutrients_field][proteins_field]
+            ),
+            saturated_fats=self.__get_float_value(
+                product_dict[nutrients_field][saturated_fats_field]
+            ),
             sodium=self.__get_float_value(product_dict[nutrients_field][sodium_field]),
             sugar=self.__get_float_value(product_dict[nutrients_field][sugar_field]),
             is_beverage=None,

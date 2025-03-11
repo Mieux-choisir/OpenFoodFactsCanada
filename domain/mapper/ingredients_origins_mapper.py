@@ -9,7 +9,7 @@ class IngredientsOriginMapper:
         origin_index = header.index("origins")
 
         return IngredientsOrigins(
-            origins=row[origin_index].split(','),
+            origins=row[origin_index].split(","),
             percent=None,
             transportation_score=None,
         )

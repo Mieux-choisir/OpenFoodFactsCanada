@@ -39,14 +39,18 @@ class ProductMapper:
             id=product_dict[id_field].strip(),
             product_name=product_dict[product_name_field].strip().title(),
             generic_name_en=product_dict[generic_name_field].strip().title(),
-            is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
+            is_raw=self.__fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
             brands=(
                 [product_dict[brands_field].strip().title()]
                 if brands_field in product_dict.keys()
                 else []
             ),
             brand_owner=product_dict[brand_owner_field].strip().title(),
-            food_groups_en=product_dict[food_groups_en_field].split(","),  # TODO compléter la liste si possible
+            food_groups_en=list(
+                filter(
+                    None, map(str.strip, product_dict[food_groups_en_field].split(","))
+                )
+            ),  # TODO compléter la liste si possible
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
                 product_dict[ingredients_field]
             ),
@@ -117,12 +121,12 @@ class ProductMapper:
             id=product_dict[id_field].strip(),
             product_name=(
                 product_dict[product_name_field].strip().title()
-                if product_dict[product_name_field] != ""
+                if product_dict[product_name_field].strip() != ""
                 else None
             ),
             generic_name_en=(
                 product_dict[generic_name_field].strip().title()
-                if product_dict[generic_name_field] is not None
+                if product_dict[generic_name_field].strip() != ""
                 else None
             ),
             is_raw=self.__off_json_is_raw_aliment(product_dict),
@@ -223,7 +227,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def fdc_is_raw_aliment(category: str):
+    def __fdc_is_raw_aliment(category: str):
         is_raw = False
 
         if category in [

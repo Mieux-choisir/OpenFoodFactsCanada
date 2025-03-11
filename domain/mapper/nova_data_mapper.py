@@ -8,7 +8,8 @@ class NovaDataMapper:
         score_index = header.index("nova_group")
 
         return NovaData(
-            score=int(row[score_index]) if row[score_index].isdigit() else None, group_markers={}
+            score=int(row[score_index]) if row[score_index].isdigit() else None,
+            group_markers={},
         )
 
     @staticmethod
@@ -16,6 +17,10 @@ class NovaDataMapper:
         score_field = "nova_group"
 
         return NovaData(
-            score=int(product_dict[score_field]) if isinstance(product_dict[score_field], int) else None,
+            score=(
+                int(product_dict[score_field])
+                if isinstance(product_dict[score_field], int)
+                else None
+            ),
             group_markers={},
         )

@@ -73,21 +73,21 @@ class NutritionFactsMapper:
         )
 
         carbohydrates_100g_value = next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == carbohydrates_100g_id
-                ),
-                None,
-            )
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == carbohydrates_100g_id
+            ),
+            None,
+        )
 
         vitamin_a_100g_value = next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == vitamin_a_100g_id
-                ),
-                None,
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == vitamin_a_100g_id
+            ),
+            None,
         )
 
         nutrients = Nutrients(

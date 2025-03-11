@@ -10,7 +10,9 @@ class EcoscoreDataMapper:
     def map_off_row_to_ecoscore_data(row: list[str], header: list[str]) -> EcoscoreData:
         score_index = header.index("environmental_score_score")
 
-        ingredients_origins: IngredientsOrigins = IngredientsOriginMapper.map_off_row_to_ingredients_origin(row, header)
+        ingredients_origins: IngredientsOrigins = (
+            IngredientsOriginMapper.map_off_row_to_ingredients_origin(row, header)
+        )
         packaging = PackagingMapper.map_off_row_to_packaging(row, header)
         production_system = ProductionSystemMapper.map_off_row_to_production_system(
             row, header
@@ -18,7 +20,7 @@ class EcoscoreDataMapper:
 
         return EcoscoreData(
             score=int(row[score_index]) if row[score_index] else None,
-            origin_of_ingredients=ingredients_origins,
+            ingredients_origins=ingredients_origins,
             packaging=packaging,
             production_system=production_system,
             threatened_species={},
@@ -28,7 +30,9 @@ class EcoscoreDataMapper:
     def map_off_dict_to_ecoscore_data(product_dict: dict) -> EcoscoreData:
         score_field = "environmental_score_score"
 
-        ingredients_origins: IngredientsOrigins = IngredientsOriginMapper.map_off_dict_to_ingredients_origin(product_dict)
+        ingredients_origins: IngredientsOrigins = (
+            IngredientsOriginMapper.map_off_dict_to_ingredients_origin(product_dict)
+        )
         packaging = PackagingMapper.map_off_dict_to_packaging(product_dict)
         production_system = ProductionSystemMapper.map_off_dict_to_production_system(
             product_dict
