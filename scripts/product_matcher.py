@@ -13,7 +13,7 @@ class ProductMatcher:
         off_collection = db["off_products"]
         fdc_collection = db["fdc_products"]
 
-        #df1, df2 = self.__extract_data(db)
+        df1, df2 = self.__extract_data(db)
 
         ddf1 = dd.from_pandas(df1, npartitions=1)
         ddf2 = dd.from_pandas(df2, npartitions=1)
@@ -38,7 +38,7 @@ class ProductMatcher:
         )
         matched_fdc_collection.insert_many(matched_fdc_products)
 
-        logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
+        print(f"{len(matched_ids)} produits matchés entre les deux collections.")
 
     def __extract_data(self, db: Database):
 
@@ -49,10 +49,10 @@ class ProductMatcher:
         doublons_off = df1[df1.duplicated(subset="id_match", keep=False)]
 
         if doublons_off.empty:
-            logging.info("Pas de doublons dans off_products.")
+            print("Pas de doublons dans off_products.")
         else:
-            logging.info(f"Il y a {len(doublons_off)} doublons dans off_products.")
-            logging.info(doublons_off)
+            print(f"Il y a {len(doublons_off)} doublons dans off_products.")
+            print(doublons_off)
 
         collection = db["fdc_products"]
         df2 = pd.DataFrame(list(collection.find({}, {"id_match": 1, "_id": 0})))
@@ -60,8 +60,8 @@ class ProductMatcher:
         doublons_fdc = df2[df2.duplicated(subset="id_match", keep=False)]
 
         if doublons_fdc.empty:
-            logging.info("Pas de doublons dans fdc_products.")
+            print("Pas de doublons dans fdc_products.")
         else:
-            logging.info(f"Il y a {len(doublons_fdc)} doublons dans fdc_products.")
-            logging.info(doublons_fdc)
+            print(f"Il y a {len(doublons_fdc)} doublons dans fdc_products.")
+            print(doublons_fdc)
         return df1, df2

@@ -44,7 +44,6 @@ class ProductMapper:
         else:
             id_match = product_dict[id_field]
 
-        id_match = product_dict[id_field].lstrip("0")
         food_groups_en_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
@@ -56,7 +55,7 @@ class ProductMapper:
             generic_name_en=product_dict[generic_name_field].title(),
             is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
             brands=(
-                product_dict[brands_field].title()
+                [product_dict[brands_field].title()]
                 if brands_field in product_dict.keys()
                 else []
             ),
@@ -77,11 +76,13 @@ class ProductMapper:
 
     def map_off_row_to_product(
         self, row: list[str], header: list[str]
-    ) -> Product | None:   
+    ) -> Product | None:
         country_index = header.index("countries_en")
-        if not any(country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES):
+        if not any(
+            country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
-        
+
         id_index = header.index("code")
         product_name_index = header.index("product_name")
         generic_name_index = header.index("generic_name")
@@ -116,9 +117,12 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-        if not any(country in product_dict[country_field] for country in ProductMapper.WANTED_COUNTRIES):
+        if not any(
+            country in product_dict[country_field]
+            for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
-        
+
         id_field = "code"
         product_name_field = "product_name"
         generic_name_field = "generic_name"

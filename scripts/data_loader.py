@@ -16,22 +16,21 @@ class DataLoader:
         try:
             logging.info("Loading products to MongoDB...")
 
-            # Connect to MongoDB
-            connection_string = "localhost:37017"
+            connection_string = (
+                "mongodb://mongo:27017/" if use_docker else "localhost:37017"
+            )
             client = MongoClient(connection_string)
             db = client[db_name]
             collection = db[collection_name]
 
             logging.info("Connected to client")
 
-            # Check if the collection already contains data
             if collection.estimated_document_count() > 0:
                 logging.info(
                     f"MongoDB collection {collection_name} already contains data. Skipping import."
                 )
                 return
 
-            # Insert products into MongoDB
             logging.info("Inserting data into MongoDB...")
             BATCH_SIZE = 5000
 
@@ -41,9 +40,6 @@ class DataLoader:
                 logging.info(f"Inserted batch {i // BATCH_SIZE + 1}")
 
             logging.info(f"Data loading complete into {db_name}.{collection_name}")
-
-            # collection.insert_many([product.model_dump() for product in products])
-            # logging.info(f"Data loading complete into {db_name}.{collection_name}")
 
         except Exception as e:
             logging.info(
