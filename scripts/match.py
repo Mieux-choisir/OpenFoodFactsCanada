@@ -24,7 +24,7 @@ def main():
         format="%(asctime)s - %(levelname)s - %(message)s",
         handlers=[logging.StreamHandler()],
     )
-    
+
     product_matcher = ProductMatcher()
 
     product_matcher.match_products()

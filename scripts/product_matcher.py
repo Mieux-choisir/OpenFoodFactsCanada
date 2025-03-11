@@ -4,6 +4,7 @@ import pandas as pd
 from pymongo import MongoClient
 from pymongo.synchronous.database import Database
 
+
 class ProductMatcher:
     def match_products(self):
         client = MongoClient("mongodb://localhost:37017/")
