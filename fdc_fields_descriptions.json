@@ -46,9 +46,10 @@
       "desc": "list of nutrient values for a food",
       "sources": [
         "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",
-        "analysis with python script"
+        "analysis with python script",
+        "https://fdc.nal.usda.gov/docs/GBFPD_Documentation_and_Download_User_Guide_Apr2023.pdf"
       ],
-      "comment": "Each element is a document."
+      "comment": "Each element is a document. Each amount is given per 100g, and is calculated from the values provided per serving on the product label."
     },
     {
       "name": "foodAttributes",

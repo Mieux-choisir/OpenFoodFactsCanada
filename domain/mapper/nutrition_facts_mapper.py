@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from domain.mapper.nutrient_mapper import NutrientMapper
 from domain.product.complexFields.nutrient_facts import NutritionFacts
 from domain.product.complexFields.nutrient_level import NutrientLevel
 from domain.product.complexFields.nutrients import Nutrients
@@ -7,90 +8,54 @@ from domain.product.complexFields.nutrients import Nutrients
 
 class NutritionFactsMapper:
 
-    @staticmethod
-    def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFacts:
+    def map_fdc_dict_to_nutrition_facts(self, food_nutrients: list[dict]) -> NutritionFacts:
         fat_id = 1004
         sodium_id = 1093
         saturated_fats_id = 1258
-        sugar_field = 2000
+        sugar_id = 2000
 
-        fat_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == fat_id
-            ),
-            None,
-        )
-        sodium_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == sodium_id
-            ),
-            None,
-        )
+        fat_level = self.__get_nutrient_level(food_nutrients, fat_id)
+        fat_unit = self.__get_nutrient_unit(food_nutrients, fat_id)
+
+        sodium_level = self.__get_nutrient_level(food_nutrients, sodium_id)
+        sodium_unit = self.__get_nutrient_unit(food_nutrients, sodium_id)
         salt_level = sodium_level * Decimal("2.5") if sodium_level is not None else None
-        saturated_fats_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == saturated_fats_id
-            ),
-            None,
-        )
-        sugar_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == sugar_field
-            ),
-            None,
-        )
+
+        saturated_fats_level = self.__get_nutrient_level(food_nutrients, saturated_fats_id)
+        saturated_fats_unit = self.__get_nutrient_unit(food_nutrients, saturated_fats_id)
+
+        sugar_level = self.__get_nutrient_level(food_nutrients, sugar_id)
+        sugar_unit = self.__get_nutrient_unit(food_nutrients, sugar_id)
+
         nutrient_level = NutrientLevel(
-            fat=fat_level,
-            salt=salt_level,
-            saturated_fats=saturated_fats_level,
-            sugar=sugar_level,
+            fat=NutrientMapper().map_nutrient("fat", fat_level, fat_unit),
+            salt=NutrientMapper().map_nutrient("salt", salt_level, sodium_unit),
+            saturated_fats=NutrientMapper().map_nutrient("saturated_fats", saturated_fats_level, saturated_fats_unit),
+            sugar=NutrientMapper().map_nutrient("sugar", sugar_level, sugar_unit),
         )
 
-        carbohydrates_100g_field = 1005
-        energy_kcal_100g_field = 1008
-        vitamin_a_100g_field = 1104
+        carbohydrates_100g_id = 1005
+        energy_kcal_100g_id = 1008
+        vitamin_a_100g_id = 1104
 
-        energy_kcal_100g_value = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == energy_kcal_100g_field
-            ),
-            None,
-        )
+        energy_kcal_100g_value = self.__get_nutrient_level(food_nutrients, energy_kcal_100g_id)
         energy_100g_value = (
             energy_kcal_100g_value * Decimal(4.1868)
             if energy_kcal_100g_value is not None
             else None
         )
 
+        carbohydrates_100g_value = self.__get_nutrient_level(food_nutrients, carbohydrates_100g_id)
+        carbohydrates_100g_unit = self.__get_nutrient_unit(food_nutrients, carbohydrates_100g_id)
+
+        vitamin_a_100g_value = self.__get_nutrient_level(food_nutrients, vitamin_a_100g_id)
+        vitamin_a_100g_unit = self.__get_nutrient_unit(food_nutrients, vitamin_a_100g_id)
+
         nutrients = Nutrients(
-            carbohydrates_100g=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == carbohydrates_100g_field
-                ),
-                None,
-            ),
+            carbohydrates_100g=NutrientMapper().map_nutrient("carbohydrates", carbohydrates_100g_value, carbohydrates_100g_unit),
             energy_100g=energy_100g_value,
             energy_kcal_100g=energy_kcal_100g_value,
-            vitamin_a_100g=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == vitamin_a_100g_field
-                ),
-                None,
-            ),
+            vitamin_a_100g=NutrientMapper().map_nutrient("vitamin_a", vitamin_a_100g_value, vitamin_a_100g_unit),
         )
 
         return NutritionFacts(
@@ -100,7 +65,7 @@ class NutritionFactsMapper:
 
     @staticmethod
     def map_off_row_to_nutrition_facts(
-        row: list[str], header: list[str]
+            row: list[str], header: list[str]
     ) -> NutritionFacts:
         fat_index = header.index("fat_100g")
         salt_index = header.index("salt_100g")
@@ -161,4 +126,26 @@ class NutritionFactsMapper:
         return NutritionFacts(
             nutrient_level=nutrient_level,
             nutrients=nutrients,
+        )
+
+    @staticmethod
+    def __get_nutrient_level(food_nutrients, searched_id):
+        return next(
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == searched_id
+            ),
+            None,
+        )
+
+    @staticmethod
+    def __get_nutrient_unit(food_nutrients, searched_id):
+        return next(
+            (
+                item["nutrient"]["unitName"].lower()
+                for item in food_nutrients
+                if item["nutrient"]["id"] == searched_id
+            ),
+            None,
         )
