@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Food Facts - Merge</title>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='datatables.min.css') }}">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+
+    <h1>Open Food Facts - Merge Products</h1>
+
+    <label for="collectionSelect">Choose collection:</label>
+    <select id="collectionSelect">
+        <option value="fdc_products">FDC Products</option>
+        <option value="off_products">OFF Products</option>
+    </select>
+
+
+    <table id="productsTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th>ID Match</th>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Merge</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button id="mergeButton">Merge Selected Products</button>
+
+    <!-- JQuery & DataTables -->
+    <script src="{{ url_for('static', filename='datatables.min.js') }}"></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+
+</body>
+</html>

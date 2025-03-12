@@ -11,3 +11,5 @@ dask
 numpy
 pandas
 pyarrow
+flask
+flask-cors
