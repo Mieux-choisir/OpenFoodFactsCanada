@@ -1,4 +1,3 @@
-from domain.mapper.allergens_mapper import AllergensMapper
 from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
@@ -12,7 +11,7 @@ from domain.validator.product_validator import ProductValidator
 
 
 class ProductMapper:
-    WANTED_COUNTRY = "Canada"
+    WANTED_COUNTRIES = ["Canada", "United States"]
 
     def __init__(
         self,
@@ -31,12 +30,14 @@ class ProductMapper:
         generic_name_field = "description"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
+
         food_groups_en_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
 
         return Product(
-            id=product_dict[id_field],
+            id_match=product_dict[id_field].lstrip("0"),
+            id_original=product_dict[id_field],
             product_name=product_dict[product_name_field].title(),
             generic_name_en=product_dict[generic_name_field].title(),
             is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
@@ -53,7 +54,6 @@ class ProductMapper:
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
                 product_dict["foodNutrients"]
             ),
-            allergens=[],
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
                 product_dict["foodNutrients"]
             ),
@@ -65,7 +65,9 @@ class ProductMapper:
         self, row: list[str], header: list[str]
     ) -> Product | None:
         country_index = header.index("countries_en")
-        if row[country_index] != ProductMapper.WANTED_COUNTRY:
+        if not any(
+            country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
 
         id_index = header.index("code")
@@ -73,7 +75,8 @@ class ProductMapper:
         generic_name_index = header.index("generic_name")
 
         return Product(
-            id=row[id_index],
+            id_match=row[id_index].lstrip("0"),
+            id_original=row[id_index],
             product_name=(
                 row[product_name_index].strip()
                 if row[product_name_index] is not None
@@ -92,7 +95,6 @@ class ProductMapper:
             nutrition_facts=self.nutrition_facts_mapper.map_off_row_to_nutrition_facts(
                 row, header
             ),
-            allergens=AllergensMapper.map_off_row_to_allergens(row, header),
             nutriscore_data=self.nutriscore_data_mapper.map_off_row_to_nutriscore_data(
                 row, header
             ),
@@ -102,7 +104,10 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-        if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
+        if not any(
+            country in product_dict[country_field]
+            for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
 
         id_field = "code"
@@ -111,10 +116,10 @@ class ProductMapper:
         brands_field = "brands"
         brand_owner_field = "brand_owner"
         food_groups_en_field = "food_groups"
-        allergens_en_field = "allergens"
 
         return Product(
-            id=product_dict[id_field],
+            id_match=product_dict[id_field].lstrip("0"),
+            id_original=product_dict[id_field],
             product_name=(
                 product_dict[product_name_field].strip()
                 if product_dict[product_name_field] is not None
@@ -138,9 +143,6 @@ class ProductMapper:
             ),
             nutrition_facts=self.nutrition_facts_mapper.map_off_dict_to_nutrition_facts(
                 product_dict
-            ),
-            allergens=AllergensMapper.map_off_dict_to_allergens(
-                product_dict, allergens_en_field
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_off_dict_to_nutriscore_data(
                 product_dict

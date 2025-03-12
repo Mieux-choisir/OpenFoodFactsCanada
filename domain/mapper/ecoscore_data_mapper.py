@@ -3,6 +3,7 @@ from domain.mapper.packaging_mapper import PackagingMapper
 from domain.mapper.production_system_mapper import ProductionSystemMapper
 from domain.product.complexFields.ingredients_origin import IngredientsOrigin
 from domain.product.complexFields.score.ecoscore_data import EcoscoreData
+from domain.utils.converter import Converter
 
 
 class EcoscoreDataMapper:
@@ -19,7 +20,7 @@ class EcoscoreDataMapper:
         )
 
         return EcoscoreData(
-            score=int(row[score_index]) if row[score_index] else None,
+            score=Converter.safe_int(row[score_index]) if row[score_index] else None,
             origin_of_ingredients=origin_of_ingredients,
             packaging=packaging,
             production_system=production_system,

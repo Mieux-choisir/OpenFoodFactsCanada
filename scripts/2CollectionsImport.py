@@ -7,17 +7,16 @@ from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.product_mapper import ProductMapper
+from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.utils.ingredient_normalizer import IngredientNormalizer
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
-from scripts.product_completer import ProductCompleter
+from scripts.product_matcher import ProductMatcher
 
 off_csv_url = (
     "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
 )
-
-off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
 fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
 
@@ -56,16 +55,17 @@ def main():
         )
     )
 
-    off_products = data_importer.import_csv_off_data(off_csv_file, 10)
+    off_products = data_importer.import_csv_off_data(off_csv_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
-
-    product_completer = ProductCompleter()
-
-    off_products = product_completer.complete_products_data(off_products, fdc_products)
 
     data_loader = DataLoader()
 
-    data_loader.load_products_to_mongo(off_products)
+    data_loader.load_products_to_mongo(off_products, collection_name="off_products")
+    data_loader.load_products_to_mongo(fdc_products, collection_name="fdc_products")
+
+    product_matcher = ProductMatcher()
+
+    product_matcher.match_products()
 
 
 if __name__ == "__main__":
