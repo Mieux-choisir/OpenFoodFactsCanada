@@ -6,6 +6,7 @@ from domain.mapper.ingredients_mapper import IngredientsMapper
 from domain.mapper.nova_data_mapper import NovaDataMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
+from domain.product.food_category_model import FoodCategoryModel
 from domain.product.product import Product
 from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
@@ -18,9 +19,11 @@ class ProductMapper:
         self,
         ingredients_mapper: IngredientsMapper,
         nutriscore_data_mapper: NutriscoreDataMapper,
+            food_category_model: FoodCategoryModel,
     ):
         self.ingredients_mapper = ingredients_mapper
         self.nutriscore_data_mapper = nutriscore_data_mapper
+        self.food_category_model = food_category_model
 
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
         """Maps a fdc dictionary to a product object"""
@@ -69,6 +72,7 @@ class ProductMapper:
         id_index = header.index("code")
         product_name_index = header.index("product_name")
         generic_name_index = header.index("generic_name")
+        category_tag_index = header.index("categories_tags")
 
         return Product(
             id=row[id_index],
@@ -85,6 +89,7 @@ class ProductMapper:
             is_raw=self.off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
+            category_en=self.food_category_model.get_off_category(row[category_tag_index]),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
             nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
@@ -106,6 +111,7 @@ class ProductMapper:
         id_field = "code"
         product_name_field = "product_name"
         generic_name_field = "generic_name"
+        category_field = "categories"
         brands_field = "brands"
         brand_owner_field = "brand_owner"
         food_groups_en_field = "food_groups"
@@ -123,6 +129,7 @@ class ProductMapper:
                 if product_dict[generic_name_field] is not None
                 else None
             ),
+            category_en=self.food_category_model.get_off_category(product_dict[category_field]),
             is_raw=self.off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(

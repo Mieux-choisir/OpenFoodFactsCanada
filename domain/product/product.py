@@ -1,7 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
 from typing import Optional, List
 
-from domain.product.category_enum import CategoryEnum
 from domain.product.complexFields.complex_field import ComplexField
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
@@ -14,7 +13,7 @@ class Product(ComplexField):
     id: Optional[str] = None
     generic_name_en: Optional[str] = None
     product_name: Optional[str] = None
-    category_en: CategoryEnum = CategoryEnum.OTHER
+    category_en: str = None
     is_raw: Optional[bool] = None
     brands: List[str] = []
     brand_owner: Optional[str] = None
