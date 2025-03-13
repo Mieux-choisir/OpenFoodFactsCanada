@@ -1,59 +1,51 @@
 $(document).ready(function () {
-    let selectedProduct = null;
+    function loadProduct() {
+        $.getJSON("/api/get_product", function (data) {
+            if (data.error) {
+                alert("No matching product found.");
+                return;
+            }
 
-    function loadTable(collection) {
-        $("#productsTable").DataTable().destroy();  // Supprimer l'instance précédente
-        $("#productsTable").DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "/api/products",
-                data: function (d) {
-                    d.collection = collection;
-                },
-            },
-            columns: [
-                { data: "id_match" },
-                { data: "id_original" },
-                { data: "product_name" },
-                { data: "brand_name" },
-                { data: "category_en" },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return `<button class="merge-btn" data-product='${JSON.stringify(row)}'>Select</button>`;
-                    },
-                },
-            ],
-        });
+            $("#id_match").text(data.id_match);
+            $("#off_name").text(data.off_name || "");
+            $("#fdc_name").text(data.fdc_name || "");
+            $("#off_ingredients").text(data.off_ingredients || "");
+            $("#fdc_ingredients").text(data.fdc_ingredients || "");
+            $("#off_calories").text(data.off_calories || "");
+            $("#fdc_calories").text(data.fdc_calories || "");
 
-        $("#productsTable tbody").on("click", ".merge-btn", function () {
-            selectedProduct = $(this).data("product");
-            alert(`Selected: ${selectedProduct.product_name}`);
+            $(".copy-check").prop("checked", false);
+            $("input[type='text']").val("");
         });
     }
 
-    $("#collectionSelect").change(function () {
-        let collection = $(this).val();
-        loadTable(collection);
+    $(".copy-check").change(function () {
+        if ($(this).is(":checked")) {
+            let target = $(this).data("target");
+            let source = $(this).data("source");
+            $("#result_" + target).val($("#" + source).text());
+        }
     });
 
-    $("#mergeButton").click(function () {
-        if (!selectedProduct) {
-            alert("Select a product to merge first!");
-            return;
-        }
+    $("#mergeBtn").click(function () {
+        let mergedProduct = {
+            id_match: $("#id_match").text(),
+            name: $("#result_name").val(),
+            ingredients: $("#result_ingredients").val(),
+            calories: $("#result_calories").val()
+        };
 
         $.ajax({
             url: "/api/merge",
-            type: "POST",
+            method: "POST",
             contentType: "application/json",
-            data: JSON.stringify(selectedProduct),
+            data: JSON.stringify(mergedProduct),
             success: function (response) {
-                alert("Product merged successfully!");
-            },
+                alert(response.message);
+                loadProduct();
+            }
         });
     });
 
-    loadTable("fdc_products");  // Charger par défaut
+    loadProduct();
 });

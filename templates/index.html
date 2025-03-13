@@ -3,48 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Food Facts - Merge</title>
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='datatables.min.css') }}">
-
-    <!-- Custom CSS -->
+    <title>Product Merging Tool</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 <body>
+     <h2 class="text-center mb-4">Product Merging Tool</h2>
 
-    <h1>Open Food Facts - Merge Products</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th></th>
+                    <th class="text-center">OFF</th>
+                    <th></th>
+                    <th class="text-center">Result</th>
+                    <th class="text-center">FDC</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td colspan="5" id="id_match" class="fw-bold text-center"></td>
+                </tr>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td id="off_name"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="name" data-source="off_name">
+                    </td>
+                    <td><input type="text" id="result_name" class="form-control"></td>
+                    <td id="fdc_name"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="name" data-source="fdc_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Ingredients</strong></td>
+                    <td id="off_ingredients"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="ingredients" data-source="off_ingredients">
+                    </td>
+                    <td><input type="text" id="result_ingredients" class="form-control"></td>
+                    <td id="fdc_ingredients"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="ingredients" data-source="fdc_ingredients">
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Calories</strong></td>
+                    <td id="off_calories"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="calories" data-source="off_calories">
+                    </td>
+                    <td><input type="text" id="result_calories" class="form-control"></td>
+                    <td id="fdc_calories"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input copy-check" data-target="calories" data-source="fdc_calories">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <label for="collectionSelect">Choose collection:</label>
-    <select id="collectionSelect">
-        <option value="fdc_products">FDC Products</option>
-        <option value="off_products">OFF Products</option>
-    </select>
+    <div class="text-center mt-4">
+        <button id="mergeBtn" class="btn btn-primary px-4">MERGE</button>
+    </div>
 
-
-    <table id="productsTable" class="table table-striped">
-        <thead>
-            <tr>
-                <th>Source</th>
-                <th>ID Match</th>
-                <th>Product Name</th>
-                <th>Brand</th>
-                <th>Category</th>
-                <th>Merge</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <button id="mergeButton">Merge Selected Products</button>
-
-    <!-- JQuery & DataTables -->
-    <script src="{{ url_for('static', filename='datatables.min.js') }}"></script>
-
-    <!-- Custom JS -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
-
-
 </body>
 </html>

@@ -1,66 +1,53 @@
-import dask.dataframe as dd
 import pandas as pd
 from pymongo import MongoClient
-from pymongo.synchronous.database import Database
-
 
 class ProductMatcher:
-    def match_products(self):
-        client = MongoClient("mongodb://localhost:37017/")
-        db = client["openfoodfacts"]
+    def __init__(self):
+        self.client = MongoClient("mongodb://localhost:37017/")
+        self.db = self.client["openfoodfacts"]
+        self.off_collection = self.db["off_products"]
+        self.fdc_collection = self.db["fdc_products"]
+        self.matched_off_collection = self.db["matched_off_products"]
+        self.matched_fdc_collection = self.db["matched_fdc_products"]
 
-        off_collection = db["off_products"]
-        fdc_collection = db["fdc_products"]
+    def find_matching_products(self):
+        """Identifie les produits communs en fonction de id_match et stocke dans des collections séparées."""
+        print("Recherche des produits avec un ID commun...")
 
-        df1, df2 = self.__extract_data(db)
+        # Extraire les id_match
+        df_off = pd.DataFrame(list(self.off_collection.find({}, {"id_match": 1, "_id": 0})))
+        df_fdc = pd.DataFrame(list(self.fdc_collection.find({}, {"id_match": 1, "_id": 0})))
 
-        ddf1 = dd.from_pandas(df1, npartitions=1)
-        ddf2 = dd.from_pandas(df2, npartitions=1)
+        if df_off.empty or df_fdc.empty:
+            print("⚠ Aucune donnée trouvée dans l'une des collections.")
+            return
 
-        ddf1 = ddf1.set_index("id_match")
-        ddf2 = ddf2.set_index("id_match")
+        # Trouver les IDs en commun
+        matched_ids = set(df_off["id_match"]).intersection(set(df_fdc["id_match"]))
 
-        merged = ddf1.join(ddf2, how="inner")
+        if not matched_ids:
+            print("❌ Aucun produit commun trouvé.")
+            return
 
-        matched_ids = merged.compute().index.tolist()
+        print(f"✅ {len(matched_ids)} produits communs trouvés !")
 
-        matched_off_collection = db["matched_off_products"]
-        matched_fdc_collection = db["matched_fdc_products"]
+        # Supprimer les anciennes données
+        self.matched_off_collection.delete_many({})
+        self.matched_fdc_collection.delete_many({})
 
-        matched_off_products = off_collection.find(
-            {"id_match": {"$in": list(matched_ids)}}
-        )
-        matched_off_collection.insert_many(matched_off_products)
+        # Insérer les produits matchés dans les nouvelles collections
+        matched_off_products = list(self.off_collection.find({"id_match": {"$in": list(matched_ids)}}))
+        matched_fdc_products = list(self.fdc_collection.find({"id_match": {"$in": list(matched_ids)}}))
 
-        matched_fdc_products = fdc_collection.find(
-            {"id_match": {"$in": list(matched_ids)}}
-        )
-        matched_fdc_collection.insert_many(matched_fdc_products)
+        if matched_off_products:
+            self.matched_off_collection.insert_many(matched_off_products)
 
-        print(f"{len(matched_ids)} produits matchés entre les deux collections.")
+        if matched_fdc_products:
+            self.matched_fdc_collection.insert_many(matched_fdc_products)
 
-    def __extract_data(self, db: Database):
+        print("✅ Données matchées enregistrées avec succès !")
 
-        collection = db["off_products"]
-        df1 = pd.DataFrame(list(collection.find({}, {"id_match": 1, "_id": 0})))
 
-        # Vérifier les doublons
-        doublons_off = df1[df1.duplicated(subset="id_match", keep=False)]
-
-        if doublons_off.empty:
-            print("Pas de doublons dans off_products.")
-        else:
-            print(f"Il y a {len(doublons_off)} doublons dans off_products.")
-            print(doublons_off)
-
-        collection = db["fdc_products"]
-        df2 = pd.DataFrame(list(collection.find({}, {"id_match": 1, "_id": 0})))
-
-        doublons_fdc = df2[df2.duplicated(subset="id_match", keep=False)]
-
-        if doublons_fdc.empty:
-            print("Pas de doublons dans fdc_products.")
-        else:
-            print(f"Il y a {len(doublons_fdc)} doublons dans fdc_products.")
-            print(doublons_fdc)
-        return df1, df2
+if __name__ == "__main__":
+    matcher = ProductMatcher()
+    matcher.find_matching_products()
