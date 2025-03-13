@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 
 class CategoryCreator:
@@ -28,10 +29,20 @@ class CategoryCreator:
 
         return off_categories
 
-    @staticmethod
-    def __normalize_line(language_code, line):
+    def __normalize_line(self, language_code, line):
         return [
-            language_code + ":" + x.lower().strip().replace(" ", "-")
+            language_code + ":" + self.__normalize_string(x)
             for x in line[3:].split(",")
         ]
-        # TODO normalize by removing accents, replacing ' and ’, and eventually other special characters if necessary
+
+    @staticmethod
+    def __normalize_string(given_string):
+        given_string = given_string.lower().strip().replace(" ", "-")
+        given_string = given_string.replace('\'', '-')
+        given_string = given_string.replace('’', '-')
+        given_string = given_string.replace('.', '-')
+
+        normalized_string = unicodedata.normalize('NFKD', given_string)
+        formatted_string = ''.join([c for c in normalized_string if not unicodedata.combining(c)])
+
+        return formatted_string

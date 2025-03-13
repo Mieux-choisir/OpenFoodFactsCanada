@@ -21,7 +21,7 @@ def categories_content():
     first_tags_for_terms = [
         "en:shortbread-cookie-with-apple",
         "en:gingerbreads",
-        "it:grappa-della-valle-d'aosta",
+        "it:grappa-della-valle-d-aosta",
     ]
 
     following_lines_for_terms = [
@@ -31,11 +31,11 @@ def categories_content():
         "fr: Grappa de la Vallée d'Aoste\n",
     ]
     following_tags_for_terms = [
-        "fr:sablés-aux-pommes",
+        "fr:sables-aux-pommes",
         "en:gingerbread",
         "ca:pa-de-gingebre",
         "de:lebkuchen",
-        "fr:grappa-de-la-vallée-d'aoste",
+        "fr:grappa-de-la-vallee-d-aoste",
     ]
 
     categories_content = (
@@ -83,7 +83,7 @@ def test_should_only_keep_first_appearing_tag_for_each_term_in_paragraphs_as_key
     assert following_tags_for_terms[4] not in result.keys()
 
 
-def test_should_keep_all_tags_for_each_term_as_values_with_corresponding_first_term_in_categories(
+def test_should_keep_all_correctly_formatted_tags_for_each_term_as_values_with_corresponding_first_term_in_categories(
     category_creator, categories_content
 ):
     content_to_read, first_tags_for_terms, following_tags_for_terms = categories_content
