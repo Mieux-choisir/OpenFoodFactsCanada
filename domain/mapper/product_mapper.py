@@ -27,7 +27,6 @@ class ProductMapper:
         """Maps a fdc dictionary to a product object"""
         id_field = "gtinUpc"
         product_name_field = "description"
-        generic_name_field = "description"
         data_source_field = "dataSource"
         modified_date_field = "modifiedDate"
         available_date_field = "availableDate"
@@ -43,7 +42,6 @@ class ProductMapper:
             id_match=product_dict[id_field].lstrip("0"),
             id_original=product_dict[id_field],
             product_name=product_dict[product_name_field].title(),
-            generic_name_en=product_dict[generic_name_field].title(),
             data_source=product_dict[data_source_field],
             modified_date=datetime.strptime(
                 product_dict[modified_date_field], "%m/%d/%Y"
@@ -89,7 +87,6 @@ class ProductMapper:
 
         id_index = header.index("code")
         product_name_index = header.index("product_name")
-        generic_name_index = header.index("generic_name")
         quantity_name_index = header.index("quantity")
         serving_size_index = header.index("serving_quantity")
         modified_date_index = header.index("last_modified_t")
@@ -100,11 +97,6 @@ class ProductMapper:
             product_name=(
                 row[product_name_index].strip()
                 if row[product_name_index] is not None
-                else None
-            ),
-            generic_name_en=(
-                row[generic_name_index].strip()
-                if row[generic_name_index] is not None
                 else None
             ),
             modified_date=datetime.fromtimestamp(
@@ -137,7 +129,6 @@ class ProductMapper:
 
         id_field = "code"
         product_name_field = "product_name"
-        generic_name_field = "generic_name"
         modified_date_field = "last_modified_t"
         brands_field = "brands"
         brand_owner_field = "brand_owner"
@@ -152,11 +143,6 @@ class ProductMapper:
             product_name=(
                 product_dict.get(product_name_field).strip()
                 if product_dict.get(product_name_field) is not None
-                else None
-            ),
-            generic_name_en=(
-                product_dict.get(generic_name_field).strip()
-                if product_dict.get(generic_name_field) is not None
                 else None
             ),
             modified_date=datetime.fromtimestamp(

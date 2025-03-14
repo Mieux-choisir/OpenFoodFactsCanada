@@ -14,7 +14,6 @@ from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 class Product(ComplexField):
     id_match: Optional[str] = None
     id_original: Optional[str] = None
-    generic_name_en: Optional[str] = None
     product_name: Optional[str] = None
     data_source: Optional[str] = None
     modified_date: Optional[datetime.datetime] = None
