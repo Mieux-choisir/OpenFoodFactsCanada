@@ -5,8 +5,8 @@ class FoodGroupsMapper:
         food_groups_index = header.index("food_groups_en")
 
         food_groups = []
-        if row[food_groups_index] is not None:
-            food_groups = row[food_groups_index].split(",")
+        if row[food_groups_index] != "":
+            food_groups = list(filter(None, map(str.strip, row[food_groups_index].lower().split(","))))
         return food_groups
 
     @staticmethod
@@ -15,5 +15,5 @@ class FoodGroupsMapper:
     ) -> list[str]:
         food_groups = []
         if product_dict[food_groups_en_field] is not None:
-            food_groups = product_dict[food_groups_en_field].split(",")
+            food_groups = list(filter(None, map(str.strip, product_dict[food_groups_en_field].lower().split(","))))
         return food_groups
