@@ -1,4 +1,5 @@
 from domain.product.complexFields.nova_data import NovaData
+from domain.utils.converter import Converter
 
 
 class NovaDataMapper:
@@ -8,7 +9,7 @@ class NovaDataMapper:
         score_index = header.index("nova_group")
 
         return NovaData(
-            score=int(row[score_index]) if row[score_index].isdigit() else None,
+            score=(Converter.safe_int(row[score_index]) if row[score_index] else None),
             group_markers={},
         )
 

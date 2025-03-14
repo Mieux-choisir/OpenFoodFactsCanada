@@ -11,7 +11,8 @@ from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 
 
 class Product(ComplexField):
-    id: Optional[str] = None
+    id_match: Optional[str] = None
+    id_original: Optional[str] = None
     generic_name_en: Optional[str] = None
     product_name: Optional[str] = None
     category_en: CategoryEnum = CategoryEnum.OTHER
@@ -21,7 +22,6 @@ class Product(ComplexField):
     food_groups_en: List[str] = []
     ingredients: Optional[Ingredients] = None
     nutrition_facts: Optional[NutritionFacts] = None
-    allergens: List = []
     nutriscore_data: Optional[NutriscoreData] = NutriscoreData()
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()
     nova_data: Optional[NovaData] = NovaData()
