@@ -9,6 +9,10 @@ from domain.utils.converter import Converter
 
 class NutritionFactsMapper:
 
+    def __init__(self):
+        self.energy_kcal_to_kj = Decimal(4.1868)
+        self.sodium_to_salt = Decimal(2.5)
+
     def map_fdc_dict_to_nutrition_facts(
         self, food_nutrients: list[dict]
     ) -> NutritionFacts:
@@ -22,7 +26,7 @@ class NutritionFactsMapper:
 
         sodium_level = self.__get_nutrient_level(food_nutrients, sodium_id)
         sodium_unit = self.__get_nutrient_unit(food_nutrients, sodium_id)
-        salt_level = sodium_level * Decimal("2.5") if sodium_level is not None else None
+        salt_level = sodium_level * self.sodium_to_salt if sodium_level is not None else None
 
         saturated_fats_level = self.__get_nutrient_level(
             food_nutrients, saturated_fats_id
@@ -51,7 +55,7 @@ class NutritionFactsMapper:
             food_nutrients, energy_kcal_100g_id
         )
         energy_100g_value = (
-            energy_kcal_100g_value * Decimal(4.1868)
+            energy_kcal_100g_value * self.energy_kcal_to_kj
             if energy_kcal_100g_value is not None
             else None
         )

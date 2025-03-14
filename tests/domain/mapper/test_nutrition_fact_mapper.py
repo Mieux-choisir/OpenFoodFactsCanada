@@ -6,6 +6,7 @@ import pytest
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 
+CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
 @pytest.fixture
 def nutrition_facts_mapper():
@@ -77,6 +78,6 @@ def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_fo
         if item["nutrient"]["id"] == fdc_ids["energy_kcal"]
     )
     assert result.nutrients.energy_100g == float(
-        expected_energy_kcal_100g * Decimal(4.1868)
+        expected_energy_kcal_100g * CONVERSION_ENERGY_KCAL_TO_KJ
     )
     assert result.nutrients.energy_kcal_100g == expected_energy_kcal_100g
