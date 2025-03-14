@@ -26,7 +26,9 @@ class NutritionFactsMapper:
 
         sodium_level = self.__get_nutrient_level(food_nutrients, sodium_id)
         sodium_unit = self.__get_nutrient_unit(food_nutrients, sodium_id)
-        salt_level = sodium_level * self.sodium_to_salt if sodium_level is not None else None
+        salt_level = (
+            sodium_level * self.sodium_to_salt if sodium_level is not None else None
+        )
 
         saturated_fats_level = self.__get_nutrient_level(
             food_nutrients, saturated_fats_id

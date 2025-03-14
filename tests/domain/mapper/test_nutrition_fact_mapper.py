@@ -8,6 +8,7 @@ from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 
 CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
+
 @pytest.fixture
 def nutrition_facts_mapper():
     nutrition_facts_mapper = NutritionFactsMapper()
