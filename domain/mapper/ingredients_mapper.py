@@ -24,7 +24,9 @@ class IngredientsMapper:
         return Ingredients(
             ingredients_text=row[ingredients_text_index],
             ingredients_list=(
-                row[ingredients_list_index].split(",") if row[ingredients_list_index] else []
+                row[ingredients_list_index].split(",")
+                if row[ingredients_list_index]
+                else []
             ),
         )
 
