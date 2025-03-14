@@ -1,9 +1,10 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
+from domain.utils.converter import Converter
 
 
 @pytest.fixture
@@ -214,23 +215,27 @@ def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_
     nutriscore_data_mapper, off_valid_rows
 ):
     row, header = off_valid_rows
+    return_float_converter_value = 10.3
 
-    result = nutriscore_data_mapper.map_off_row_to_nutriscore_data(row, header)
+    with patch.object(
+        Converter, "safe_float", return_value=return_float_converter_value
+    ):
+        result = nutriscore_data_mapper.map_off_row_to_nutriscore_data(row, header)
 
-    assert result.energy == float(
-        row[header.index("energy_100g")]
+    assert (
+        result.energy == return_float_converter_value
     ), f"Expected energy value to be {row[header.index("energy_100g")]}, got {result.energy}"
     assert result.fibers == float(
         row[header.index("fiber_100g")]
     ), f"Expected energy value to be {row[header.index("fiber_100g")]}, got {result.fibers}"
-    assert result.fruit_percentage == float(
-        row[header.index("fruits-vegetables-nuts_100g")]
+    assert (
+        result.fruit_percentage == return_float_converter_value
     ), f"Expected energy value to be {row[header.index("fruits-vegetables-nuts_100g")]}, got {result.fruit_percentage}"
     assert result.proteins == float(
         row[header.index("proteins_100g")]
     ), f"Expected energy value to be {row[header.index("proteins_100g")]}, got {result.proteins}"
-    assert result.saturated_fats == float(
-        row[header.index("saturated-fat_100g")]
+    assert (
+        result.saturated_fats == return_float_converter_value
     ), f"Expected energy value to be {row[header.index("saturated-fat_100g")]}, got {result.saturated_fats}"
     assert result.sodium == float(
         row[header.index("sodium_100g")]
@@ -310,17 +315,21 @@ def test_should_return_empty_score_for_absent_score_in_nutriscore_data_for_given
 def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_off_dict(
     nutriscore_data_mapper, off_valid_dict
 ):
-    result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
+    return_float_converter_value = 10.3
+
+    with patch.object(
+        Converter, "safe_float", return_value=return_float_converter_value
+    ):
+        result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
 
     assert (
         result.energy == off_valid_dict["nutriments"]["energy_100g"]
     ), f"Expected energy value to be {off_valid_dict["nutriments"]["energy_100g"]}, got {result.energy}"
     assert (
-        result.fibers == off_valid_dict["nutriments"]["fiber_100g"]
+        result.fibers == return_float_converter_value
     ), f"Expected energy value to be {off_valid_dict["nutriments"]["fiber_100g"]}, got {result.fibers}"
     assert (
-        result.fruit_percentage
-        == off_valid_dict["nutriments"]["fruits-vegetables-nuts_100g"]
+        result.fruit_percentage == return_float_converter_value
     ), f"Expected energy value to be {off_valid_dict["nutriments"]["fruits-vegetables-nuts_100g"]}, got {result.fruit_percentage}"
     assert (
         result.proteins == off_valid_dict["nutriments"]["proteins_100g"]

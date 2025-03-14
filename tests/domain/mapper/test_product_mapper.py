@@ -2,7 +2,6 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from domain.mapper.allergens_mapper import AllergensMapper
 from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
@@ -38,7 +37,7 @@ def product_mapper(ingredients_mapper, nutriscore_data_mapper):
 @pytest.fixture
 def fdc_dict():
     fdc_dict = {
-        "gtinUpc": " 0445236",
+        "gtinUpc": " 00445236",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -118,7 +117,6 @@ def off_rows():
         "generic_name",
         "brands",
         "food_groups_en",
-        "allergens_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
@@ -126,12 +124,11 @@ def off_rows():
     ]
     row = [
         "Canada, United Kingdom ",
-        " 455612222",
+        " 00455612222",
         " GRANOLA, CINNAMON BAR",
         "granola and cinnamon bar ",
         " Michele's, Cliff",
         " cereals, snacks , ",
-        " allergen 1, , allergen 2",
         "2",
         "cereals again",
         "en:cereals",
@@ -150,7 +147,6 @@ def off_emtpy_strings_rows():
         "generic_name",
         "brands",
         "food_groups_en",
-        "allergens_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
@@ -163,7 +159,6 @@ def off_emtpy_strings_rows():
         " ",
         " Michele's, Cliff",
         " cereals, snacks , ",
-        " allergen 1, , allergen 2",
         "2",
         "cereals again",
         "en:cereals",
@@ -182,7 +177,6 @@ def off_rows_without_canada():
         "generic_name",
         "brands",
         "food_groups_en",
-        "allergens_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
@@ -195,7 +189,6 @@ def off_rows_without_canada():
         "granola and cinnamon bar ",
         " Michele's, Cliff",
         " cereals, snacks , ",
-        " allergen 1, , allergen 2",
         "2",
         "cereals again",
         "en:cereals",
@@ -209,13 +202,12 @@ def off_rows_without_canada():
 def off_dict():
     off_dict = {
         "countries": ["Canada", "United Kingdom "],
-        "code": " 455612222",
+        "code": " 00455612222",
         "product_name": " GRANOLA, CINNAMON BAR",
         "generic_name": "granola and cinnamon bar ",
         "brands": " Michele's, CLIFF",
         "brand_owner": " MICHELE'S",
         "food_groups": " cereals, snacks , ",
-        "allergens": " allergen 1, , allergen 2",
         "nova_group": "2",
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
@@ -235,7 +227,6 @@ def off_empty_strings_dict():
         "brands": " Michele's, CLIFF",
         "brand_owner": " MICHELE'S",
         "food_groups": " cereals, snacks , ",
-        "allergens": " allergen 1, , allergen 2",
         "nova_group": "2",
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
@@ -254,7 +245,6 @@ def off_dict_without_canada():
         "generic_name": "granola and cinnamon bar ",
         "brands": " Michele's, Cliff",
         "food_groups": " cereals, snacks , ",
-        "allergens": " allergen 1, , allergen 2",
         "nova_group": "2",
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
@@ -299,7 +289,6 @@ def mock_off_row_functions(product_mapper):
     brands = ["brand 1", "brand 2", "brand 3"]
     brand_owner = "brand owner name"
     food_groups = ["food group1", "food group 2"]
-    allergens = ["allergen1", "allergen 2"]
 
     product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = (
         ingredients
@@ -323,31 +312,25 @@ def mock_off_row_functions(product_mapper):
                     return_value=nutrition_facts,
                 ):
                     with patch.object(
-                        AllergensMapper,
-                        "map_off_row_to_allergens",
-                        return_value=allergens,
+                        EcoscoreDataMapper,
+                        "map_off_row_to_ecoscore_data",
+                        return_value=ecoscore_data,
                     ):
                         with patch.object(
-                            EcoscoreDataMapper,
-                            "map_off_row_to_ecoscore_data",
-                            return_value=ecoscore_data,
+                            NovaDataMapper,
+                            "map_off_row_to_nova_data",
+                            return_value=nova_data,
                         ):
-                            with patch.object(
-                                NovaDataMapper,
-                                "map_off_row_to_nova_data",
-                                return_value=nova_data,
-                            ):
-                                yield {
-                                    "ingredients": ingredients,
-                                    "nutriscore_data": nutriscore_data,
-                                    "nutrition_facts": nutrition_facts,
-                                    "ecoscore_data": ecoscore_data,
-                                    "brand_owner": brand_owner,
-                                    "brands": brands,
-                                    "allergens": allergens,
-                                    "food_groups": food_groups,
-                                    "nova_data": nova_data,
-                                }
+                            yield {
+                                "ingredients": ingredients,
+                                "nutriscore_data": nutriscore_data,
+                                "nutrition_facts": nutrition_facts,
+                                "ecoscore_data": ecoscore_data,
+                                "brand_owner": brand_owner,
+                                "brands": brands,
+                                "food_groups": food_groups,
+                                "nova_data": nova_data,
+                            }
 
 
 @pytest.fixture
@@ -360,7 +343,6 @@ def mock_off_dict_functions(product_mapper):
     brands = ["brand 1", "brand 2", "brand 3"]
     brand_owner = "brand owner name"
     food_groups = ["food group1", "food group 2"]
-    allergens = ["allergen1", "allergen 2"]
 
     product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = (
         ingredients
@@ -384,31 +366,25 @@ def mock_off_dict_functions(product_mapper):
                     return_value=nutrition_facts,
                 ):
                     with patch.object(
-                        AllergensMapper,
-                        "map_off_dict_to_allergens",
-                        return_value=allergens,
+                        EcoscoreDataMapper,
+                        "map_off_dict_to_ecoscore_data",
+                        return_value=ecoscore_data,
                     ):
                         with patch.object(
-                            EcoscoreDataMapper,
-                            "map_off_dict_to_ecoscore_data",
-                            return_value=ecoscore_data,
+                            NovaDataMapper,
+                            "map_off_dict_to_nova_data",
+                            return_value=nova_data,
                         ):
-                            with patch.object(
-                                NovaDataMapper,
-                                "map_off_dict_to_nova_data",
-                                return_value=nova_data,
-                            ):
-                                yield {
-                                    "ingredients": ingredients,
-                                    "nutriscore_data": nutriscore_data,
-                                    "ecoscore_data": ecoscore_data,
-                                    "nova_data": nova_data,
-                                    "nutrition_facts": nutrition_facts,
-                                    "brand_owner": brand_owner,
-                                    "brands": brands,
-                                    "food_groups": food_groups,
-                                    "allergens": allergens,
-                                }
+                            yield {
+                                "ingredients": ingredients,
+                                "nutriscore_data": nutriscore_data,
+                                "ecoscore_data": ecoscore_data,
+                                "nova_data": nova_data,
+                                "nutrition_facts": nutrition_facts,
+                                "brand_owner": brand_owner,
+                                "brands": brands,
+                                "food_groups": food_groups,
+                            }
 
 
 # ----------------------------------------------------------------
@@ -432,14 +408,24 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
     ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip().title()}, got {result.brand_name}"
 
 
-def test_should_return_given_id_in_product_for_given_fdc_dict(
+def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
-        result.id == fdc_dict["gtinUpc"].strip()
-    ), f"Expected id field to be {fdc_dict["gtinUpc"].strip()}, got {result.id}"
+        result.id_original == fdc_dict["gtinUpc"].strip()
+    ), f"Expected original id field to be {fdc_dict["gtinUpc"].strip()}, got {result.id_original}"
+
+
+def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+
+    assert result.id_match == fdc_dict["gtinUpc"].strip().lstrip(
+        "0"
+    ), f"Expected match id field to be {fdc_dict["gtinUpc"].strip().lstrip("0")}, got {result.id_match}"
 
 
 def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_dict(
@@ -501,16 +487,6 @@ def test_should_return_correctly_split_list_for_food_groups_en_in_product_for_gi
     assert (
         result.food_groups_en == expected_result
     ), f"Expected food groups en field to be {expected_result}, got {result.food_groups_en}"
-
-
-def test_should_return_empty_list_for_allergens_in_product_for_given_fdc_dict(
-    product_mapper, fdc_dict, mock_fdc_functions
-):
-    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
-
-    assert (
-        result.allergens == []
-    ), f"Expected allergens field to be {[]}, got {result.allergens}"
 
 
 def test_should_return_empty_is_raw_field_when_not_enough_information_in_product_for_given_fdc_dict(
@@ -620,7 +596,7 @@ def test_should_return_mapped_brand_owner_name_in_product_for_given_off_row(
     ), f"Expected brand name field to be {mock_off_row_functions["brand_owner"]}, got {result.brand_owner}"
 
 
-def test_should_return_given_id_in_product_for_given_off_row(
+def test_should_return_given_id_for_id_original_in_product_for_given_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
@@ -628,8 +604,20 @@ def test_should_return_given_id_in_product_for_given_off_row(
     result = product_mapper.map_off_row_to_product(row, header)
 
     assert (
-        result.id == row[header.index("code")].strip()
-    ), f"Expected id field to be {row[header.index("code")].strip()}, got {result.id}"
+        result.id_original == row[header.index("code")].strip()
+    ), f"Expected original id field to be {row[header.index("code")].strip()}, got {result.id_original}"
+
+
+def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_off_row(
+    product_mapper, off_rows, mock_off_row_functions
+):
+    row, header = off_rows
+
+    result = product_mapper.map_off_row_to_product(row, header)
+
+    assert result.id_match == row[header.index("code")].strip().lstrip(
+        "0"
+    ), f"Expected match id field to be {row[header.index("code")].strip()}, got {result.id_match}"
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_row(
@@ -765,18 +753,6 @@ def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
     ), f"Expected nutrition facts field to be {mock_off_row_functions["nutrition_facts"]}, got {result.nutrition_facts}"
 
 
-def test_should_return_mapped_allergens_in_product_for_given_off_row(
-    product_mapper, off_rows, mock_off_row_functions
-):
-    row, header = off_rows
-
-    result = product_mapper.map_off_row_to_product(row, header)
-
-    assert (
-        result.allergens == mock_off_row_functions["allergens"]
-    ), f"Expected allergens field to be {mock_off_row_functions["allergens"]}, got {result.allergens}"
-
-
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
@@ -862,14 +838,24 @@ def test_should_return_mapped_brand_owner_name_in_product_for_given_off_dict(
     ), f"Expected brand owner field to be {mock_off_dict_functions["brand_owner"]}, got {result.brand_name}"
 
 
-def test_should_return_given_id_in_product_for_given_off_dict(
+def test_should_return_given_id_for_id_original_in_product_for_given_off_dict(
     product_mapper, off_dict, mock_off_dict_functions
 ):
     result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert (
-        result.id == off_dict["code"].strip()
-    ), f"Expected id field to be {off_dict["code"].strip()}, got {result.id}"
+        result.id_original == off_dict["code"].strip()
+    ), f"Expected original id field to be {off_dict["code"].strip()}, got {result.id_match}"
+
+
+def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_off_dict(
+    product_mapper, off_dict, mock_off_dict_functions
+):
+    result = product_mapper.map_off_dict_to_product(off_dict)
+
+    assert result.id_match == off_dict["code"].strip().lstrip(
+        "0"
+    ), f"Expected match id field to be {off_dict["code"].strip().lstrip("0")}, got {result.id_match}"
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_dict(
@@ -969,16 +955,6 @@ def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(
     assert (
         result.nutrition_facts == mock_off_dict_functions["nutrition_facts"]
     ), f"Expected nutrition facts field to be {mock_off_dict_functions["nutrition_facts"]}, got {result.nutrition_facts}"
-
-
-def test_should_return_correctly_split_allergens_in_product_for_given_off_dict(
-    product_mapper, off_dict, mock_off_dict_functions
-):
-    result = product_mapper.map_off_dict_to_product(off_dict)
-
-    assert (
-        result.allergens == mock_off_dict_functions["allergens"]
-    ), f"Expected allergens field to be {mock_off_dict_functions["allergens"]}, got {result.allergens}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_dict(
