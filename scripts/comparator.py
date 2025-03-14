@@ -11,9 +11,9 @@ def extract_data():
     client = MongoClient("mongodb://localhost:27017/")
     db = client["openfoodfacts"]
     collection = db["off_products"]
-    df1 = pd.DataFrame(list(collection.find({"id": "0888849011308"})))
+    df1 = pd.DataFrame(list(collection.find({"id_match": "99999967647"})))
     collection = db["fdc_products"]
-    df2 = pd.DataFrame(list(collection.find({"id": "0888849011308"})))
+    df2 = pd.DataFrame(list(collection.find({"id_match": "99999967647"})))
 
     return df1, df2
 
@@ -77,8 +77,8 @@ def main():
     ddf1 = dd.from_pandas(df1, npartitions=1)
     ddf2 = dd.from_pandas(df2, npartitions=1)
 
-    ddf1 = ddf1.set_index("id")
-    ddf2 = ddf2.set_index("id")
+    ddf1 = ddf1.set_index("id_match")
+    ddf2 = ddf2.set_index("id_match")
 
     merged = ddf1.join(ddf2, lsuffix="_src1", rsuffix="_src2", how="outer")
 

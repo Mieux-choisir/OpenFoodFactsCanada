@@ -107,7 +107,9 @@ class ProductMapper:
                 if row[generic_name_index] is not None
                 else None
             ),
-            modified_date=datetime.fromtimestamp(Converter.safe_int(row[modified_date_index]), tz=timezone.utc),
+            modified_date=datetime.fromtimestamp(
+                Converter.safe_int(row[modified_date_index]), tz=timezone.utc
+            ),
             quantity=row[quantity_name_index],
             is_raw=self.off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
@@ -157,7 +159,9 @@ class ProductMapper:
                 if product_dict.get(generic_name_field) is not None
                 else None
             ),
-            modified_date=datetime.fromtimestamp(product_dict.get(modified_date_field), tz=timezone.utc),
+            modified_date=datetime.fromtimestamp(
+                product_dict.get(modified_date_field), tz=timezone.utc
+            ),
             quantity=product_dict.get(quantity_name_field),
             is_raw=self.off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
