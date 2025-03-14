@@ -28,8 +28,6 @@ class ProductMatcher:
         matched_off_collection = db["matched_off_products"]
         matched_fdc_collection = db["matched_fdc_products"]
 
-        final_collection = db["final_collection"]
-
         if matched_off_collection.count_documents({}) > 0:
             logging.info("Matched OFF products already exist. Skipping insert.")
         else:
@@ -48,13 +46,6 @@ class ProductMatcher:
             matched_fdc_collection.insert_many(matched_fdc_products)
 
         logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
-
-        matched_off_products = matched_off_collection.find(
-            {"id_match": {"$in": matched_ids}}
-        )
-        matched_fdc_products = matched_fdc_collection.find(
-            {"id_match": {"$in": matched_ids}}
-        )
 
     def __extract_data(self, db: Database):
 
