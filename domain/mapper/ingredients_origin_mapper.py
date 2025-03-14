@@ -19,7 +19,7 @@ class IngredientsOriginMapper:
         origin_field = "origins"
 
         return IngredientsOrigin(
-            origin=product_dict[origin_field],
+            origin=product_dict.get(origin_field),
             percent=None,
             transportation_score=None,
         )

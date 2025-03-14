@@ -8,8 +8,8 @@ class ProductionSystemMapper:
 
         return ProductionSystem(
             labels=(
-                product_dict[labels_field]
-                if product_dict[labels_field] is not None
+                product_dict.get(labels_field)
+                if product_dict.get(labels_field) is not None
                 else []
             ),
             value=None,

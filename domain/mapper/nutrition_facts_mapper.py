@@ -1,8 +1,6 @@
 from decimal import Decimal
 
 from domain.product.complexFields.nutrient_facts import NutritionFacts
-from domain.product.complexFields.nutrient_level import NutrientLevel
-from domain.product.complexFields.nutrients import Nutrients
 from domain.utils.converter import Converter
 
 
@@ -10,156 +8,223 @@ class NutritionFactsMapper:
 
     @staticmethod
     def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFacts:
-        fat_id = 1004
-        sodium_id = 1093
-        saturated_fats_id = 1258
-        sugar_field = 2000
+        nutrient_ids = {
+            "fat_100g": 1004,
+            "sodium_100g": 1093,
+            "saturated_fats_100g": 1258,
+            "sugar_100g": 2000,
+            "carbohydrates_100g": 1005,
+            "energy_kcal_100g": 1008,
+            "vitamin_a_100g": 1104,
+            "proteins_100g": 1003,
+            "fiber_100g": 1079,
+            "monounsaturated_fat_100g": 1292,
+            "polyunsaturated_fat_100g": 1293,
+            "trans_fat_100g": 1257,
+            "cholesterol_100g": 1253,
+            "calcium_100g": 1087,
+            "iron_100g": 1089,
+            "potassium_100g": 1092,
+            "vitamin_b1_100g": 1165,
+            "vitamin_b2_100g": 1166,
+            "vitamin_b6_100g": 1175,
+            "vitamin_b9_100g": 1186,
+            "vitamin_b12_100g": 1178,
+            "vitamin_c_100g": 1162,
+            "vitamin_pp_100g": 1167,
+            "phosphorus_100g": 1091,
+            "magnesium_100g": 1090,
+            "zinc_100g": 1095,
+            "folates_100g": 1177,
+            "pantothenic_acid_100g": 1170,
+            "soluble_fiber_100g": 1082,
+            "insoluble_fiber_100g": 1084,
+            "copper_100g": 1098,
+            "manganese_100g": 1101,
+            "polyols_100g": 1086,
+            "selenium_100g": 1103,
+            "phylloguinone_100g": 1185,
+            "iodine_100g": 1100,
+            "biotin_100g": 1176,
+            "caffeine_100g": 1057,
+            "molybdenum_100g": 1102,
+            "chromium_100g": 1096,
+        }
 
-        fat_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == fat_id
-            ),
-            None,
-        )
-        sodium_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == sodium_id
-            ),
-            None,
-        )
-        salt_level = sodium_level * Decimal("2.5") if sodium_level is not None else None
-        saturated_fats_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == saturated_fats_id
-            ),
-            None,
-        )
-        sugar_level = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == sugar_field
-            ),
-            None,
-        )
-        nutrient_level = NutrientLevel(
-            fat=fat_level,
-            salt=salt_level,
-            saturated_fats=saturated_fats_level,
-            sugar=sugar_level,
-        )
-
-        carbohydrates_100g_field = 1005
-        energy_kcal_100g_field = 1008
-        vitamin_a_100g_field = 1104
-
-        energy_kcal_100g_value = next(
-            (
-                item["amount"]
-                for item in food_nutrients
-                if item["nutrient"]["id"] == energy_kcal_100g_field
-            ),
-            None,
-        )
-        energy_100g_value = (
-            energy_kcal_100g_value * Decimal(4.1868)
-            if energy_kcal_100g_value is not None
-            else None
-        )
-
-        nutrients = Nutrients(
-            carbohydrates_100g=next(
+        nutrition_facts_data = {}
+        for field, nutrient_id in nutrient_ids.items():
+            value = next(
                 (
                     item["amount"]
                     for item in food_nutrients
-                    if item["nutrient"]["id"] == carbohydrates_100g_field
+                    if item["nutrient"]["id"] == nutrient_id
                 ),
                 None,
-            ),
-            energy_100g=energy_100g_value,
-            energy_kcal_100g=energy_kcal_100g_value,
-            vitamin_a_100g=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == vitamin_a_100g_field
-                ),
-                None,
-            ),
-        )
+            )
+            if field == "sodium_100g" and value is not None:
+                nutrition_facts_data["salt_100g"] = value * Decimal("2.5")
+            if field == "energy_kcal_100g" and value is not None:
+                nutrition_facts_data["energy_100g"] = value * Decimal(4.1868)
+            nutrition_facts_data[field] = value
 
-        return NutritionFacts(
-            nutrient_level=nutrient_level,
-            nutrients=nutrients,
-        )
+        return NutritionFacts(**nutrition_facts_data)
 
     @staticmethod
     def map_off_row_to_nutrition_facts(
         row: list[str], header: list[str]
     ) -> NutritionFacts:
-        fat_index = header.index("fat_100g")
-        salt_index = header.index("salt_100g")
-        saturated_fats_index = header.index("saturated-fat_100g")
-        sugar_index = header.index("sugars_100g")
+        field_mapping = {
+            "saturated-fat_100g": "saturated_fats_100g",
+            "sugars_100g": "sugar_100g",
+            "trans-fat_100g": "trans_fats_100g",
+            "fiber_100g": "fibers_100g",
+            "monounsaturated-fat_100g": "monounsaturated_fats_100g",
+            "polyunsaturated-fat_100g": "polyunsaturated_fats_100g",
+            "energy-kcal_100g": "energy_kcal_100g",
+            "vitamin-a_100g": "vitamin_a_100g",
+            "vitamin-b1_100g": "vitamin_b1_100g",
+            "vitamin-b2_100g": "vitamin_b2_100g",
+            "vitamin-b6_100g": "vitamin_b6_100g",
+            "vitamin-b9_100g": "vitamin_b9_100g",
+            "vitamin-b12_100g": "vitamin_b12_100g",
+            "vitamin-c_100g": "vitamin_c_100g",
+            "vitamin-pp_100g": "vitamin_pp_100g",
+            "pantothenic-acid_100g": "pantothenic_acid_100g",
+            "soluble-fiber_100g": "soluble_fiber_100g",
+            "insoluble-fiber_100g": "insoluble_fiber_100g",
+        }
 
-        nutrient_level = NutrientLevel(
-            fat=Converter.safe_float(row[fat_index]),
-            salt=row[salt_index],
-            saturated_fats=Converter.safe_float(row[saturated_fats_index]),
-            sugar=row[sugar_index],
-        )
+        fields = [
+            "fat_100g",
+            "salt_100g",
+            "saturated-fat_100g",
+            "sugars_100g",
+            "carbohydrates_100g",
+            "energy_100g",
+            "energy-kcal_100g",
+            "vitamin-a_100g",
+            "proteins_100g",
+            "fiber_100g",
+            "sodium_100g",
+            "monounsaturated-fat_100g",
+            "polyunsaturated-fat_100g",
+            "trans-fat_100g",
+            "cholesterol_100g",
+            "calcium_100g",
+            "iron_100g",
+            "potassium_100g",
+            "vitamin-b1_100g",
+            "vitamin-b2_100g",
+            "vitamin-b6_100g",
+            "vitamin-b9_100g",
+            "vitamin-b12_100g",
+            "vitamin-c_100g",
+            "vitamin-pp_100g",
+            "phosphorus_100g",
+            "magnesium_100g",
+            "zinc_100g",
+            "folates_100g",
+            "pantothenic-acid_100g",
+            "soluble-fiber_100g",
+            "insoluble-fiber_100g",
+            "copper_100g",
+            "manganese_100g",
+            "polyols_100g",
+            "selenium_100g",
+            "phylloguinone_100g",
+            "iodine_100g",
+            "biotin_100g",
+            "caffeine_100g",
+            "molybdenum_100g",
+            "chromium_100g",
+        ]
 
-        carbohydrates_100g_index = header.index("carbohydrates_100g")
-        energy_100g_index = header.index("energy_100g")
-        energy_kcal_100g_index = header.index("energy-kcal_100g")
-        vitamin_a_100g_index = header.index("vitamin-a_100g")
+        nutrition_facts_data = {
+            field_mapping.get(field, field): (
+                Converter.safe_float(row[header.index(field)])
+                if field in header
+                else None
+            )
+            for field in fields
+        }
 
-        nutrients = Nutrients(
-            carbohydrates_100g=row[carbohydrates_100g_index],
-            energy_100g=Converter.safe_float(row[energy_100g_index]),
-            energy_kcal_100g=Converter.safe_float(row[energy_kcal_100g_index]),
-            vitamin_a_100g=row[vitamin_a_100g_index],
-        )
-
-        return NutritionFacts(
-            nutrient_level=nutrient_level,
-            nutrients=nutrients,
-        )
+        return NutritionFacts(**nutrition_facts_data)
 
     @staticmethod
     def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
-        nutriments_field = "nutriments"
-        fat_field = "fat_100g"
-        salt_field = "salt_100g"
-        saturated_fats_field = "saturated-fat_100g"
-        sugar_field = "sugars_100g"
+        nutriments = product_dict.get("nutriments", {})
 
-        nutrient_level = NutrientLevel(
-            fat=product_dict[nutriments_field][fat_field],
-            salt=product_dict[nutriments_field][salt_field],
-            saturated_fats=product_dict[nutriments_field][saturated_fats_field],
-            sugar=product_dict[nutriments_field][sugar_field],
-        )
+        field_mapping = {
+            "saturated-fat_100g": "saturated_fats_100g",
+            "sugars_100g": "sugar_100g",
+            "trans-fat_100g": "trans_fats_100g",
+            "fiber_100g": "fibers_100g",
+            "monounsaturated-fat_100g": "monounsaturated_fats_100g",
+            "polyunsaturated-fat_100g": "polyunsaturated_fats_100g",
+            "energy-kcal_100g": "energy_kcal_100g",
+            "vitamin-a_100g": "vitamin_a_100g",
+            "vitamin-b1_100g": "vitamin_b1_100g",
+            "vitamin-b2_100g": "vitamin_b2_100g",
+            "vitamin-b6_100g": "vitamin_b6_100g",
+            "vitamin-b9_100g": "vitamin_b9_100g",
+            "vitamin-b12_100g": "vitamin_b12_100g",
+            "vitamin-c_100g": "vitamin_c_100g",
+            "vitamin-pp_100g": "vitamin_pp_100g",
+            "pantothenic-acid_100g": "pantothenic_acid_100g",
+            "soluble-fiber_100g": "soluble_fiber_100g",
+            "insoluble-fiber_100g": "insoluble_fiber_100g",
+        }
 
-        carbohydrates_100g_field = "carbohydrates_100g"
-        energy_100g_field = "energy_100g"
-        energy_kcal_100g_field = "energy-kcal_100g"
-        vitamin_a_100g_field = "vitamin-a_100g"
+        fields = [
+            "fat_100g",
+            "salt_100g",
+            "saturated-fat_100g",
+            "sugars_100g",
+            "carbohydrates_100g",
+            "energy_100g",
+            "energy-kcal_100g",
+            "vitamin-a_100g",
+            "proteins_100g",
+            "fiber_100g",
+            "sodium_100g",
+            "monounsaturated-fat_100g",
+            "polyunsaturated-fat_100g",
+            "trans-fat_100g",
+            "cholesterol_100g",
+            "calcium_100g",
+            "iron_100g",
+            "potassium_100g",
+            "vitamin-b1_100g",
+            "vitamin-b2_100g",
+            "vitamin-b6_100g",
+            "vitamin-b9_100g",
+            "vitamin-b12_100g",
+            "vitamin-c_100g",
+            "vitamin-pp_100g",
+            "phosphorus_100g",
+            "magnesium_100g",
+            "zinc_100g",
+            "folates_100g",
+            "pantothenic-acid_100g",
+            "soluble-fiber_100g",
+            "insoluble-fiber_100g",
+            "copper_100g",
+            "manganese_100g",
+            "polyols_100g",
+            "selenium_100g",
+            "phylloguinone_100g",
+            "iodine_100g",
+            "biotin_100g",
+            "caffeine_100g",
+            "molybdenum_100g",
+            "chromium_100g",
+        ]
 
-        nutrients = Nutrients(
-            carbohydrates_100g=product_dict[nutriments_field][carbohydrates_100g_field],
-            energy_100g=product_dict[nutriments_field][energy_100g_field],
-            energy_kcal_100g=product_dict[nutriments_field][energy_kcal_100g_field],
-            vitamin_a_100g=product_dict[nutriments_field][vitamin_a_100g_field],
-        )
+        nutrition_facts_data = {
+            field_mapping.get(field, field): (
+                float(nutriments[field]) if field in nutriments else None
+            )
+            for field in fields
+        }
 
-        return NutritionFacts(
-            nutrient_level=nutrient_level,
-            nutrients=nutrients,
-        )
+        return NutritionFacts(**nutrition_facts_data)

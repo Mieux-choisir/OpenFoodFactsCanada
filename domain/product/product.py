@@ -1,4 +1,5 @@
 # pylint: disable=missing-module-docstring, missing-function-docstring, missing-class-docstring
+import datetime
 from typing import Optional, List
 
 from domain.product.category_enum import CategoryEnum
@@ -15,12 +16,19 @@ class Product(ComplexField):
     id_original: Optional[str] = None
     generic_name_en: Optional[str] = None
     product_name: Optional[str] = None
+    data_source: Optional[str] = None
+    modified_date: Optional[datetime.datetime] = None
+    available_date: Optional[datetime.datetime] = None
+    publication_date: Optional[datetime.datetime] = None
+    quantity: Optional[str] = None
     category_en: CategoryEnum = CategoryEnum.OTHER
     is_raw: Optional[bool] = None
     brands: List[str] = []
     brand_owner: Optional[str] = None
     food_groups_en: List[str] = []
     ingredients: Optional[Ingredients] = None
+    serving_size: Optional[float] = None
+    serving_size_unit: Optional[str] = None
     nutrition_facts: Optional[NutritionFacts] = None
     nutriscore_data: Optional[NutriscoreData] = NutriscoreData()
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()

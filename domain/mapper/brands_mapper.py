@@ -24,8 +24,8 @@ class BrandsMapper:
     @staticmethod
     def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> list[str]:
         brands_value = []
-        if product_dict[brands_field] is not None:
-            brands_value = product_dict[brands_field].title().split(",")
+        if product_dict.get(brands_field) is not None:
+            brands_value = product_dict.get(brands_field).title().split(",")
         return brands_value
 
     @staticmethod
@@ -33,8 +33,8 @@ class BrandsMapper:
         product_dict: dict, brand_owner_field: str, brands_field: str
     ) -> str | None:
         brand_owner_value = None
-        if product_dict[brand_owner_field] is not None:
-            brand_owner_value = product_dict[brand_owner_field].title()
-        elif product_dict[brands_field] is not None:
-            brand_owner_value = product_dict[brands_field].title()
+        if product_dict.get(brand_owner_field) is not None:
+            brand_owner_value = product_dict.get(brand_owner_field).title()
+        elif product_dict.get(brands_field) is not None:
+            brand_owner_value = product_dict.get(brands_field).title()
         return brand_owner_value

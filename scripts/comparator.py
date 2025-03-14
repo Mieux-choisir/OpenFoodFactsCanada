@@ -66,6 +66,12 @@ def store_mismatched_products(mismatches):
 
 
 def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+
     df1, df2 = extract_data()
 
     ddf1 = dd.from_pandas(df1, npartitions=1)

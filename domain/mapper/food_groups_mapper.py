@@ -14,6 +14,6 @@ class FoodGroupsMapper:
         product_dict: dict, food_groups_en_field: str
     ) -> list[str]:
         food_groups = []
-        if product_dict[food_groups_en_field] is not None:
-            food_groups = product_dict[food_groups_en_field].split(",")
+        if product_dict.get(food_groups_en_field) is not None:
+            food_groups = product_dict.get(food_groups_en_field).split(",")
         return food_groups
