@@ -28,7 +28,7 @@ class StringComparator:
     @staticmethod
     def is_lists_have_same_elements(self, first_list: List[str], second_list: List[str]) -> bool:
         for i in range(len(first_list)):
-            if not self.is_identical_case_white_space(first_list[i], second_list[i]):
+            if not self.compare_string(first_list[i], second_list[i]):
                 return False
         return True
 
