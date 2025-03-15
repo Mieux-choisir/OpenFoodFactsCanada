@@ -19,7 +19,7 @@ class NovaDataMapper:
 
         return NovaData(
             score=(
-                int(product_dict.get(score_field))
+                Converter.safe_int(product_dict.get(score_field))
                 if product_dict.get(score_field)
                 else None
             ),
