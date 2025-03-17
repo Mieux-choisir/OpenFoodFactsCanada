@@ -1,4 +1,6 @@
 import re
+
+import ijson
 import unicodedata
 
 
@@ -29,6 +31,18 @@ class CategoryCreator:
 
         return off_categories
 
+    @staticmethod
+    def create_fdc_to_off_mapping(file_path: str) -> dict:
+        print("MAPPER")
+        mapping = {}
+
+        with open(file_path, "r", encoding="utf-8") as file:
+            i = 1
+            for obj in ijson.items(file, "categories.item"):
+                mapping[obj.get("fdc")] = obj.get("off")
+        print(mapping)
+        return mapping
+
     def __normalize_line(self, language_code, line):
         return [
             language_code + ":" + self.__normalize_string(x)
@@ -38,11 +52,13 @@ class CategoryCreator:
     @staticmethod
     def __normalize_string(given_string):
         given_string = given_string.lower().strip().replace(" ", "-")
-        given_string = given_string.replace('\'', '-')
-        given_string = given_string.replace('’', '-')
-        given_string = given_string.replace('.', '-')
+        given_string = given_string.replace("'", "-")
+        given_string = given_string.replace("’", "-")
+        given_string = given_string.replace(".", "-")
 
-        normalized_string = unicodedata.normalize('NFKD', given_string)
-        formatted_string = ''.join([c for c in normalized_string if not unicodedata.combining(c)])
+        normalized_string = unicodedata.normalize("NFKD", given_string)
+        formatted_string = "".join(
+            [c for c in normalized_string if not unicodedata.combining(c)]
+        )
 
         return formatted_string

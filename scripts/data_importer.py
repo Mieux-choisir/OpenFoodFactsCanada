@@ -23,6 +23,7 @@ class DataImporter:
                 ):  # there are also products from New Zealand
                     prod = self.product_mapper.map_fdc_dict_to_product(obj)
                     products.append(prod)
+                    print(prod.categories_en)
         logging.info("FDC data imported")
         return products
 
