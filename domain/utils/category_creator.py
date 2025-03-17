@@ -33,14 +33,21 @@ class CategoryCreator:
 
     @staticmethod
     def create_fdc_to_off_mapping(file_path: str) -> dict:
-        print("MAPPER")
         mapping = {}
 
         with open(file_path, "r", encoding="utf-8") as file:
-            i = 1
             for obj in ijson.items(file, "categories.item"):
-                mapping[obj.get("fdc")] = obj.get("off")
-        print(mapping)
+                off_categories = obj.get("off")
+                if off_categories is not None:
+                    mapping[obj.get("fdc")] = [
+                        (
+                            "en:" + x[4:].strip().lower().replace(" ", "-")
+                            if x.startswith("en: ")
+                            else x.strip().lower().replace(" ", "-")
+                        )
+                        for x in off_categories
+                    ]
+
         return mapping
 
     def __normalize_line(self, language_code, line):
