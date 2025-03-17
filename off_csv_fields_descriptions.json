@@ -965,7 +965,8 @@
   "type":"nutrition facts",
   "schema":"number",
   "desc":"the amount of vitamin A in micrograms per 100g or 100ml of the product",
-  "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"]
+  "sources":["https://static.openfoodfacts.org/data/data-fields.txt", "analysis with python script"],
+  "comment": "This field corresponds to the retinol value."
 },
 { "name":"beta-carotene_100g",
   "type":"nutrition facts",
