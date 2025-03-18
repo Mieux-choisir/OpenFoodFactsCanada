@@ -13,7 +13,7 @@ class Product(ComplexField):
     id: Optional[str] = None
     generic_name_en: Optional[str] = None
     product_name: Optional[str] = None
-    categories_en: list[str] = None
+    categories_en: list[str] = []
     is_raw: Optional[bool] = None
     brands: List[str] = []
     brand_owner: Optional[str] = None

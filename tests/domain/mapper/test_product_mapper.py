@@ -38,6 +38,36 @@ def product_mapper(ingredients_mapper, nutriscore_data_mapper, category_mapper):
     return product_mapper
 
 
+def test_should_return_mapped_category_in_product_for_fdc_dict(product_mapper):
+    fdc_dict = {
+        "gtinUpc": "Canada",
+        "description": "Super bars",
+        "brandName": "CLIFF",
+        "brandOwner": "CLIFF'S",
+        "brandedFoodCategory": "en:cereals",
+        "ingredients": "ingredient1, ingredient 2",
+        "foodNutrients": ["foodNutrient1"],
+    }
+    product_mapper.category_mapper.get_off_category_of_fdc_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
+    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = None
+    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
+        None
+    )
+
+    with patch.object(
+        NutritionFactsMapper, "map_fdc_dict_to_nutrition_facts", return_value=None
+    ):
+        with patch.object(
+            NutriscoreDataMapper, "map_fdc_dict_to_nutriscore_data", return_value=None
+        ):
+            result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+
+    assert result.categories_en == ["en:cereals", "en:snacks"]
+
+
 def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
     row = ["Canada", "195", "Super bars", "bars", "en:cereals", "4", "bars", "4"]
     header = [
@@ -50,12 +80,12 @@ def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
         "pnns_groups_1",
         "additives_n",
     ]
-    product_mapper.category_mapper.get_off_category_of_fdc_product.return_value = (
-        "en:cereals"
-    )
     product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = None
     product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
         None
+    )
+    product_mapper.category_mapper.get_off_category_of_off_product.return_value = (
+        "en:cereals"
     )
 
     with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
@@ -78,7 +108,7 @@ def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
                         ):
                             result = product_mapper.map_off_row_to_product(row, header)
 
-    assert result.categories_en == "en:cereals"
+    assert result.categories_en == ["en:cereals"]
 
 
 def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
@@ -92,12 +122,12 @@ def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
         "pnns_groups_1": "bars",
         "additives_n": 4,
     }
-    product_mapper.category_mapper.get_off_category_of_fdc_product.return_value = (
-        "en:cereals"
-    )
     product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = None
     product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
         None
+    )
+    product_mapper.category_mapper.get_off_category_of_off_product.return_value = (
+        "en:cereals"
     )
 
     with patch.object(BrandsMapper, "map_off_dict_to_brands", return_value=[]):
@@ -120,4 +150,4 @@ def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
                         ):
                             result = product_mapper.map_off_dict_to_product(off_dict)
 
-    assert result.categories_en == "en:cereals"
+    assert result.categories_en == ["en:cereals"]

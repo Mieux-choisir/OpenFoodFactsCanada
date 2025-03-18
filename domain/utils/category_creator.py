@@ -6,7 +6,7 @@ import unicodedata
 
 class CategoryCreator:
 
-    def create_categories(self, file_path: str) -> dict:
+    def create_off_categories(self, file_path: str) -> dict:
         off_categories = {}
         last_added = None
 
@@ -31,22 +31,11 @@ class CategoryCreator:
 
         return off_categories
 
-    @staticmethod
-    def create_fdc_to_off_mapping(file_path: str) -> dict:
-        mapping = {}
-
-        with open(file_path, "r", encoding="utf-8") as file:
-            for obj in ijson.items(file, "categories.item"):
-                off_categories = obj.get("off")
-                if off_categories is not None:
-                    mapping[obj.get("fdc")] = [
-                        (
-                            "en:" + x[4:].strip().lower().replace(" ", "-")
-                            if x.startswith("en: ")
-                            else x.strip().lower().replace(" ", "-")
-                        )
-                        for x in off_categories
-                    ]
+    def create_fdc_to_off_categories_mapping(
+        self, file_path: str, off_categories: dict
+    ) -> dict:
+        mapping = self.__get_mapping_from_file(file_path)
+        mapping = self.__remove_absent_off_categories(mapping, off_categories)
 
         return mapping
 
@@ -69,3 +58,35 @@ class CategoryCreator:
         )
 
         return formatted_string
+
+    @staticmethod
+    def __get_mapping_from_file(file_path: str) -> dict:
+        mapping = {}
+
+        with open(file_path, "r", encoding="utf-8") as file:
+            for obj in ijson.items(file, "categories.item"):
+                matching_categories = obj.get("off")
+                if matching_categories is not None:
+                    mapping[obj.get("fdc")] = [
+                        (x.strip().lower().replace("en: ", "en:", 1).replace(" ", "-"))
+                        for x in matching_categories
+                    ]
+
+        return mapping
+
+    def __remove_absent_off_categories(self, mapping: dict, categories: dict) -> dict:
+        for mapping_key, mapping_values in mapping.items():
+            for value in mapping_values:
+                if self.__is_absent(value, categories):
+                    mapping[mapping_key].remove(value)
+        return mapping
+
+    @staticmethod
+    def __is_absent(searched_value: str, categories: dict):
+        found = False
+        for key, value in categories.items():
+            if searched_value in value:
+                found = True
+                break
+
+        return not found

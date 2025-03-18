@@ -65,13 +65,42 @@ def categories_content():
     return categories_content, first_tags_for_terms, following_tags_for_terms
 
 
+@pytest.fixture
+def fdc_mapping_content():
+    existing_off_categories = ["en: other-off-category1", "en:off-category2"]
+    absent_off_categories = ["absent-off-category"]
+
+    first_mapping = """{"fdc": "fdc-cat-1", "off": ["en: other-off-category1"]}"""
+    second_mapping = (
+        """{"fdc": "fdc-cat-2", "off": ["en:off-category2", "absent-off-category"]}"""
+    )
+    mapping_content = '{"categories": [' + first_mapping + ", " + second_mapping + "]}"
+
+    off_categories = {
+        "em:off-category1": ["en:off-category1", "en:other-off-category1"],
+        "en:off-category2": ["en:off-category2"],
+    }
+
+    return (
+        mapping_content,
+        off_categories,
+        existing_off_categories,
+        absent_off_categories,
+    )
+
+
+# ----------------------------------------------------------------
+# Tests create_off_categories
+# ----------------------------------------------------------------
+
+
 def test_should_only_keep_first_appearing_tag_for_each_term_in_paragraphs_as_keys_in_categories(
     category_creator, categories_content
 ):
     content_to_read, first_tags_for_terms, following_tags_for_terms = categories_content
 
     with patch("builtins.open", mock_open(read_data=content_to_read)):
-        result = category_creator.create_categories("mock_categories_content.txt")
+        result = category_creator.create_off_categories("mock_categories_content.txt")
 
     assert first_tags_for_terms[0] in result.keys()
     assert first_tags_for_terms[1] in result.keys()
@@ -89,7 +118,7 @@ def test_should_keep_all_correctly_formatted_tags_for_each_term_as_values_with_c
     content_to_read, first_tags_for_terms, following_tags_for_terms = categories_content
 
     with patch("builtins.open", mock_open(read_data=content_to_read)):
-        result = category_creator.create_categories("mock_categories_content.txt")
+        result = category_creator.create_off_categories("mock_categories_content.txt")
 
     assert first_tags_for_terms[0] in result[first_tags_for_terms[0]]
     assert following_tags_for_terms[0] in result[first_tags_for_terms[0]]
@@ -99,3 +128,44 @@ def test_should_keep_all_correctly_formatted_tags_for_each_term_as_values_with_c
     assert following_tags_for_terms[3] in result[first_tags_for_terms[1]]
     assert first_tags_for_terms[2] in result[first_tags_for_terms[2]]
     assert following_tags_for_terms[4] in result[first_tags_for_terms[2]]
+
+
+# ----------------------------------------------------------------
+# Tests create_fdc_to_off_categories_mapping
+# ----------------------------------------------------------------
+
+
+def test_should_return_mapping_with_correctly_formatted_existing_off_categories_in_values_for_fdc_to_off_mapping_content(
+    category_creator, fdc_mapping_content
+):
+    content_to_read, off_categories, existing_categories, _ = fdc_mapping_content
+
+    with patch("builtins.open", mock_open(read_data=content_to_read)):
+        result = category_creator.create_fdc_to_off_categories_mapping(
+            "mock_categories_mapping_content.txt", off_categories
+        )
+
+    expected_present_categories = [
+        cat.strip().lower().replace("en: ", "en:").replace(" ", "-", 1)
+        for cat in existing_categories
+    ]
+    for category in expected_present_categories:
+        assert any(category in value for value in result.values())
+
+
+def test_should_return_mapping_with_removed_absent_off_categories_for_fdc_to_off_mapping_content(
+    category_creator, fdc_mapping_content
+):
+    content_to_read, off_categories, _, absent_categories = fdc_mapping_content
+
+    with patch("builtins.open", mock_open(read_data=content_to_read)):
+        result = category_creator.create_fdc_to_off_categories_mapping(
+            "mock_categories_mapping_content.txt", off_categories
+        )
+
+    expected_absent_categories = [
+        cat.strip().lower().replace("en: ", "en:", 1).replace(" ", "-")
+        for cat in absent_categories
+    ]
+    for category in expected_absent_categories:
+        assert not any(category in value for value in result.values())

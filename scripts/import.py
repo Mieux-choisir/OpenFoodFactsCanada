@@ -53,7 +53,7 @@ def main():
         ProductMapper(
             IngredientsMapper(IngredientNormalizer()),
             NutriscoreDataMapper(NumberMapper()),
-            CategoryMapper(),
+            CategoryMapper(CategoryCreator()),
         )
     )
 
