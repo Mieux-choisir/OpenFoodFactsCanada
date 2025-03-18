@@ -56,9 +56,7 @@ class ProductMapper:
                 product_dict.get(category_field)
             ),
             food_groups_en=list(
-                filter(
-                    None, map(str.strip, product_dict[category_field].split(","))
-                )
+                filter(None, map(str.strip, product_dict[category_field].split(",")))
             ),  # TODO compléter la liste si possible
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
                 product_dict[ingredients_field]
@@ -143,8 +141,9 @@ class ProductMapper:
                 else None
             ),
             generic_name_en=(
-                product_dict[generic_name_field].strip()
-                if product_dict[generic_name_field] is not None and product_dict[generic_name_field].strip() != ""
+                product_dict[generic_name_field].strip().title()
+                if product_dict[generic_name_field] is not None
+                and product_dict[generic_name_field].strip() != ""
                 else None
             ),
             categories_en=self.category_mapper.get_off_categories_of_off_product(

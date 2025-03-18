@@ -6,6 +6,7 @@ from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
 from domain.mapper.ingredients_mapper import IngredientsMapper
+from domain.mapper.category_mapper import CategoryMapper
 from domain.mapper.nova_data_mapper import NovaDataMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
@@ -17,10 +18,6 @@ from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
-from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
-from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
-from domain.mapper.product_mapper import ProductMapper
-from domain.mapper.category_mapper import CategoryMapper
 
 
 @pytest.fixture
@@ -44,9 +41,14 @@ def category_mapper():
 
 
 @pytest.fixture
-def product_mapper(ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper, category_mapper):
+def product_mapper(
+    ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper, category_mapper
+):
     return ProductMapper(
-        ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper, category_mapper
+        ingredients_mapper,
+        nutriscore_data_mapper,
+        nutrition_facts_mapper,
+        category_mapper,
     )
 
 
@@ -228,6 +230,7 @@ def off_dict():
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
         "additives_n": 5,
+        "categories": "en:breads, en:meals",
     }
 
     return off_dict
@@ -247,6 +250,7 @@ def off_empty_strings_dict():
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
         "additives_n": 5,
+        "categories": "en:breads",
     }
 
     return off_dict
@@ -481,35 +485,17 @@ def test_should_return_mapped_ingredients_in_product_for_given_fdc_dict(
     ), f"Expected ingredients field to be {mock_fdc_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_fdc_dict(product_mapper):
-    fdc_dict = {
-        "gtinUpc": "Canada",
-        "description": "Super bars",
-        "brandName": "CLIFF",
-        "brandOwner": "CLIFF'S",
-        "brandedFoodCategory": "en:cereals",
-        "ingredients": "ingredient1, ingredient 2",
-        "foodNutrients": ["foodNutrient1"],
-    }
+def test_should_return_mapped_category_in_product_for_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
     product_mapper.category_mapper.get_off_categories_of_fdc_product.return_value = [
         "en:cereals",
         "en:snacks",
     ]
-    product_mapper.ingredients_mapper.map_fdc_dict_to_ingredients.return_value = None
-    product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
-        None
-    )
 
-    with patch.object(
-        NutritionFactsMapper, "map_fdc_dict_to_nutrition_facts", return_value=None
-    ):
-        with patch.object(
-            NutriscoreDataMapper, "map_fdc_dict_to_nutriscore_data", return_value=None
-        ):
-            result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert result.categories_en == ["en:cereals", "en:snacks"]
-
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
@@ -797,49 +783,18 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_row(
     ), f"Expected ingredients field to be {mock_off_row_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
-    row = ["Canada", "195", "Super bars", "bars", "en:cereals", "4", "bars", "4"]
-    header = [
-        "countries_en",
-        "code",
-        "product_name",
-        "generic_name",
-        "categories_tags",
-        "nova_group",
-        "pnns_groups_1",
-        "additives_n",
-    ]
-    product_mapper.ingredients_mapper.map_off_row_to_ingredients.return_value = None
-    product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
-        None
-    )
+def test_should_return_mapped_category_in_product_for_off_row(
+    product_mapper, off_rows, mock_off_row_functions
+):
+    row, header = off_rows
     product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
         "en:cereals",
         "en:snacks",
     ]
 
-    with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
-        with patch.object(BrandsMapper, "map_off_row_to_brand_owner", return_value=""):
-            with patch.object(
-                FoodGroupsMapper, "map_off_row_to_food_groups", return_value=[]
-            ):
-                with patch.object(
-                    NutritionFactsMapper,
-                    "map_off_row_to_nutrition_facts",
-                    return_value=None,
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_row_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            EcoscoreDataMapper,
-                            "map_off_row_to_ecoscore_data",
-                            return_value=None,
-                        ):
-                            result = product_mapper.map_off_row_to_product(row, header)
+    result = product_mapper.map_off_row_to_product(row, header)
 
     assert result.categories_en == ["en:cereals", "en:snacks"]
-
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
@@ -1048,48 +1003,17 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
     ), f"Expected ingredients field to be {mock_off_dict_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
-    off_dict = {
-        "countries": "Canada",
-        "code": "195",
-        "product_name": "Super bars",
-        "generic_name": "bars",
-        "categories": ["en:cereals"],
-        "nova_group": 4,
-        "pnns_groups_1": "bars",
-        "additives_n": 4,
-    }
-    product_mapper.ingredients_mapper.map_off_dict_to_ingredients.return_value = None
-    product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
-        None
-    )
+def test_should_return_mapped_category_in_product_for_off_dict(
+    product_mapper, off_dict, mock_off_dict_functions
+):
     product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
         "en:cereals",
         "en:snacks",
     ]
 
-    with patch.object(BrandsMapper, "map_off_dict_to_brands", return_value=[]):
-        with patch.object(BrandsMapper, "map_off_dict_to_brand_owner", return_value=""):
-            with patch.object(
-                FoodGroupsMapper, "map_off_dict_to_food_groups", return_value=[]
-            ):
-                with patch.object(
-                    NutritionFactsMapper,
-                    "map_off_dict_to_nutrition_facts",
-                    return_value=None,
-                ):
-                    with patch.object(
-                        AllergensMapper, "map_off_dict_to_allergens", return_value=[]
-                    ):
-                        with patch.object(
-                            EcoscoreDataMapper,
-                            "map_off_dict_to_ecoscore_data",
-                            return_value=None,
-                        ):
-                            result = product_mapper.map_off_dict_to_product(off_dict)
+    result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.categories_en == ["en:cereals", "en:snacks"]
-
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(
