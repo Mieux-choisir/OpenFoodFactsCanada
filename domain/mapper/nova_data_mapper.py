@@ -19,8 +19,8 @@ class NovaDataMapper:
 
         return NovaData(
             score=(
-                Converter.safe_int(product_dict.get(score_field))
-                if product_dict.get(score_field)
+                int(product_dict[score_field])
+                if isinstance(product_dict[score_field], int)
                 else None
             ),
             group_markers={},

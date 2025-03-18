@@ -90,11 +90,7 @@ class NutriscoreDataMapper:
             ),
             energy=Converter.safe_float(row[energy_index]),
             fibers=row[fibers_index],
-            fruit_percentage=(
-                row[fruit_percentage_index]
-                if fruit_percentage_index < len(row)
-                else None
-            ),
+            fruit_percentage=Converter.safe_float(row[fruit_percentage_index]),
             proteins=row[proteins_index],
             saturated_fats=Converter.safe_float(row[saturated_fats_index]),
             sodium=row[sodium_index],
@@ -122,9 +118,20 @@ class NutriscoreDataMapper:
                 else None
             ),
             energy=product_dict.get(nutrients_field, {}).get(energy_field),
-            fibers=product_dict.get(nutrients_field, {}).get(fibers_field),
-            fruit_percentage=product_dict.get(nutrients_field, {}).get(
-                fruit_percentage_field
+            fibers=(
+                Converter.safe_float(
+                    product_dict.get(nutrients_field, {}).get(fibers_field)
+                )
+                if product_dict.get(nutrients_field, {}).get(fibers_field) is not None
+                else None
+            ),
+            fruit_percentage=(
+                Converter.safe_float(
+                    product_dict.get(nutrients_field, {}).get(fruit_percentage_field)
+                )
+                if product_dict.get(nutrients_field, {}).get(fruit_percentage_field)
+                is not None
+                else None
             ),
             proteins=product_dict.get(nutrients_field, {}).get(proteins_field),
             saturated_fats=product_dict.get(nutrients_field, {}).get(

@@ -35,15 +35,17 @@ class ProductMapper:
         publication_date_field = "publicationDate"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
+        ingredients_field = "ingredients"
+        food_nutrients_field = "foodNutrients"
 
         food_groups_en_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
 
         return Product(
-            id_match=product_dict[id_field].lstrip("0"),
-            id_original=product_dict[id_field],
-            product_name=product_dict[product_name_field].title(),
+            id_match=product_dict[id_field].strip().lstrip("0"),
+            id_original=product_dict[id_field].strip(),
+            product_name=product_dict[product_name_field].strip().title(),
             data_source=product_dict[data_source_field],
             modified_date=datetime.strptime(
                 product_dict[modified_date_field], "%m/%d/%Y"
@@ -55,24 +57,28 @@ class ProductMapper:
                 product_dict[publication_date_field], "%m/%d/%Y"
             ),
             quantity=product_dict["householdServingFullText"],
-            is_raw=self.fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
+            is_raw=self.__fdc_is_raw_aliment(product_dict["brandedFoodCategory"]),
             brands=(
-                [product_dict[brands_field].title()]
+                [product_dict[brands_field].strip().title()]
                 if brands_field in product_dict.keys()
                 else []
             ),
-            brand_owner=product_dict[brand_owner_field].title(),
-            food_groups_en=product_dict[food_groups_en_field].split(","),
+            brand_owner=product_dict[brand_owner_field].strip().title(),
+            food_groups_en=list(
+                filter(
+                    None, map(str.strip, product_dict[food_groups_en_field].split(","))
+                )
+            ),  # TODO compléter la liste si possible
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
-                product_dict["ingredients"]
+                product_dict[ingredients_field]
             ),
             serving_size=product_dict["servingSize"],
             serving_size_unit=product_dict["servingSizeUnit"],
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
-                product_dict["foodNutrients"]
+                product_dict[food_nutrients_field]
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
-                product_dict["foodNutrients"]
+                product_dict[food_nutrients_field]
             ),
             ecoscore_data=None,
             nova_data=None,
@@ -94,18 +100,18 @@ class ProductMapper:
         modified_date_index = header.index("last_modified_t")
 
         return Product(
-            id_match=row[id_index].lstrip("0"),
-            id_original=row[id_index],
+            id_match=row[id_index].strip().lstrip("0"),
+            id_original=row[id_index].strip(),
             product_name=(
-                row[product_name_index].strip()
-                if row[product_name_index] is not None
+                row[product_name_index].strip().title()
+                if row[product_name_index] != ""
                 else None
             ),
             modified_date=datetime.fromtimestamp(
                 Converter.safe_int(row[modified_date_index]), tz=timezone.utc
             ),
             quantity=row[quantity_name_index],
-            is_raw=self.off_csv_is_raw_aliment(row, header),
+            is_raw=self.__off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
@@ -140,18 +146,18 @@ class ProductMapper:
         serving_size_unit_field = "serving_quantity_unit"
 
         return Product(
-            id_match=product_dict.get(id_field).lstrip("0"),
-            id_original=product_dict.get(id_field),
+            id_match=product_dict.get(id_field).strip().lstrip("0"),
+            id_original=product_dict.get(id_field).strip(),
             product_name=(
-                product_dict.get(product_name_field).strip()
-                if product_dict.get(product_name_field) is not None
+                product_dict.get(product_name_field).strip().title()
+                if product_dict.get(product_name_field).strip() != ""
                 else None
             ),
             modified_date=datetime.fromtimestamp(
                 product_dict.get(modified_date_field), tz=timezone.utc
             ),
             quantity=product_dict.get(quantity_name_field),
-            is_raw=self.off_json_is_raw_aliment(product_dict),
+            is_raw=self.__off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(
                 product_dict, brand_owner_field, brands_field
@@ -177,7 +183,7 @@ class ProductMapper:
         )
 
     @staticmethod
-    def off_csv_is_raw_aliment(row: list[str], header: list[str]):
+    def __off_csv_is_raw_aliment(row: list[str], header: list[str]):
         """Checks if the aliment is raw based on its row values"""
         # Check the NOVA group
         nova_index = header.index("nova_group")
@@ -211,7 +217,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def off_json_is_raw_aliment(product_dict: dict) -> bool:
+    def __off_json_is_raw_aliment(product_dict: dict) -> bool:
         """Checks if the aliment is raw based on its dict values"""
         # Check the NOVA group
         nova_field = "nova_group"
@@ -248,7 +254,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def fdc_is_raw_aliment(category: str):
+    def __fdc_is_raw_aliment(category: str):
         is_raw = False
 
         if category in [
