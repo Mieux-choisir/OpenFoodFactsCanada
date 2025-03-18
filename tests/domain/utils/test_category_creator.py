@@ -13,6 +13,17 @@ def category_creator():
 
 @pytest.fixture
 def categories_content():
+    parents_lines = [
+        "< en:Biscuits and cakes\n",
+        "< en:Italian grape marc spirit or grape marc\n",
+        "< en:Beverages\n",
+    ]
+    parents_tags = [
+        "en:biscuits-and-cakes",
+        "en:italian-grape-marc-spirit-or-grape-marc",
+        "en:beverages",
+    ]
+
     first_lines_for_terms = [
         "en: Shortbread cookie with apple\n",
         "en: Gingerbreads, gingerbread\n",
@@ -44,25 +55,30 @@ def categories_content():
         "stopwords:ca: als, a les, de, el, del, de la, la, té, i, amb, base\n"
         "### Properties for categories entries\n"
         "# add following tag for category having always same nutriscore grade\n"
-        "< en:Shortbread cookies\n"
         + first_lines_for_terms[0]
         + following_lines_for_terms[0]
         + "agribalyse_food_code:en: 24072\n"
         "ciqual_food_code:en: 24072\n"
         "\n"
-        "< en:Biscuits and cakes\n"
+        + parents_lines[0]
         + first_lines_for_terms[1]
         + following_lines_for_terms[1]
         + following_lines_for_terms[2]
         + "wikidata:en: Q178600\n"
         "\n"
-        "< en:Italian grape marc spirit or grape marc\n"
+        + parents_lines[1]
+        + parents_lines[2]
         + first_lines_for_terms[2]
         + following_lines_for_terms[3]
         + "origins:en: en:italy\n"
     )
 
-    return categories_content, first_tags_for_terms, following_tags_for_terms
+    return (
+        categories_content,
+        first_tags_for_terms,
+        following_tags_for_terms,
+        parents_tags,
+    )
 
 
 @pytest.fixture
@@ -97,7 +113,9 @@ def fdc_mapping_content():
 def test_should_only_keep_first_appearing_tag_for_each_term_in_paragraphs_as_keys_in_categories(
     category_creator, categories_content
 ):
-    content_to_read, first_tags_for_terms, following_tags_for_terms = categories_content
+    content_to_read, first_tags_for_terms, following_tags_for_terms, _ = (
+        categories_content
+    )
 
     with patch("builtins.open", mock_open(read_data=content_to_read)):
         result = category_creator.create_off_categories("mock_categories_content.txt")
@@ -115,19 +133,40 @@ def test_should_only_keep_first_appearing_tag_for_each_term_in_paragraphs_as_key
 def test_should_keep_all_correctly_formatted_tags_for_each_term_as_values_with_corresponding_first_term_in_categories(
     category_creator, categories_content
 ):
-    content_to_read, first_tags_for_terms, following_tags_for_terms = categories_content
+    content_to_read, first_tags_for_terms, following_tags_for_terms, _ = (
+        categories_content
+    )
 
     with patch("builtins.open", mock_open(read_data=content_to_read)):
         result = category_creator.create_off_categories("mock_categories_content.txt")
 
-    assert first_tags_for_terms[0] in result[first_tags_for_terms[0]]
-    assert following_tags_for_terms[0] in result[first_tags_for_terms[0]]
-    assert first_tags_for_terms[1] in result[first_tags_for_terms[1]]
-    assert following_tags_for_terms[1] in result[first_tags_for_terms[1]]
-    assert following_tags_for_terms[2] in result[first_tags_for_terms[1]]
-    assert following_tags_for_terms[3] in result[first_tags_for_terms[1]]
-    assert first_tags_for_terms[2] in result[first_tags_for_terms[2]]
-    assert following_tags_for_terms[4] in result[first_tags_for_terms[2]]
+    assert [first_tags_for_terms[0], following_tags_for_terms[0]] == result[
+        first_tags_for_terms[0]
+    ]["values"]
+    assert [
+        first_tags_for_terms[1],
+        following_tags_for_terms[1],
+        following_tags_for_terms[2],
+        following_tags_for_terms[3],
+    ] == result[first_tags_for_terms[1]]["values"]
+    assert [first_tags_for_terms[2], following_tags_for_terms[4]] == result[
+        first_tags_for_terms[2]
+    ]["values"]
+
+
+def test_should_keep_all_correctly_formatted_parent_tags_for_each_term(
+    category_creator, categories_content
+):
+    content_to_read, first_tags_for_terms, _, parents_tags = categories_content
+
+    with patch("builtins.open", mock_open(read_data=content_to_read)):
+        result = category_creator.create_off_categories("mock_categories_content.txt")
+
+    assert [] == result[first_tags_for_terms[0]]["parents"]
+    assert [parents_tags[0]] == result[first_tags_for_terms[1]]["parents"]
+    assert [parents_tags[1], parents_tags[2]] == result[first_tags_for_terms[2]][
+        "parents"
+    ]
 
 
 # ----------------------------------------------------------------

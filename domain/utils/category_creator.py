@@ -9,26 +9,36 @@ class CategoryCreator:
     def create_off_categories(self, file_path: str) -> dict:
         off_categories = {}
         last_added = None
+        parents = []
 
         with open(file_path, "r", encoding="utf-8") as file:
             for line in file:
-                if line.startswith("en: "):
-                    categories_line_list = self.__normalize_line("en", line)
-                    off_categories[categories_line_list[0]] = categories_line_list
-                    last_added = categories_line_list[0]
+                stripped_line = line.strip()
 
-                elif re.compile("..:").match(line):
-                    categories_line_list = self.__normalize_line(line[:2], line)
+                if stripped_line.startswith("< en:"):
+                    parents.append(self.__normalize_string(stripped_line[2:]))
+
+                elif re.compile("..:").match(stripped_line):
+                    categories_line_list = self.__normalize_line(
+                        stripped_line[:2], stripped_line
+                    )
+
                     if last_added is None:
-                        off_categories[categories_line_list[0]] = categories_line_list
-                        last_added = categories_line_list[0]
+                        canonical_category = categories_line_list[0]
+                        off_categories[canonical_category] = {
+                            "values": categories_line_list,
+                            "parents": parents,
+                        }
+
+                        last_added = canonical_category
+                        parents = []
+
                     else:
                         for cat in categories_line_list:
-                            off_categories[last_added].append(cat)
+                            off_categories[last_added]["values"].append(cat)
 
-                elif line.strip() == "":
+                elif stripped_line == "":
                     last_added = None
-
         return off_categories
 
     def create_fdc_to_off_categories_mapping(
@@ -42,12 +52,13 @@ class CategoryCreator:
     def __normalize_line(self, language_code, line):
         return [
             language_code + ":" + self.__normalize_string(x)
-            for x in line[3:].split(",")
+            for x in re.sub(r"^([a-zA-Z][a-zA-Z]): *", r"", line, flags=re.M).split(",")
         ]
 
     @staticmethod
     def __normalize_string(given_string):
-        given_string = given_string.lower().strip().replace(" ", "-")
+        given_string = given_string.lower().strip()
+        given_string = given_string.replace(" ", "-")
         given_string = given_string.replace("'", "-")
         given_string = given_string.replace("’", "-")
         given_string = given_string.replace(".", "-")

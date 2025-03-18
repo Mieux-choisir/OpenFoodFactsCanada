@@ -47,7 +47,7 @@ class ProductMapper:
                 else []
             ),
             brand_owner=product_dict[brand_owner_field].title(),
-            categories_en=self.category_mapper.get_off_category_of_fdc_product(
+            categories_en=self.category_mapper.get_off_categories_of_fdc_product(
                 product_dict.get(category_field)
             ),
             food_groups_en=product_dict[category_field].split(","),
@@ -92,11 +92,9 @@ class ProductMapper:
             is_raw=self.off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
-            categories_en=[
-                self.category_mapper.get_off_category_of_off_product(
-                    row[category_tag_index]
-                )
-            ],
+            categories_en=self.category_mapper.get_off_categories_of_off_product(
+                row[category_tag_index]
+            ),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
             nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
@@ -136,11 +134,9 @@ class ProductMapper:
                 if product_dict[generic_name_field] is not None
                 else None
             ),
-            categories_en=[
-                self.category_mapper.get_off_category_of_off_product(
-                    product_dict[category_field]
-                )
-            ],
+            categories_en=self.category_mapper.get_off_categories_of_off_product(
+                product_dict[category_field]
+            ),
             is_raw=self.off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(

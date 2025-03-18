@@ -48,7 +48,7 @@ def test_should_return_mapped_category_in_product_for_fdc_dict(product_mapper):
         "ingredients": "ingredient1, ingredient 2",
         "foodNutrients": ["foodNutrient1"],
     }
-    product_mapper.category_mapper.get_off_category_of_fdc_product.return_value = [
+    product_mapper.category_mapper.get_off_categories_of_fdc_product.return_value = [
         "en:cereals",
         "en:snacks",
     ]
@@ -84,9 +84,10 @@ def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
     product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
         None
     )
-    product_mapper.category_mapper.get_off_category_of_off_product.return_value = (
-        "en:cereals"
-    )
+    product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
 
     with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=[]):
         with patch.object(BrandsMapper, "map_off_row_to_brand_owner", return_value=""):
@@ -108,7 +109,7 @@ def test_should_return_mapped_category_in_product_for_off_row(product_mapper):
                         ):
                             result = product_mapper.map_off_row_to_product(row, header)
 
-    assert result.categories_en == ["en:cereals"]
+    assert result.categories_en == ["en:cereals", "en:snacks"]
 
 
 def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
@@ -126,9 +127,10 @@ def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
     product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
         None
     )
-    product_mapper.category_mapper.get_off_category_of_off_product.return_value = (
-        "en:cereals"
-    )
+    product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
 
     with patch.object(BrandsMapper, "map_off_dict_to_brands", return_value=[]):
         with patch.object(BrandsMapper, "map_off_dict_to_brand_owner", return_value=""):
@@ -150,4 +152,4 @@ def test_should_return_mapped_category_in_product_for_off_dict(product_mapper):
                         ):
                             result = product_mapper.map_off_dict_to_product(off_dict)
 
-    assert result.categories_en == ["en:cereals"]
+    assert result.categories_en == ["en:cereals", "en:snacks"]

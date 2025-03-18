@@ -1,3 +1,5 @@
+import re
+
 from domain.utils.category_creator import CategoryCreator
 
 
@@ -13,45 +15,54 @@ class CategoryMapper:
             )
         )
 
-    def get_off_category_of_off_product(self, given_categories: str) -> str:
+    def get_off_categories_of_off_product(self, given_categories: str) -> list[str]:
         given_categories_list = list(
             filter(None, map(str.strip, given_categories.split(",")))
         )
         given_categories_list.reverse()
-        off_category = "en:other"
 
-        found = False
-        for given_category in given_categories_list:
-            for key, value_list in self.off_categories.items():
-                if given_category in value_list:
-                    off_category = key
-                    found = True
-                    break
+        off_categories = self.__get_off_categories_from_given_categories(
+            given_categories_list
+        )
+        if not off_categories:
+            off_categories = ["en:other"]
 
-            if found:
-                break
+        return off_categories
 
-        return off_category
-
-    def get_off_category_of_fdc_product(self, given_category: str) -> list[str]:
+    def get_off_categories_of_fdc_product(self, given_category: str) -> list[str]:
         off_categories = []
 
         given_off_categories = self.fdc_to_off_categories.get(given_category)
+
         if given_off_categories is not None:
             for searched_category in given_off_categories:
-                for key, value_list in self.off_categories.items():
-                    if searched_category in value_list:
+                for key, value in self.off_categories.items():
+                    off_cat_list = value["values"]
+                    if searched_category in off_cat_list:
                         off_categories.append(key)
                         break
 
         if not off_categories:
-            off_categories = [
-                given_category.strip()
-                .lower()
-                .replace(",", "")
-                .replace("&", "")
-                .replace(" ", "-")
-                + "-fdc"
-            ]
+            cat = re.sub(" +[-&/()]* *|[=&/()]", "-", given_category.strip())
+            off_categories = ["en:" + cat.rstrip("-").lower().replace(",", "") + "-fdc"]
+
+        return off_categories
+
+    def __get_off_categories_from_given_categories(
+        self, given_categories_list: list[str]
+    ) -> list[str]:
+        off_categories = []
+
+        if given_categories_list is not None:
+            for given_category in given_categories_list:
+                for key, value in self.off_categories.items():
+                    categories_list = value["values"]
+
+                    if given_category in categories_list:
+                        for found_cat in off_categories:
+                            if key in self.off_categories[found_cat]["parents"]:
+                                return off_categories
+
+                        off_categories.append(key)
 
         return off_categories
