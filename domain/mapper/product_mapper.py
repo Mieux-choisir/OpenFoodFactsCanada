@@ -1,4 +1,3 @@
-from domain.mapper.allergens_mapper import AllergensMapper
 from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
@@ -13,16 +12,18 @@ from domain.validator.product_validator import ProductValidator
 
 
 class ProductMapper:
-    WANTED_COUNTRY = "Canada"
+    WANTED_COUNTRIES = ["Canada", "United States"]
 
     def __init__(
         self,
         ingredients_mapper: IngredientsMapper,
         nutriscore_data_mapper: NutriscoreDataMapper,
+        nutrition_facts_mapper: NutritionFactsMapper,
         category_mapper: CategoryMapper,
     ):
         self.ingredients_mapper = ingredients_mapper
         self.nutriscore_data_mapper = nutriscore_data_mapper
+        self.nutrition_facts_mapper = nutrition_facts_mapper
         self.category_mapper = category_mapper
 
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
@@ -32,34 +33,41 @@ class ProductMapper:
         generic_name_field = "description"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
+        ingredients_field = "ingredients"
+        food_nutrients_field = "foodNutrients"
+
         category_field = (
             "brandedFoodCategory"  # TODO convert fdc categories to off food groups
         )
 
         return Product(
-            id=product_dict[id_field],
-            product_name=product_dict[product_name_field].title(),
-            generic_name_en=product_dict[generic_name_field].title(),
-            is_raw=self.fdc_is_raw_aliment(product_dict[category_field]),
+            id_match=product_dict[id_field].strip().lstrip("0"),
+            id_original=product_dict[id_field].strip(),
+            product_name=product_dict[product_name_field].strip().title(),
+            generic_name_en=product_dict[generic_name_field].strip().title(),
+            is_raw=self.__fdc_is_raw_aliment(product_dict[category_field]),
             brands=(
-                [product_dict[brands_field].title()]
+                [product_dict[brands_field].strip().title()]
                 if brands_field in product_dict.keys()
                 else []
             ),
-            brand_owner=product_dict[brand_owner_field].title(),
+            brand_owner=product_dict[brand_owner_field].strip().title(),
             categories_en=self.category_mapper.get_off_categories_of_fdc_product(
                 product_dict.get(category_field)
             ),
-            food_groups_en=product_dict[category_field].split(","),
+            food_groups_en=list(
+                filter(
+                    None, map(str.strip, product_dict[category_field].split(","))
+                )
+            ),  # TODO compléter la liste si possible
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
-                product_dict["ingredients"]
+                product_dict[ingredients_field]
             ),
-            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(
-                product_dict["foodNutrients"]
+            nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
+                product_dict[food_nutrients_field]
             ),
-            allergens=[],
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
-                product_dict["foodNutrients"]
+                product_dict[food_nutrients_field]
             ),
             ecoscore_data=None,
             nova_data=None,
@@ -69,7 +77,9 @@ class ProductMapper:
         self, row: list[str], header: list[str]
     ) -> Product | None:
         country_index = header.index("countries_en")
-        if row[country_index] != ProductMapper.WANTED_COUNTRY:
+        if not any(
+            country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
 
         id_index = header.index("code")
@@ -78,18 +88,19 @@ class ProductMapper:
         category_tag_index = header.index("categories_tags")
 
         return Product(
-            id=row[id_index],
+            id_match=row[id_index].strip().lstrip("0"),
+            id_original=row[id_index].strip(),
             product_name=(
-                row[product_name_index].strip()
-                if row[product_name_index] is not None
+                row[product_name_index].strip().title()
+                if row[product_name_index] != ""
                 else None
             ),
             generic_name_en=(
-                row[generic_name_index].strip()
-                if row[generic_name_index] is not None
+                row[generic_name_index].strip().title()
+                if row[generic_name_index] != ""
                 else None
             ),
-            is_raw=self.off_csv_is_raw_aliment(row, header),
+            is_raw=self.__off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
             categories_en=self.category_mapper.get_off_categories_of_off_product(
@@ -97,10 +108,9 @@ class ProductMapper:
             ),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
-            nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
+            nutrition_facts=self.nutrition_facts_mapper.map_off_row_to_nutrition_facts(
                 row, header
             ),
-            allergens=AllergensMapper.map_off_row_to_allergens(row, header),
             nutriscore_data=self.nutriscore_data_mapper.map_off_row_to_nutriscore_data(
                 row, header
             ),
@@ -110,7 +120,10 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
-        if product_dict[country_field] != ProductMapper.WANTED_COUNTRY:
+        if not any(
+            country in product_dict[country_field]
+            for country in ProductMapper.WANTED_COUNTRIES
+        ):
             return None
 
         id_field = "code"
@@ -120,24 +133,24 @@ class ProductMapper:
         brands_field = "brands"
         brand_owner_field = "brand_owner"
         food_groups_en_field = "food_groups"
-        allergens_en_field = "allergens"
 
         return Product(
-            id=product_dict[id_field],
+            id_match=product_dict[id_field].strip().lstrip("0"),
+            id_original=product_dict[id_field].strip(),
             product_name=(
-                product_dict[product_name_field].strip()
-                if product_dict[product_name_field] is not None
+                product_dict[product_name_field].strip().title()
+                if product_dict[product_name_field].strip() != ""
                 else None
             ),
             generic_name_en=(
                 product_dict[generic_name_field].strip()
-                if product_dict[generic_name_field] is not None
+                if product_dict[generic_name_field] is not None and product_dict[generic_name_field].strip() != ""
                 else None
             ),
             categories_en=self.category_mapper.get_off_categories_of_off_product(
                 product_dict[category_field]
             ),
-            is_raw=self.off_json_is_raw_aliment(product_dict),
+            is_raw=self.__off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(
                 product_dict, brand_owner_field, brands_field
@@ -148,11 +161,8 @@ class ProductMapper:
             ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(
                 product_dict
             ),
-            nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
+            nutrition_facts=self.nutrition_facts_mapper.map_off_dict_to_nutrition_facts(
                 product_dict
-            ),
-            allergens=AllergensMapper.map_off_dict_to_allergens(
-                product_dict, allergens_en_field
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_off_dict_to_nutriscore_data(
                 product_dict
@@ -164,7 +174,7 @@ class ProductMapper:
         )
 
     @staticmethod
-    def off_csv_is_raw_aliment(row: list[str], header: list[str]):
+    def __off_csv_is_raw_aliment(row: list[str], header: list[str]):
         """Checks if the aliment is raw based on its row values"""
         # Check the NOVA group
         nova_index = header.index("nova_group")
@@ -198,7 +208,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def off_json_is_raw_aliment(product_dict: dict) -> bool:
+    def __off_json_is_raw_aliment(product_dict: dict) -> bool:
         """Checks if the aliment is raw based on its dict values"""
         # Check the NOVA group
         nova_field = "nova_group"
@@ -235,7 +245,7 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def fdc_is_raw_aliment(category: str):
+    def __fdc_is_raw_aliment(category: str):
         is_raw = False
 
         if category in [

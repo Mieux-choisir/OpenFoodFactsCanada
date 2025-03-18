@@ -25,7 +25,7 @@ class IngredientsMapper:
             ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
                 ingredients_text
             ),
-            ingredients_text=ingredients_text,
+            ingredients_text=ingredients_text.title(),
         )
 
     def map_off_dict_to_ingredients(self, product_dict: dict) -> Ingredients:
@@ -36,5 +36,5 @@ class IngredientsMapper:
             ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
                 ingredients_text
             ),
-            ingredients_text=ingredients_text,
+            ingredients_text=ingredients_text.title(),
         )

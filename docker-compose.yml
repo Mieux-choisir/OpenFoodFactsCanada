@@ -18,12 +18,13 @@ services:
       - mongo
     volumes:
       - ./scripts:/app/scripts  # Mount scripts folder
+      - ./domain:/app/domain
       - mongo_data:/data/db  # MongoDB storage
       - ./data:/app/data  # Store downloaded files
     networks:
       - openfoodfacts-net
-    command: python /app/scripts/import.py  # Run script after build
-
+    command: python -m scripts.2CollectionsImport
+    
 networks:
   openfoodfacts-net:
     driver: bridge
