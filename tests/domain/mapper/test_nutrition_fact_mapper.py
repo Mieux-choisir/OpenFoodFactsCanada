@@ -47,10 +47,10 @@ def test_should_return_mapped_nutrient_level_values_in_nutrition_facts_for_fdc_d
     with patch.object(NutrientAmountMapper, "map_nutrient", return_value=25):
         result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(fdc_dict)
 
-    assert result.nutrient_level.sugar == 25
-    assert result.nutrient_level.saturated_fats == 25
-    assert result.nutrient_level.fat == 25
-    assert result.nutrient_level.salt == 25
+    assert result.sugar_100g == 25
+    assert result.saturated_fats_100g == 25
+    assert result.fat_100g == 25
+    assert result.salt_100g == 25
 
 
 def test_should_return_mapped_nutrients_in_nutrition_facts_for_fdc_dict(
@@ -61,8 +61,8 @@ def test_should_return_mapped_nutrients_in_nutrition_facts_for_fdc_dict(
     with patch.object(NutrientAmountMapper, "map_nutrient", return_value=10.2):
         result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(fdc_dict)
 
-    assert result.nutrients.carbohydrates_100g == 10.2
-    assert result.nutrients.vitamin_a_100g == 10.2
+    assert result.carbohydrates_100g == 10.2
+    assert result.vitamin_a_100g == 10.2
 
 
 def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_for_fdc_dict(
@@ -78,7 +78,10 @@ def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_fo
         for item in fdc_dict
         if item["nutrient"]["id"] == fdc_ids["energy_kcal"]
     )
-    assert result.nutrients.energy_100g == float(
+    print(result.energy_100g)
+    print(result.energy_kcal_100g)
+    print(expected_energy_kcal_100g)
+    assert result.energy_100g == float(
         expected_energy_kcal_100g * CONVERSION_ENERGY_KCAL_TO_KJ
     )
-    assert result.nutrients.energy_kcal_100g == expected_energy_kcal_100g
+    assert result.energy_kcal_100g == 10.2

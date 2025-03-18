@@ -14,7 +14,7 @@ def nutrient_amount_mapper():
 def test_should_return_nothing_when_value_cannot_be_converted_given_nutrient_to_convert(
     nutrient_amount_mapper,
 ):
-    nutrient_name = "sugar"
+    nutrient_name = "sugar_100g"
     nutrient_value = 45
     nutrient_unit = "other"
 
@@ -42,7 +42,7 @@ def test_should_return_given_value_given_nutrient_not_to_convert(
 def test_should_return_given_value_given_nutrient_to_convert_and_correct_unit(
     nutrient_amount_mapper,
 ):
-    nutrient_name = "sugar"
+    nutrient_name = "sugar_100g"
     nutrient_value = 45
     nutrient_unit = "g"
 
@@ -56,7 +56,7 @@ def test_should_return_given_value_given_nutrient_to_convert_and_correct_unit(
 def test_should_return_correctly_converted_value_given_nutrient_to_convert_in_g_and_incorrect_unit(
     nutrient_amount_mapper,
 ):
-    nutrient_name = "sugar"
+    nutrient_name = "sugar_100g"
     nutrient_value = 45
     nutrient_unit = "mg"
 
@@ -70,7 +70,7 @@ def test_should_return_correctly_converted_value_given_nutrient_to_convert_in_g_
 def test_should_return_correctly_converted_value_given_nutrient_to_convert_in_mcg_and_incorrect_unit(
     nutrient_amount_mapper,
 ):
-    nutrient_name = "sugar"
+    nutrient_name = "sugar_100g"
     nutrient_value = 45
     nutrient_unit = "iu"
 
