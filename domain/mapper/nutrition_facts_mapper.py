@@ -11,7 +11,9 @@ class NutritionFactsMapper:
         self.energy_kcal_to_kj = Decimal(4.1868)
         self.sodium_to_salt = Decimal(2.5)
 
-    def map_fdc_dict_to_nutrition_facts(self, food_nutrients: list[dict]) -> NutritionFacts:
+    def map_fdc_dict_to_nutrition_facts(
+        self, food_nutrients: list[dict]
+    ) -> NutritionFacts:
         nutrient_ids = {
             "fat_100g": 1004,
             "sodium_100g": 1093,
@@ -59,13 +61,17 @@ class NutritionFactsMapper:
         for field, nutrient_id in nutrient_ids.items():
             value = self.__get_nutrient_level(food_nutrients, nutrient_id)
             unit = self.__get_nutrient_unit(food_nutrients, nutrient_id)
-            
+
             if field == "sodium_100g" and value is not None:
-                nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient("salt_100g", value * self.sodium_to_salt, unit)
+                nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient(
+                    "salt_100g", value * self.sodium_to_salt, unit
+                )
             if field == "energy_kcal_100g" and value is not None:
                 nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
-            
-            nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(field, value, unit)
+
+            nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(
+                field, value, unit
+            )
 
         return NutritionFacts(**nutrition_facts_data)
 
