@@ -1,13 +1,17 @@
 from decimal import Decimal
 
+from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.product.complexFields.nutrient_facts import NutritionFacts
 from domain.utils.converter import Converter
 
 
 class NutritionFactsMapper:
 
-    @staticmethod
-    def map_fdc_dict_to_nutrition_facts(food_nutrients: list[dict]) -> NutritionFacts:
+    def __init__(self):
+        self.energy_kcal_to_kj = Decimal(4.1868)
+        self.sodium_to_salt = Decimal(2.5)
+
+    def map_fdc_dict_to_nutrition_facts(self, food_nutrients: list[dict]) -> NutritionFacts:
         nutrient_ids = {
             "fat_100g": 1004,
             "sodium_100g": 1093,
@@ -53,19 +57,15 @@ class NutritionFactsMapper:
 
         nutrition_facts_data = {}
         for field, nutrient_id in nutrient_ids.items():
-            value = next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == nutrient_id
-                ),
-                None,
-            )
+            value = self.__get_nutrient_level(food_nutrients, nutrient_id)
+            unit = self.__get_nutrient_unit(food_nutrients, nutrient_id)
+            
             if field == "sodium_100g" and value is not None:
-                nutrition_facts_data["salt_100g"] = value * Decimal("2.5")
+                nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient("salt_100g", value * self.sodium_to_salt, unit)
             if field == "energy_kcal_100g" and value is not None:
-                nutrition_facts_data["energy_100g"] = value * Decimal(4.1868)
-            nutrition_facts_data[field] = value
+                nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
+            
+            nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(field, value, unit)
 
         return NutritionFacts(**nutrition_facts_data)
 
@@ -228,3 +228,25 @@ class NutritionFactsMapper:
         }
 
         return NutritionFacts(**nutrition_facts_data)
+
+    @staticmethod
+    def __get_nutrient_level(food_nutrients, searched_id):
+        return next(
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == searched_id
+            ),
+            None,
+        )
+
+    @staticmethod
+    def __get_nutrient_unit(food_nutrients, searched_id):
+        return next(
+            (
+                item["nutrient"]["unitName"].lower()
+                for item in food_nutrients
+                if item["nutrient"]["id"] == searched_id
+            ),
+            None,
+        )

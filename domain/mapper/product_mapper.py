@@ -19,9 +19,11 @@ class ProductMapper:
         self,
         ingredients_mapper: IngredientsMapper,
         nutriscore_data_mapper: NutriscoreDataMapper,
+        nutrition_facts_mapper: NutritionFactsMapper,
     ):
         self.ingredients_mapper = ingredients_mapper
         self.nutriscore_data_mapper = nutriscore_data_mapper
+        self.nutrition_facts_mapper = nutrition_facts_mapper
 
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
         """Maps a fdc dictionary to a product object"""
@@ -66,7 +68,7 @@ class ProductMapper:
             ),
             serving_size=product_dict["servingSize"],
             serving_size_unit=product_dict["servingSizeUnit"],
-            nutrition_facts=NutritionFactsMapper.map_fdc_dict_to_nutrition_facts(
+            nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
                 product_dict["foodNutrients"]
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
@@ -109,7 +111,7 @@ class ProductMapper:
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
             serving_size=Converter.safe_float(row[serving_size_index]),
-            nutrition_facts=NutritionFactsMapper.map_off_row_to_nutrition_facts(
+            nutrition_facts=self.nutrition_facts_mapper.map_off_row_to_nutrition_facts(
                 row, header
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_off_row_to_nutriscore_data(
@@ -162,7 +164,7 @@ class ProductMapper:
             ),
             serving_size=product_dict.get(serving_size_field),
             serving_size_unit=product_dict.get(serving_size_unit_field),
-            nutrition_facts=NutritionFactsMapper.map_off_dict_to_nutrition_facts(
+            nutrition_facts=self.nutrition_facts_mapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_off_dict_to_nutriscore_data(
