@@ -30,8 +30,15 @@ def nutriscore_data_mapper():
 
 
 @pytest.fixture
-def product_mapper(ingredients_mapper, nutriscore_data_mapper):
-    return ProductMapper(ingredients_mapper, nutriscore_data_mapper)
+def nutrition_facts_mapper():
+    return MagicMock(spec=NutritionFactsMapper)
+
+
+@pytest.fixture
+def product_mapper(ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper):
+    return ProductMapper(
+        ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper
+    )
 
 
 @pytest.fixture
@@ -266,6 +273,9 @@ def mock_fdc_functions(product_mapper):
     product_mapper.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data.return_value = (
         nutriscore_data
     )
+    product_mapper.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts.return_value = (
+        nutrition_facts
+    )
 
     with patch.object(
         NutritionFactsMapper,
@@ -295,6 +305,9 @@ def mock_off_row_functions(product_mapper):
     )
     product_mapper.nutriscore_data_mapper.map_off_row_to_nutriscore_data.return_value = (
         nutriscore_data
+    )
+    product_mapper.nutrition_facts_mapper.map_off_row_to_nutrition_facts.return_value = (
+        nutrition_facts
     )
 
     with patch.object(BrandsMapper, "map_off_row_to_brands", return_value=brands):
@@ -349,6 +362,9 @@ def mock_off_dict_functions(product_mapper):
     )
     product_mapper.nutriscore_data_mapper.map_off_dict_to_nutriscore_data.return_value = (
         nutriscore_data
+    )
+    product_mapper.nutrition_facts_mapper.map_off_dict_to_nutrition_facts.return_value = (
+        nutrition_facts
     )
 
     with patch.object(BrandsMapper, "map_off_dict_to_brands", return_value=brands):

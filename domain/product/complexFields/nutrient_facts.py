@@ -4,5 +4,5 @@ from domain.product.complexFields.nutrients import Nutrients
 
 
 class NutritionFacts(ComplexField):
-    nutrient_level: NutrientLevel
-    nutrients: Nutrients
+    nutrient_level: NutrientLevel = NutrientLevel()
+    nutrients: Nutrients = Nutrients()

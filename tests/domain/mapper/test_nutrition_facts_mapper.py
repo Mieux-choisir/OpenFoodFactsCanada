@@ -1,10 +1,15 @@
+from unittest.mock import patch
+
 import pytest
 from decimal import Decimal
 
+from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 
 from domain.product.complexFields.nutrient_level import NutrientLevel
 from domain.product.complexFields.nutrients import Nutrients
+
+CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
 
 @pytest.fixture
@@ -14,44 +19,26 @@ def nutrition_facts_mapper():
 
 @pytest.fixture
 def fdc_dict():
-    fat_id = 1004
-    saturated_fats_id = 1258
-    sodium_id = 1093
-    sugar_id = 2000
-    carbohydrates_100g_id = 1005
-    energy_kcal_100g_id = 1008
-    vitamin_a_100g_id = 1104
-
-    nutrient_values = {
-        "fat": Decimal("45.2"),
-        "saturated_fats": Decimal("63.78"),
-        "sodium": Decimal("0.5"),
-        "sugar": Decimal("45.14"),
-        "carbohydrates": Decimal("423"),
-        "energy_kcal": Decimal("10"),
-        "vitamin_a": Decimal("120"),
+    ids = {
+        "fat": 1004,
+        "sodium": 1093,
+        "saturated_fats": 1258,
+        "sugar": 2000,
+        "carbohydrates": 1005,
+        "energy_kcal": 1008,
+        "vitamin_a": 1104,
     }
 
-    food_nutrients = [
-        {"nutrient": {"id": fat_id}, "amount": nutrient_values["fat"]},
-        {
-            "nutrient": {"id": saturated_fats_id},
-            "amount": nutrient_values["saturated_fats"],
-        },
-        {"nutrient": {"id": sodium_id}, "amount": nutrient_values["sodium"]},
-        {"nutrient": {"id": sugar_id}, "amount": nutrient_values["sugar"]},
-        {
-            "nutrient": {"id": carbohydrates_100g_id},
-            "amount": nutrient_values["carbohydrates"],
-        },
-        {
-            "nutrient": {"id": energy_kcal_100g_id},
-            "amount": nutrient_values["energy_kcal"],
-        },
-        {"nutrient": {"id": vitamin_a_100g_id}, "amount": nutrient_values["vitamin_a"]},
+    fdc_dict = [
+        {"nutrient": {"id": ids["fat"], "unitName": "g"}, "amount": 10},
+        {"nutrient": {"id": ids["saturated_fats"], "unitName": "g"}, "amount": 20},
+        {"nutrient": {"id": ids["sugar"], "unitName": "g"}, "amount": 30.5},
+        {"nutrient": {"id": ids["carbohydrates"], "unitName": "g"}, "amount": 40},
+        {"nutrient": {"id": ids["energy_kcal"], "unitName": "g"}, "amount": 50},
+        {"nutrient": {"id": ids["sodium"], "unitName": "g"}, "amount": 62},
     ]
 
-    return food_nutrients, nutrient_values
+    return ids, fdc_dict
 
 
 @pytest.fixture
@@ -94,40 +81,49 @@ def off_dict():
 # ----------------------------------------------------------------
 
 
-def test_should_return_correct_nutrient_level_in_nutrition_facts_for_given_fdc_dict(
+def test_should_return_mapped_nutrient_level_values_in_nutrition_facts_for_fdc_dict(
     nutrition_facts_mapper, fdc_dict
 ):
-    food_nutrients, nutrient_values = fdc_dict
+    _, fdc_dict = fdc_dict
 
-    result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(food_nutrients)
+    with patch.object(NutrientAmountMapper, "map_nutrient", return_value=25):
+        result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(fdc_dict)
 
-    expected_nutrient_level = NutrientLevel(
-        fat=nutrient_values["fat"],
-        salt=nutrient_values["sodium"] * Decimal("2.5"),
-        saturated_fats=nutrient_values["saturated_fats"],
-        sugar=nutrient_values["sugar"],
-    )
-    assert (
-        result.nutrient_level == expected_nutrient_level
-    ), f"Expected nutrient level to be {expected_nutrient_level}, got {result.nutrient_level}"
+    assert result.nutrient_level.sugar == 25
+    assert result.nutrient_level.saturated_fats == 25
+    assert result.nutrient_level.fat == 25
+    assert result.nutrient_level.salt == 25
 
 
-def test_should_return_correct_nutrients_in_nutrition_facts_for_given_fdc_dict(
+def test_should_return_mapped_nutrients_in_nutrition_facts_for_fdc_dict(
     nutrition_facts_mapper, fdc_dict
 ):
-    food_nutrients, nutrient_values = fdc_dict
+    _, fdc_dict = fdc_dict
 
-    result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(food_nutrients)
+    with patch.object(NutrientAmountMapper, "map_nutrient", return_value=10.2):
+        result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(fdc_dict)
 
-    expected_nutrients = Nutrients(
-        carbohydrates_100g=nutrient_values["carbohydrates"],
-        energy_100g=nutrient_values["energy_kcal"] * Decimal(4.1868),
-        energy_kcal_100g=nutrient_values["energy_kcal"],
-        vitamin_a_100g=nutrient_values["vitamin_a"],
+    assert result.nutrients.carbohydrates_100g == 10.2
+    assert result.nutrients.vitamin_a_100g == 10.2
+
+
+def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_for_fdc_dict(
+    nutrition_facts_mapper, fdc_dict
+):
+    fdc_ids, fdc_dict = fdc_dict
+
+    with patch.object(NutrientAmountMapper, "map_nutrient", return_value=10.2):
+        result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(fdc_dict)
+
+    expected_energy_kcal_100g = next(
+        item["amount"]
+        for item in fdc_dict
+        if item["nutrient"]["id"] == fdc_ids["energy_kcal"]
     )
-    assert (
-        result.nutrients == expected_nutrients
-    ), f"Expected nutrient level to be {expected_nutrients}, got {result.nutrients}"
+    assert result.nutrients.energy_100g == float(
+        expected_energy_kcal_100g * CONVERSION_ENERGY_KCAL_TO_KJ
+    )
+    assert result.nutrients.energy_kcal_100g == expected_energy_kcal_100g
 
 
 # ----------------------------------------------------------------
