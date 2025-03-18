@@ -6,7 +6,9 @@ class BrandsMapper:
 
         brands = []
         if row[brands_index] is not None and row[brands_index] != "":
-            brands = row[brands_index].split(",")
+            brands = list(
+                filter(None, map(str.strip, row[brands_index].title().split(",")))
+            )
         return brands
 
     @staticmethod
@@ -16,17 +18,21 @@ class BrandsMapper:
 
         brand_owner = None
         if row[brand_owner_index] is not None and row[brand_owner_index] != "":
-            brand_owner = row[brand_owner_index]
+            brand_owner = row[brand_owner_index].title().strip()
         elif row[brands_index] is not None and row[brands_index] != "":
-            brand_owner = row[brands_index]
+            brand_owner = row[brands_index].split(",")[0].title().strip()
         return brand_owner
 
     @staticmethod
     def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> list[str]:
-        brands_value = []
+        brands = []
         if product_dict[brands_field] is not None:
-            brands_value = product_dict[brands_field].title().split(",")
-        return brands_value
+            brands = list(
+                filter(
+                    None, map(str.strip, product_dict[brands_field].title().split(","))
+                )
+            )
+        return brands
 
     @staticmethod
     def map_off_dict_to_brand_owner(
@@ -34,7 +40,7 @@ class BrandsMapper:
     ) -> str | None:
         brand_owner_value = None
         if product_dict[brand_owner_field] is not None:
-            brand_owner_value = product_dict[brand_owner_field].title()
+            brand_owner_value = product_dict[brand_owner_field].title().strip()
         elif product_dict[brands_field] is not None:
-            brand_owner_value = product_dict[brands_field].title()
+            brand_owner_value = product_dict[brands_field].title().strip()
         return brand_owner_value

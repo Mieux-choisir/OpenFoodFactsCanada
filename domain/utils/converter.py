@@ -8,8 +8,8 @@ class Converter:
             return None
 
     @staticmethod
-    def safe_float(string: str) -> float:
+    def safe_float(variable_to_convert) -> float:
         try:
-            return float(string)
+            return float(variable_to_convert)
         except ValueError:
             return None
