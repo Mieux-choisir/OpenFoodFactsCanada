@@ -464,7 +464,6 @@ def mock_off_dict_functions(product_mapper):
 def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):
-    print(fdc_dict)
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert (
