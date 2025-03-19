@@ -148,11 +148,8 @@ class ProductMapper:
         return Product(
             id_match=product_dict.get(id_field).strip().lstrip("0"),
             id_original=product_dict.get(id_field).strip(),
-            product_name=(
-                product_dict.get(product_name_field).strip().title()
-                if product_dict.get(product_name_field).strip() != ""
-                else None
-            ),
+            product_name=product_dict.get(product_name_field, "").strip().title()
+            or None,
             modified_date=datetime.fromtimestamp(
                 product_dict.get(modified_date_field), tz=timezone.utc
             ),

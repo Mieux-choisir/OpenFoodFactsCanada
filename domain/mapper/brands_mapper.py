@@ -26,10 +26,11 @@ class BrandsMapper:
     @staticmethod
     def map_off_dict_to_brands(product_dict: dict, brands_field: str) -> list[str]:
         brands = []
-        if product_dict[brands_field] is not None:
+        if product_dict.get(brands_field) is not None:
             brands = list(
                 filter(
-                    None, map(str.strip, product_dict[brands_field].title().split(","))
+                    None,
+                    map(str.strip, product_dict.get(brands_field).title().split(",")),
                 )
             )
         return brands

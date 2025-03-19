@@ -17,9 +17,13 @@ class IngredientsOriginMapper:
     @staticmethod
     def map_off_dict_to_ingredients_origin(product_dict: dict) -> IngredientsOrigins:
         origin_field = "origins"
+        origins_value = product_dict.get(origin_field, [])
+
+        if isinstance(origins_value, str):
+            origins_value = [origins_value.strip()] if origins_value.strip() else []
 
         return IngredientsOrigins(
-            origins=product_dict.get(origin_field),
+            origins=origins_value,
             percent=None,
             transportation_score=None,
         )
