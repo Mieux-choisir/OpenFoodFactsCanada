@@ -3,7 +3,6 @@ import logging
 from decimal import Decimal
 
 from domain.product.complexFields.ingredients import Ingredients
-from domain.product.complexFields.ingredients_origins import IngredientsOrigins
 from domain.product.product import Product
 
 
@@ -132,8 +131,8 @@ class CsvCreator:
             "nutriscore_data.saturated_fats": None,
             "nutriscore_data.sodium": "Sodium for 100 g / 100 ml",
             "nutriscore_data.sugar": None,
-            "nutriscore_data.fruit_percentage": "Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
-            # "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml"],
+            "nutriscore_data.fruit_percentage": ["Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
+                                                 "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml"],
             "nutriscore_data.is_beverage": None,
             "nutriscore_data.score": "Nutri-Score score",
             "ecoscore_data.score": None,
@@ -157,14 +156,14 @@ class CsvCreator:
             )
 
             columns = (
-                self.mandatory_columns
-                + self.recommended_columns
-                + self.optional_columns
+                    self.mandatory_columns
+                    + self.recommended_columns
+                    + self.optional_columns
             )
             filewriter.writerow(columns)
 
             for product in products:
-                list_to_write = self.create_csv_line_for_product(product, columns)
+                list_to_write = self.__create_csv_line_for_product(product, columns)
                 empty_mandatory_columns = self.__check_fields_not_empty(
                     self.mandatory_columns, list_to_write
                 )
@@ -175,8 +174,8 @@ class CsvCreator:
                     logging.info(f"product: {product}")
                 filewriter.writerow(list_to_write)
 
-    def create_csv_line_for_product(
-        self, product: Product, columns: list[str]
+    def __create_csv_line_for_product(
+            self, product: Product, columns: list[str]
     ) -> list[str]:
         line = [""] * len(columns)
 
@@ -187,7 +186,7 @@ class CsvCreator:
 
     @staticmethod
     def __check_fields_not_empty(
-        checked_columns: list[str], values_list: list[str]
+            checked_columns: list[str], values_list: list[str]
     ) -> list[str]:
         empty_fields = []
 
@@ -199,12 +198,18 @@ class CsvCreator:
 
     def __add_values(self, columns, line, key, value, old_key_name):
         current_key_name = old_key_name + "." + key if old_key_name != "" else key
+
         if self.__is_simple_field(value):
-            if self.product_field_to_columns_mapping.get(current_key_name) is not None:
-                column_id = columns.index(
-                    self.product_field_to_columns_mapping.get(current_key_name)
-                )
-                line[column_id] = value
+            column_mapping = self.product_field_to_columns_mapping.get(current_key_name)
+
+            if column_mapping is not None:
+                if isinstance(column_mapping, str):
+                    column_id = columns.index(column_mapping)
+                    line[column_id] = value
+                elif isinstance(column_mapping, list):
+                    column_ids = [columns.index(cat) for cat in column_mapping]
+                    for column_id in column_ids:
+                        line[column_id] = value
 
         elif value is not None:
             value_dict = vars(value) if not isinstance(value, dict) else value
@@ -214,20 +219,11 @@ class CsvCreator:
     @staticmethod
     def __is_simple_field(value) -> bool:
         is_simple_field = (
-            value is not None
-            and isinstance(value, str)
-            or isinstance(value, int)
-            or isinstance(value, float)
-            or isinstance(value, Decimal)
-            or isinstance(value, list)
+                value is not None
+                and isinstance(value, str)
+                or isinstance(value, int)
+                or isinstance(value, float)
+                or isinstance(value, Decimal)
+                or isinstance(value, list)
         )
         return is_simple_field
-
-
-product = Product()
-product.ingredients = Ingredients(
-    ingredients_text="ingredient1, ingredient2 (propetrtuees), ingredient3",
-    ingredients_list=["ingerdeint1", "ingredient2", "ingredient3"],
-)
-creator = CsvCreator("TEST.csv")
-creator.create_csv_file_for_products([product])
