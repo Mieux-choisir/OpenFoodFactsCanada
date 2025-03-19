@@ -20,8 +20,8 @@ class PackagingMapper:
         return Packaging(
             non_recyclable_and_non_biodegradable_materials=None,
             packaging=(
-                product_dict[packaging_tags_field]
-                if product_dict[packaging_tags_field] is not None
+                product_dict.get(packaging_tags_field)
+                if product_dict.get(packaging_tags_field) is not None
                 else []
             ),
         )

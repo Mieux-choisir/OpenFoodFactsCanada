@@ -11,7 +11,8 @@ from domain.utils.ingredient_normalizer import IngredientNormalizer
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
-from scripts.product_matcher import ProductMatcher
+
+# off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
 off_csv_url = (
     "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
@@ -31,6 +32,13 @@ def main():
     os.makedirs(data_dir, exist_ok=True)
 
     data_downloader = DataDownloader()
+
+    # off_jsonl_gz_file = "off_jsonl.gz"
+    # off_jsonl_file = "off_jsonl.jsonl"
+
+    # data_downloader.download_and_decompress_data(
+    #     off_jsonl_url, off_jsonl_gz_file, ".gz", off_jsonl_file
+    # )
 
     off_csv_gz_file = os.path.join(data_dir, "off_csv.gz")
     off_csv_file = os.path.join(data_dir, "off_csv.csv")
@@ -55,16 +63,13 @@ def main():
     )
 
     off_products = data_importer.import_csv_off_data(off_csv_file)
+    # off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
 
     data_loader = DataLoader()
 
     data_loader.load_products_to_mongo(off_products, collection_name="off_products")
     data_loader.load_products_to_mongo(fdc_products, collection_name="fdc_products")
-
-    product_matcher = ProductMatcher()
-
-    product_matcher.match_products()
 
 
 if __name__ == "__main__":
