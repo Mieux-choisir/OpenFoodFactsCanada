@@ -8,6 +8,7 @@ from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.product_mapper import ProductMapper
 from domain.utils.ingredient_normalizer import IngredientNormalizer
+from scripts.csv_creator import CsvCreator
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
@@ -64,7 +65,9 @@ def main():
 
     product_matcher = ProductMatcher()
 
-    product_matcher.match_products()
+    ids = product_matcher.match_products()
+    csv_creator = CsvCreator("fdc_products_to_add.csv")
+    csv_creator.create_csv_file_for_products(fdc_products, ids)
 
 
 if __name__ == "__main__":

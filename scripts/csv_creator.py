@@ -2,7 +2,8 @@ import csv
 import logging
 from decimal import Decimal
 
-from domain.product.complexFields.ingredients import Ingredients
+from pymongo import MongoClient
+
 from domain.product.product import Product
 
 
@@ -151,7 +152,9 @@ class CsvCreator:
             "nova_data.group_markers": None,
         }
 
-    def create_csv_file_for_products(self, products: list[Product]) -> None:
+    def create_csv_file_for_products(
+        self, products: list[Product], wanted_products_ids: list[str]
+    ) -> None:
         with open(self.csv_path, "w", encoding="utf-8", newline="") as file:
             filewriter = csv.writer(
                 file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
@@ -166,17 +169,18 @@ class CsvCreator:
             filewriter.writerow(columns)
 
             for product in products:
-                list_to_write = self.__create_csv_line_for_product(product, columns)
-                filewriter.writerow(list_to_write)
+                if product.id_match in wanted_products_ids:
+                    list_to_write = self.__create_csv_line_for_product(product, columns)
+                    filewriter.writerow(list_to_write)
 
-                empty_mandatory_columns = self.__check_fields_not_empty(
-                    self.mandatory_columns, list_to_write
-                )
-                if empty_mandatory_columns:
-                    logging.warning(
-                        f"WARNING: empty mandatory columns:{empty_mandatory_columns}!"
+                    empty_mandatory_columns = self.__check_fields_not_empty(
+                        self.mandatory_columns, list_to_write
                     )
-                    logging.info(f"product: {product}")
+                    if empty_mandatory_columns:
+                        logging.warning(
+                            f"WARNING: empty mandatory columns:{empty_mandatory_columns}!"
+                        )
+                        logging.info(f"product: {product}")
 
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
@@ -185,6 +189,8 @@ class CsvCreator:
 
         for key, value in vars(product).items():
             self.__add_values(columns, line, key, value, "")
+
+        line[columns.index("Main language")] = "English"
 
         return line
 

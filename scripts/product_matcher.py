@@ -6,7 +6,7 @@ from pymongo.synchronous.database import Database
 
 
 class ProductMatcher:
-    def match_products(self):
+    def match_products(self) -> list[str]:
         client = MongoClient("mongodb://localhost:37017/")
         db = client["openfoodfacts"]
 
@@ -39,6 +39,8 @@ class ProductMatcher:
         matched_fdc_collection.insert_many(matched_fdc_products)
 
         logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
+
+        return matched_ids
 
     def __extract_data(self, db: Database):
 

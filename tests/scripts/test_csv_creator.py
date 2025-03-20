@@ -5,7 +5,7 @@ import pytest
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
 from domain.product.product import Product
-from domain.utils.csv_creator import CsvCreator
+from scripts.csv_creator import CsvCreator
 
 
 @pytest.fixture
@@ -60,6 +60,7 @@ def products_mapped_lists(csv_creator, products):
     nova_data_score_id = columns_list.index(
         csv_creator.product_field_to_columns_mapping.get("nova_data.score")
     )
+    language_id = columns_list.index("Main language")
 
     mapped_lists = []
     for product in products:
@@ -84,6 +85,7 @@ def products_mapped_lists(csv_creator, products):
         expected_added_list[nova_data_score_id] = (
             str(product.nova_data.score) if product.nova_data.score is not None else ""
         )
+        expected_added_list[language_id] = "English"
         mapped_lists.append(expected_added_list)
 
     return mapped_lists
@@ -92,7 +94,7 @@ def products_mapped_lists(csv_creator, products):
 def test_should_open_csv_file_with_correct_parameters(csv_creator):
     open_mock = mock_open()
     with patch("builtins.open", open_mock):
-        csv_creator.create_csv_file_for_products([])
+        csv_creator.create_csv_file_for_products([], [])
 
     open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
 
@@ -103,7 +105,7 @@ def test_should_write_correct_headers_line_in_csv_file(csv_creator):
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products([])
+            csv_creator.create_csv_file_for_products([], [])
 
     open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
     mock_filewriter.writerow.assert_called_with(
@@ -113,7 +115,7 @@ def test_should_write_correct_headers_line_in_csv_file(csv_creator):
     )
 
 
-def test_should_write_correctly_formatted_lines_for_given_products_in_csv_file(
+def test_should_write_correctly_formatted_lines_only_for_products_with_ids_to_add_in_csv_file(
     csv_creator, products, products_mapped_lists
 ):
     open_mock = mock_open()
@@ -121,7 +123,7 @@ def test_should_write_correctly_formatted_lines_for_given_products_in_csv_file(
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products(products)
+            csv_creator.create_csv_file_for_products(products, [products[0].id_match])
 
-    for mapped_list in products_mapped_lists:
-        mock_filewriter.writerow.assert_any_call(mapped_list)
+    mock_filewriter.writerow.assert_called_with(products_mapped_lists[0])
+    assert mock_filewriter.writerow.call_count == 2
