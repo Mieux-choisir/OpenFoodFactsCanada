@@ -1,74 +1,67 @@
+from decimal import Decimal
 from domain.mapper.number_mapper import NumberMapper
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 from domain.utils.converter import Converter
+from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 
 
 class NutriscoreDataMapper:
     def __init__(self, number_mapper: NumberMapper):
         self.number_mapper = number_mapper
+        self.energy_kcal_to_kj = Decimal(4.1868)
 
-    @staticmethod
-    def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreData:
-        energy_id = 1008
-        fibers_id = 1079
-        proteins_id = 1003
-        saturated_fats_id = 1258
-        sodium_id = 1093
-        sugar_id = 2000
+    def map_fdc_dict_to_nutriscore_data(
+        self, food_nutrients: list[dict]
+    ) -> NutriscoreData:
+        nutrient_ids = {
+            "fibers_100g": 1079,
+            "proteins_100g": 1003,
+            "saturated_fats_100g": 1258,
+            "sodium_100g": 1093,
+            "sugar_100g": 2000,
+        }
 
-        return NutriscoreData(
-            score=None,
-            energy=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == energy_id
-                ),
-                None,
+        nutriscore_data = {
+            "score": None,
+            "fruit_percentage": None,
+            "is_beverage": None,
+        }
+
+        energy_kcal = next(
+            (
+                item["amount"]
+                for item in food_nutrients
+                if item["nutrient"]["id"] == 1008
             ),
-            fibers=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == fibers_id
-                ),
-                None,
-            ),
-            fruit_percentage=None,
-            proteins=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == proteins_id
-                ),
-                None,
-            ),
-            saturated_fats=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == saturated_fats_id
-                ),
-                None,
-            ),
-            sodium=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == sodium_id
-                ),
-                None,
-            ),
-            sugar=next(
-                (
-                    item["amount"]
-                    for item in food_nutrients
-                    if item["nutrient"]["id"] == sugar_id
-                ),
-                None,
-            ),
-            is_beverage=None,
+            None,
         )
+
+        if energy_kcal is not None:
+            nutriscore_data["energy_100g"] = float(energy_kcal) * float(self.energy_kcal_to_kj)
+
+        for field, nutrient_id in nutrient_ids.items():
+            value = next(
+                (
+                    item["amount"]
+                    for item in food_nutrients
+                    if item["nutrient"]["id"] == nutrient_id
+                ),
+                None,
+            )
+            unit = next(
+                (
+                    item["nutrient"]["unitName"]
+                    for item in food_nutrients
+                    if item["nutrient"]["id"] == nutrient_id
+                ),
+                None,
+            )
+
+            nutriscore_data[field] = NutrientAmountMapper().map_nutrient(
+                field, value, unit
+            )
+
+        return NutriscoreData(**nutriscore_data)
 
     def map_off_row_to_nutriscore_data(
         self, row: list[str], header: list[str]
@@ -88,13 +81,13 @@ class NutriscoreDataMapper:
                 if row[nutriscore_score_index]
                 else None
             ),
-            energy=Converter.safe_float(row[energy_index]),
-            fibers=row[fibers_index],
+            energy_100g=Converter.safe_float(row[energy_index]),
+            fibers_100g=row[fibers_index],
             fruit_percentage=Converter.safe_float(row[fruit_percentage_index]),
-            proteins=row[proteins_index],
-            saturated_fats=Converter.safe_float(row[saturated_fats_index]),
-            sodium=row[sodium_index],
-            sugar=row[sugar_index],
+            proteins_100g=row[proteins_index],
+            saturated_fats_100g=Converter.safe_float(row[saturated_fats_index]),
+            sodium_100g=row[sodium_index],
+            sugar_100g=row[sugar_index],
             is_beverage=None,
         )
 
@@ -117,8 +110,8 @@ class NutriscoreDataMapper:
                 if product_dict.get(nutriscore_score_field)
                 else None
             ),
-            energy=product_dict.get(nutrients_field, {}).get(energy_field),
-            fibers=(
+            energy_100g=product_dict.get(nutrients_field, {}).get(energy_field),
+            fibers_100g=(
                 Converter.safe_float(
                     product_dict.get(nutrients_field, {}).get(fibers_field)
                 )
@@ -133,11 +126,11 @@ class NutriscoreDataMapper:
                 is not None
                 else None
             ),
-            proteins=product_dict.get(nutrients_field, {}).get(proteins_field),
-            saturated_fats=product_dict.get(nutrients_field, {}).get(
+            proteins_100g=product_dict.get(nutrients_field, {}).get(proteins_field),
+            saturated_fats_100g=product_dict.get(nutrients_field, {}).get(
                 saturated_fats_field
             ),
-            sodium=product_dict.get(nutrients_field, {}).get(sodium_field),
-            sugar=product_dict.get(nutrients_field, {}).get(sugar_field),
+            sodium_100g=product_dict.get(nutrients_field, {}).get(sodium_field),
+            sugar_100g=product_dict.get(nutrients_field, {}).get(sugar_field),
             is_beverage=None,
         )
