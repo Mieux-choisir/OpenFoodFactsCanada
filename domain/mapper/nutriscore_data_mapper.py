@@ -37,7 +37,9 @@ class NutriscoreDataMapper:
         )
 
         if energy_kcal is not None:
-            nutriscore_data["energy_100g"] = float(energy_kcal) * float(self.energy_kcal_to_kj)
+            nutriscore_data["energy_100g"] = float(energy_kcal) * float(
+                self.energy_kcal_to_kj
+            )
 
         for field, nutrient_id in nutrient_ids.items():
             value = next(
