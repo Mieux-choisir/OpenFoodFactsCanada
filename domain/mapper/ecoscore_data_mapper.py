@@ -40,7 +40,11 @@ class EcoscoreDataMapper:
         )
 
         return EcoscoreData(
-            score=int(product_dict[score_field]) if product_dict[score_field] else None,
+            score=(
+                int(product_dict.get(score_field))
+                if product_dict.get(score_field)
+                else None
+            ),
             ingredients_origins=ingredients_origins,
             packaging=packaging,
             production_system=production_system,

@@ -19,22 +19,21 @@ class IngredientsMapper:
         self, row: list[str], header: list[str]
     ) -> Ingredients:
         ingredients_text_index = header.index("ingredients_text")
-        ingredients_text = row[ingredients_text_index]
 
         return Ingredients(
             ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
-                ingredients_text
+                row[ingredients_text_index]
             ),
-            ingredients_text=ingredients_text.title(),
+            ingredients_text=row[ingredients_text_index].title(),
         )
 
     def map_off_dict_to_ingredients(self, product_dict: dict) -> Ingredients:
         ingredients_text_field = "ingredients_text"
-        ingredients_text = product_dict[ingredients_text_field]
 
         return Ingredients(
             ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
-                ingredients_text
+                product_dict.get(ingredients_text_field)
             ),
-            ingredients_text=ingredients_text.title(),
+            ingredients_text=product_dict.get(ingredients_text_field, "").title()
+            or None,
         )

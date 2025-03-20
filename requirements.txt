@@ -11,3 +11,4 @@ dask
 numpy
 pandas
 pyarrow
+datetime

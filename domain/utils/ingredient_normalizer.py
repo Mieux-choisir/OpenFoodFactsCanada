@@ -5,6 +5,10 @@ class IngredientNormalizer:
     def normalise_ingredients_list(self, ingredients_text: str) -> list[str]:
         """Creates a normalised ingredients list based on a given text of ingredients.
         ingredients_text is an enumeration of the ingredients separated by a comma"""
+
+        if not ingredients_text:
+            return []
+
         ingredients_text = ingredients_text.title()
         ingredients_text = self.__remove_unnecessary_text(ingredients_text)
         ingredients_list = self.__segment_ingredients(ingredients_text)
