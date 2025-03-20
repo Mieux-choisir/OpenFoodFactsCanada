@@ -131,8 +131,10 @@ class CsvCreator:
             "nutriscore_data.saturated_fats": None,
             "nutriscore_data.sodium": "Sodium for 100 g / 100 ml",
             "nutriscore_data.sugar": None,
-            "nutriscore_data.fruit_percentage": ["Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
-                                                 "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml"],
+            "nutriscore_data.fruit_percentage": [
+                "Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
+                "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml",
+            ],
             "nutriscore_data.is_beverage": None,
             "nutriscore_data.score": "Nutri-Score score",
             "ecoscore_data.score": None,
@@ -156,14 +158,17 @@ class CsvCreator:
             )
 
             columns = (
-                    self.mandatory_columns
-                    + self.recommended_columns
-                    + self.optional_columns
+                self.mandatory_columns
+                + self.recommended_columns
+                + self.optional_columns
             )
+
             filewriter.writerow(columns)
 
             for product in products:
                 list_to_write = self.__create_csv_line_for_product(product, columns)
+                filewriter.writerow(list_to_write)
+
                 empty_mandatory_columns = self.__check_fields_not_empty(
                     self.mandatory_columns, list_to_write
                 )
@@ -172,10 +177,9 @@ class CsvCreator:
                         f"WARNING: empty mandatory columns:{empty_mandatory_columns}!"
                     )
                     logging.info(f"product: {product}")
-                filewriter.writerow(list_to_write)
 
     def __create_csv_line_for_product(
-            self, product: Product, columns: list[str]
+        self, product: Product, columns: list[str]
     ) -> list[str]:
         line = [""] * len(columns)
 
@@ -183,18 +187,6 @@ class CsvCreator:
             self.__add_values(columns, line, key, value, "")
 
         return line
-
-    @staticmethod
-    def __check_fields_not_empty(
-            checked_columns: list[str], values_list: list[str]
-    ) -> list[str]:
-        empty_fields = []
-
-        for i in range(len(checked_columns)):
-            if values_list[i] == "":
-                empty_fields.append(checked_columns[i])
-
-        return empty_fields
 
     def __add_values(self, columns, line, key, value, old_key_name):
         current_key_name = old_key_name + "." + key if old_key_name != "" else key
@@ -205,11 +197,15 @@ class CsvCreator:
             if column_mapping is not None:
                 if isinstance(column_mapping, str):
                     column_id = columns.index(column_mapping)
-                    line[column_id] = value
+                    line[column_id] = (
+                        str(value) if not isinstance(value, list) else value
+                    )
                 elif isinstance(column_mapping, list):
                     column_ids = [columns.index(cat) for cat in column_mapping]
                     for column_id in column_ids:
-                        line[column_id] = value
+                        line[column_id] = (
+                            str(value) if not isinstance(value, list) else value
+                        )
 
         elif value is not None:
             value_dict = vars(value) if not isinstance(value, dict) else value
@@ -219,11 +215,22 @@ class CsvCreator:
     @staticmethod
     def __is_simple_field(value) -> bool:
         is_simple_field = (
-                value is not None
-                and isinstance(value, str)
-                or isinstance(value, int)
-                or isinstance(value, float)
-                or isinstance(value, Decimal)
-                or isinstance(value, list)
+            isinstance(value, str)
+            or isinstance(value, int)
+            or isinstance(value, float)
+            or isinstance(value, Decimal)
+            or isinstance(value, list)
         )
         return is_simple_field
+
+    @staticmethod
+    def __check_fields_not_empty(
+        checked_columns: list[str], values_list: list[str]
+    ) -> list[str]:
+        empty_fields = []
+
+        for i in range(len(checked_columns)):
+            if values_list[i] == "":
+                empty_fields.append(checked_columns[i])
+
+        return empty_fields
