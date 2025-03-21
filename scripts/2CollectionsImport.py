@@ -12,6 +12,7 @@ from scripts.csv_creator import CsvCreator
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
+from scripts.product_matcher import ProductMatcher
 
 # off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
@@ -76,7 +77,7 @@ def main():
 
     ids = product_matcher.match_products()
     csv_creator = CsvCreator("fdc_products_to_add.csv")
-    csv_creator.create_csv_file_for_products(fdc_products, ids)
+    csv_creator.create_csv_file_for_products_not_existing_in_off(fdc_products, ids)
 
 
 if __name__ == "__main__":

@@ -76,9 +76,6 @@ def products_mapped_lists(csv_creator, products):
             if product.ingredients.ingredients_text is not None
             else ""
         )
-        expected_added_list[brands_id] = (
-            product.brands if product.brands is not None else ""
-        )
         expected_added_list[category_id] = (
             str(product.category_en) if product.category_en is not None else ""
         )
@@ -86,6 +83,13 @@ def products_mapped_lists(csv_creator, products):
             str(product.nova_data.score) if product.nova_data.score is not None else ""
         )
         expected_added_list[language_id] = "English"
+
+        expected_added_list[brands_id] = ""
+        if product.brands != []:
+            for brand in product.brands:
+                expected_added_list[brands_id] += brand + ", "
+        expected_added_list[brands_id] = expected_added_list[brands_id][:-2]
+
         mapped_lists.append(expected_added_list)
 
     return mapped_lists
@@ -94,7 +98,7 @@ def products_mapped_lists(csv_creator, products):
 def test_should_open_csv_file_with_correct_parameters(csv_creator):
     open_mock = mock_open()
     with patch("builtins.open", open_mock):
-        csv_creator.create_csv_file_for_products([], [])
+        csv_creator.create_csv_file_for_products_not_existing_in_off([], [])
 
     open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
 
@@ -105,7 +109,7 @@ def test_should_write_correct_headers_line_in_csv_file(csv_creator):
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products([], [])
+            csv_creator.create_csv_file_for_products_not_existing_in_off([], [])
 
     open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
     mock_filewriter.writerow.assert_called_with(
@@ -123,7 +127,9 @@ def test_should_write_correctly_formatted_lines_only_for_products_with_ids_to_ad
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products(products, [products[0].id_match])
+            csv_creator.create_csv_file_for_products_not_existing_in_off(
+                products, [products[0].id_match]
+            )
 
-    mock_filewriter.writerow.assert_called_with(products_mapped_lists[0])
+    mock_filewriter.writerow.assert_called_with(products_mapped_lists[1])
     assert mock_filewriter.writerow.call_count == 2

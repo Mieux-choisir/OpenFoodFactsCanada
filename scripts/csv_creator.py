@@ -1,5 +1,6 @@
 import csv
 import logging
+from datetime import datetime
 from decimal import Decimal
 
 from pymongo import MongoClient
@@ -109,8 +110,8 @@ class CsvCreator:
         ]
         self.product_field_to_columns_mapping = {
             "id_match": "Barcode",
-            "generic_name_en": "Common name",
             "product_name": "Product name",
+            "quantity": "Quantity",
             "category_en": "Categories",
             "is_raw": None,
             "brands": "Brands",
@@ -118,42 +119,32 @@ class CsvCreator:
             "food_groups_en": None,
             "ingredients.ingredients_text": "Ingredients list",
             "ingredients.ingredients_list": None,
-            "nutrition_facts.nutrient_level.fat": "Fat for 100 g / 100 ml",
-            "nutrition_facts.nutrient_level.salt": "Salt for 100 g / 100 ml",
-            "nutrition_facts.nutrient_level.saturated_fats": "Saturated fat for 100 g / 100 ml",
-            "nutrition_facts.nutrient_level.sugar": "Sugars for 100 g / 100 ml",
-            "nutrition_facts.nutrients.carbohydrates_100g": "Carbohydrates for 100 g / 100 ml",
-            "nutrition_facts.nutrients.energy_100g": "Energy (kJ) for 100 g / 100 ml",
-            "nutrition_facts.nutrients.energy_kcal_100g": "Energy (kcal) for 100 g / 100 ml",
-            "nutrition_facts.nutrients.vitamin_a_100g": None,
-            "nutriscore_data.energy": None,
-            "nutriscore_data.fibers": "Fiber for 100 g / 100 ml",
-            "nutriscore_data.proteins": "Proteins for 100 g / 100 ml",
-            "nutriscore_data.saturated_fats": None,
-            "nutriscore_data.sodium": "Sodium for 100 g / 100 ml",
-            "nutriscore_data.sugar": None,
+            "serving_size": "Serving size",
+            "serving_size_unit": "Serving size",  # TODO handle serving size + unit
+            "nutrition_facts.fat_100g": "Fat for 100 g / 100 ml",
+            "nutrition_facts.salt_100g": "Salt for 100 g / 100 ml",
+            "nutrition_facts.saturated_fats_100g": "Saturated fat for 100 g / 100 ml",
+            "nutrition_facts.sugar_100g": "Sugars for 100 g / 100 ml",
+            "nutrition_facts.carbohydrates_100g": "Carbohydrates for 100 g / 100 ml",
+            "nutrition_facts.energy_100g": "Energy (kJ) for 100 g / 100 ml",
+            "nutrition_facts.energy_kcal_100g": "Energy (kcal) for 100 g / 100 ml",
+            "nutrition_facts.proteins_100g": "Proteins for 100 g / 100 ml",
+            "nutrition_facts.fibers_100g": "Fiber for 100 g / 100 ml",
+            "nutrition_facts.sodium_100g": "Sodium for 100 g / 100 ml",
             "nutriscore_data.fruit_percentage": [
                 "Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
                 "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml",
             ],
-            "nutriscore_data.is_beverage": None,
             "nutriscore_data.score": "Nutri-Score score",
-            "ecoscore_data.score": None,
             "ecoscore_data.ingredients_origins.origins": "Origins of ingredients",
-            "ecoscore_data.ingredients_origins.percent": None,
-            "ecoscore_data.ingredients_origins.transportation_score": None,
-            "ecoscore_data.packaging.non_recyclable_and_non_biodegradable_materials": None,
             "ecoscore_data.packaging.packaging": "Packaging",
-            "ecoscore_data.packaging.production_system.labels": "Labels",
-            "ecoscore_data.packaging.production_system.value": None,
-            "ecoscore_data.packaging.production_system.warning": "Warning",
-            "ecoscore_data.threatened_species": None,
+            "ecoscore_data.packaging.production_system.labels": "Labels",  # TODO removed => add back ?
+            "ecoscore_data.packaging.production_system.warning": "Warning",  # TODO removed => add back ?
             "nova_data.score": "NOVA group",
-            "nova_data.group_markers": None,
         }
 
-    def create_csv_file_for_products(
-        self, products: list[Product], wanted_products_ids: list[str]
+    def create_csv_file_for_products_not_existing_in_off(
+        self, products: list[Product], existing_off_products_ids: list[str]
     ) -> None:
         with open(self.csv_path, "w", encoding="utf-8", newline="") as file:
             filewriter = csv.writer(
@@ -169,8 +160,9 @@ class CsvCreator:
             filewriter.writerow(columns)
 
             for product in products:
-                if product.id_match in wanted_products_ids:
+                if product.id_match not in existing_off_products_ids:
                     list_to_write = self.__create_csv_line_for_product(product, columns)
+                    print("list res = ", list_to_write)
                     filewriter.writerow(list_to_write)
 
                     empty_mandatory_columns = self.__check_fields_not_empty(
@@ -178,9 +170,9 @@ class CsvCreator:
                     )
                     if empty_mandatory_columns:
                         logging.warning(
-                            f"WARNING: empty mandatory columns:{empty_mandatory_columns}!"
+                            f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
                         )
-                        logging.info(f"product: {product}")
+            logging.info("Csv file created!")
 
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
@@ -199,13 +191,11 @@ class CsvCreator:
 
         if self.__is_simple_field(value):
             column_mapping = self.product_field_to_columns_mapping.get(current_key_name)
-
             if column_mapping is not None:
                 if isinstance(column_mapping, str):
                     column_id = columns.index(column_mapping)
-                    line[column_id] = (
-                        str(value) if not isinstance(value, list) else value
-                    )
+                    value = self.__format_value(value)
+                    line[column_id] = value
                 elif isinstance(column_mapping, list):
                     column_ids = [columns.index(cat) for cat in column_mapping]
                     for column_id in column_ids:
@@ -226,8 +216,22 @@ class CsvCreator:
             or isinstance(value, float)
             or isinstance(value, Decimal)
             or isinstance(value, list)
+            or isinstance(value, datetime)
         )
         return is_simple_field
+
+    @staticmethod
+    def __format_value(value):
+        formatted_value = ""
+        if isinstance(value, list):
+            if len(value) > 0:
+                for element in value[:-1]:
+                    formatted_value += str(element) + ", "
+                formatted_value += str(value[-1])
+
+        else:
+            formatted_value = str(value) if not isinstance(value, list) else value
+        return formatted_value
 
     @staticmethod
     def __check_fields_not_empty(

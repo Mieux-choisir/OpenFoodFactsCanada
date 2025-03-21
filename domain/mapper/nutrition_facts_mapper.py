@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
-from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.utils.converter import Converter
 
 

@@ -20,9 +20,7 @@ class DataLoader:
                 f"Loading products into MongoDB ({db_name}.{collection_name})..."
             )
 
-            connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
-            )
+            connection_string = "mongodb://localhost:37017"
             client = MongoClient(connection_string)
             collection = client[db_name][collection_name]
 
@@ -34,6 +32,7 @@ class DataLoader:
             logging.info("Connected to MongoDB, indexes created")
 
             def process_batch(batch):
+                print("BATCH")
                 batch_client = MongoClient(connection_string)
                 batch_collection = batch_client[db_name][collection_name]
 

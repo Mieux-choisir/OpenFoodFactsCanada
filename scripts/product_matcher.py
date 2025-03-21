@@ -34,7 +34,7 @@ class ProductMatcher:
             matched_off_products = off_collection.find(
                 {"id_match": {"$in": list(matched_ids)}}
             )
-            matched_off_collection.insert_many(matched_off_products)
+            # matched_off_collection.insert_many(matched_off_products)
             logging.info(f"Inserted {len(matched_ids)} matched OFF products.")
 
         if matched_fdc_collection.count_documents({}) > 0:
@@ -43,7 +43,7 @@ class ProductMatcher:
             matched_fdc_products = fdc_collection.find(
                 {"id_match": {"$in": list(matched_ids)}}
             )
-            matched_fdc_collection.insert_many(matched_fdc_products)
+            # matched_fdc_collection.insert_many(matched_fdc_products)
 
         logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
 
