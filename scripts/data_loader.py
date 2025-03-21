@@ -32,7 +32,6 @@ class DataLoader:
             logging.info("Connected to MongoDB, indexes created")
 
             def process_batch(batch):
-                print("BATCH")
                 batch_client = MongoClient(connection_string)
                 batch_collection = batch_client[db_name][collection_name]
 

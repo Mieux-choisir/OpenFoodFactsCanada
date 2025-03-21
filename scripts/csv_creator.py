@@ -3,8 +3,6 @@ import logging
 from datetime import datetime
 from decimal import Decimal
 
-from pymongo import MongoClient
-
 from domain.product.product import Product
 
 
@@ -162,7 +160,6 @@ class CsvCreator:
             for product in products:
                 if product.id_match not in existing_off_products_ids:
                     list_to_write = self.__create_csv_line_for_product(product, columns)
-                    print("list res = ", list_to_write)
                     filewriter.writerow(list_to_write)
 
                     empty_mandatory_columns = self.__check_fields_not_empty(
