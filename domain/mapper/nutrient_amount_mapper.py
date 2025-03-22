@@ -3,7 +3,6 @@ from decimal import Decimal
 
 class NutrientAmountMapper:
     def __init__(self):
-        self.nutrient_unit_required_iu = ["vitamin_a_100g"]
         self.unit_conversions_to_g = {
             "mcg": 1000000,
             "mg": 1000,
