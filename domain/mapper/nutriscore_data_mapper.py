@@ -112,27 +112,32 @@ class NutriscoreDataMapper:
         return NutriscoreData(
             score=(
                 self.number_mapper.map_letter_to_number(
-                    product_dict[nutriscore_score_field]
+                    product_dict.get(nutriscore_score_field)
                 )
-                if product_dict[nutriscore_score_field]
+                if product_dict.get(nutriscore_score_field)
                 else None
             ),
-            energy=product_dict[nutrients_field][energy_field],
+            energy=product_dict.get(nutrients_field, {}).get(energy_field),
             fibers=(
-                Converter.safe_float(product_dict[nutrients_field][fibers_field])
-                if product_dict[nutrients_field][fibers_field] is not None
+                Converter.safe_float(
+                    product_dict.get(nutrients_field, {}).get(fibers_field)
+                )
+                if product_dict.get(nutrients_field, {}).get(fibers_field) is not None
                 else None
             ),
             fruit_percentage=(
                 Converter.safe_float(
-                    product_dict[nutrients_field][fruit_percentage_field]
+                    product_dict.get(nutrients_field, {}).get(fruit_percentage_field)
                 )
-                if product_dict[nutrients_field][fruit_percentage_field] is not None
+                if product_dict.get(nutrients_field, {}).get(fruit_percentage_field)
+                is not None
                 else None
             ),
-            proteins=product_dict[nutrients_field][proteins_field],
-            saturated_fats=product_dict[nutrients_field][saturated_fats_field],
-            sodium=product_dict[nutrients_field][sodium_field],
-            sugar=product_dict[nutrients_field][sugar_field],
+            proteins=product_dict.get(nutrients_field, {}).get(proteins_field),
+            saturated_fats=product_dict.get(nutrients_field, {}).get(
+                saturated_fats_field
+            ),
+            sodium=product_dict.get(nutrients_field, {}).get(sodium_field),
+            sugar=product_dict.get(nutrients_field, {}).get(sugar_field),
             is_beverage=None,
         )

@@ -7,12 +7,14 @@ from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.category_mapper import CategoryMapper
 from domain.product.product import Product
+from domain.utils.converter import Converter
 from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
+from datetime import datetime, timezone
 
 
 class ProductMapper:
-    WANTED_COUNTRIES = ["Canada", "United States"]
+    WANTED_COUNTRIES = ["Canada", "United States", "New Zealand"]
 
     def __init__(
         self,
@@ -30,7 +32,10 @@ class ProductMapper:
         """Maps a fdc dictionary to a product object"""
         id_field = "gtinUpc"
         product_name_field = "description"
-        generic_name_field = "description"
+        data_source_field = "dataSource"
+        modified_date_field = "modifiedDate"
+        available_date_field = "availableDate"
+        publication_date_field = "publicationDate"
         brands_field = "brandName"
         brand_owner_field = "brandOwner"
         ingredients_field = "ingredients"
@@ -44,7 +49,17 @@ class ProductMapper:
             id_match=product_dict[id_field].strip().lstrip("0"),
             id_original=product_dict[id_field].strip(),
             product_name=product_dict[product_name_field].strip().title(),
-            generic_name_en=product_dict[generic_name_field].strip().title(),
+            data_source=product_dict[data_source_field],
+            modified_date=datetime.strptime(
+                product_dict[modified_date_field], "%m/%d/%Y"
+            ),
+            available_date=datetime.strptime(
+                product_dict[available_date_field], "%m/%d/%Y"
+            ),
+            publication_date=datetime.strptime(
+                product_dict[publication_date_field], "%m/%d/%Y"
+            ),
+            quantity=product_dict["householdServingFullText"],
             is_raw=self.__fdc_is_raw_aliment(product_dict[category_field]),
             brands=(
                 [product_dict[brands_field].strip().title()]
@@ -61,6 +76,8 @@ class ProductMapper:
             ingredients=self.ingredients_mapper.map_fdc_dict_to_ingredients(
                 product_dict[ingredients_field]
             ),
+            serving_size=product_dict["servingSize"],
+            serving_size_unit=product_dict["servingSizeUnit"],
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
                 product_dict[food_nutrients_field]
             ),
@@ -82,7 +99,9 @@ class ProductMapper:
 
         id_index = header.index("code")
         product_name_index = header.index("product_name")
-        generic_name_index = header.index("generic_name")
+        quantity_name_index = header.index("quantity")
+        serving_size_index = header.index("serving_quantity")
+        modified_date_index = header.index("last_modified_t")
         category_tag_index = header.index("categories_tags")
 
         return Product(
@@ -93,11 +112,10 @@ class ProductMapper:
                 if row[product_name_index] != ""
                 else None
             ),
-            generic_name_en=(
-                row[generic_name_index].strip().title()
-                if row[generic_name_index] != ""
-                else None
+            modified_date=datetime.fromtimestamp(
+                Converter.safe_int(row[modified_date_index]), tz=timezone.utc
             ),
+            quantity=row[quantity_name_index],
             is_raw=self.__off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
@@ -106,6 +124,7 @@ class ProductMapper:
             ),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
             ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
+            serving_size=Converter.safe_float(row[serving_size_index]),
             nutrition_facts=self.nutrition_facts_mapper.map_off_row_to_nutrition_facts(
                 row, header
             ),
@@ -119,33 +138,31 @@ class ProductMapper:
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         country_field = "countries"
         if not any(
-            country in product_dict[country_field]
+            country in product_dict.get(country_field, [])
             for country in ProductMapper.WANTED_COUNTRIES
         ):
             return None
 
         id_field = "code"
         product_name_field = "product_name"
-        generic_name_field = "generic_name"
+        modified_date_field = "last_modified_t"
         category_field = "categories"
         brands_field = "brands"
         brand_owner_field = "brand_owner"
         food_groups_en_field = "food_groups"
+        quantity_name_field = "quantity"
+        serving_size_field = "serving_quantity"
+        serving_size_unit_field = "serving_quantity_unit"
 
         return Product(
-            id_match=product_dict[id_field].strip().lstrip("0"),
-            id_original=product_dict[id_field].strip(),
-            product_name=(
-                product_dict[product_name_field].strip().title()
-                if product_dict[product_name_field].strip() != ""
-                else None
+            id_match=product_dict.get(id_field).strip().lstrip("0"),
+            id_original=product_dict.get(id_field).strip(),
+            product_name=product_dict.get(product_name_field, "").strip().title()
+            or None,
+            modified_date=datetime.fromtimestamp(
+                product_dict.get(modified_date_field), tz=timezone.utc
             ),
-            generic_name_en=(
-                product_dict[generic_name_field].strip().title()
-                if product_dict[generic_name_field] is not None
-                and product_dict[generic_name_field].strip() != ""
-                else None
-            ),
+            quantity=product_dict.get(quantity_name_field),
             categories_en=self.category_mapper.get_off_categories_of_off_product(
                 product_dict[category_field]
             ),
@@ -160,6 +177,8 @@ class ProductMapper:
             ingredients=self.ingredients_mapper.map_off_dict_to_ingredients(
                 product_dict
             ),
+            serving_size=product_dict.get(serving_size_field),
+            serving_size_unit=product_dict.get(serving_size_unit_field),
             nutrition_facts=self.nutrition_facts_mapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
@@ -211,7 +230,7 @@ class ProductMapper:
         """Checks if the aliment is raw based on its dict values"""
         # Check the NOVA group
         nova_field = "nova_group"
-        nova_group = product_dict[nova_field]
+        nova_group = product_dict.get(nova_field)
 
         try:
             if NovaDataValidator.check_nova_raw_group(nova_group):
@@ -223,19 +242,19 @@ class ProductMapper:
 
         # Check the PNNS groups
         pnns_field = "pnns_groups_1"
-        if ProductValidator.check_pnns_groups(product_dict[pnns_field]):
+        if ProductValidator.check_pnns_groups(product_dict.get(pnns_field)):
             return True
 
         # Check the categories
         cat_field = "categories_tags"
-        if ProductValidator.check_list_categories(product_dict[cat_field]):
+        if ProductValidator.check_list_categories(product_dict.get(cat_field)):
             return True
 
         # Check the additives
         additives_field = "additives_n"
         try:
             if ProductValidator.check_additives(
-                product_dict[additives_field], nova_group
+                product_dict.get(additives_field), nova_group
             ):
                 return True
         except ValueError:

@@ -62,6 +62,13 @@ def fdc_dict():
         "ingredients": None,
         "foodNutrients": None,
         "brandedFoodCategory": "cereals, ,bars ",
+        "dataSource": "LI",
+        "modifiedDate": "04/26/2020",
+        "availableDate": "04/26/2020",
+        "publicationDate": "04/26/2020",
+        "householdServingFullText": "0.25 cup",
+        "servingSize": 28,
+        "servingSizeUnit": "g",
     }
 
     return fdc_dict
@@ -76,6 +83,13 @@ def fdc_no_brand_name_dict():
         "ingredients": None,
         "foodNutrients": None,
         "brandedFoodCategory": "cereals, ,bars ",
+        "dataSource": "LI",
+        "modifiedDate": "04/26/2020",
+        "availableDate": "04/26/2020",
+        "publicationDate": "04/26/2020",
+        "householdServingFullText": "0.25 cup",
+        "servingSize": 28,
+        "servingSizeUnit": "g",
     }
 
     return fdc_dict
@@ -91,6 +105,13 @@ def fdc_raw_dict():
         "ingredients": None,
         "foodNutrients": None,
         "brandedFoodCategory": "Vegetables  Unprepared/Unprocessed (Frozen)",
+        "dataSource": "LI",
+        "modifiedDate": "04/26/2020",
+        "availableDate": "04/26/2020",
+        "publicationDate": "04/26/2020",
+        "householdServingFullText": "0.25 cup",
+        "servingSize": 28,
+        "servingSizeUnit": "g",
     }
 
     return fdc_dict
@@ -106,6 +127,13 @@ def fdc_not_raw_dict():
         "ingredients": None,
         "foodNutrients": None,
         "brandedFoodCategory": "other",
+        "dataSource": "LI",
+        "modifiedDate": "04/26/2020",
+        "availableDate": "04/26/2020",
+        "publicationDate": "04/26/2020",
+        "householdServingFullText": "0.25 cup",
+        "servingSize": 28,
+        "servingSizeUnit": "g",
     }
 
     return fdc_dict
@@ -121,6 +149,13 @@ def fdc_not_enough_information_for_raw_dict():
         "ingredients": None,
         "foodNutrients": None,
         "brandedFoodCategory": "Pre-Packaged Fruit & Vegetables",
+        "dataSource": "LI",
+        "modifiedDate": "04/26/2020",
+        "availableDate": "04/26/2020",
+        "publicationDate": "04/26/2020",
+        "householdServingFullText": "0.25 cup",
+        "servingSize": 28,
+        "servingSizeUnit": "g",
     }
 
     return fdc_dict
@@ -132,25 +167,29 @@ def off_rows():
         "countries_en",
         "code",
         "product_name",
-        "generic_name",
         "brands",
         "food_groups_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
         "additives_n",
+        "quantity",
+        "serving_quantity",
+        "last_modified_t",
     ]
     row = [
         "Canada, United Kingdom ",
         " 00455612222",
         " GRANOLA, CINNAMON BAR",
-        "granola and cinnamon bar ",
         " Michele's, Cliff",
         " cereals, snacks , ",
         "2",
         "cereals again",
         "en:cereals",
         "5",
+        "70 g",
+        "70",
+        "1632675242",
     ]
 
     return row, header
@@ -162,25 +201,29 @@ def off_emtpy_strings_rows():
         "countries_en",
         "code",
         "product_name",
-        "generic_name",
         "brands",
         "food_groups_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
         "additives_n",
+        "quantity",
+        "serving_quantity",
+        "last_modified_t",
     ]
     row = [
         "Canada, United Kingdom ",
         " 455612222",
         "",
-        " ",
         " Michele's, Cliff",
         " cereals, snacks , ",
         "2",
         "cereals again",
         "en:cereals",
         "5",
+        "70 g",
+        "70",
+        "1632675242",
     ]
 
     return row, header
@@ -192,25 +235,29 @@ def off_rows_without_canada():
         "countries_en",
         "code",
         "product_name",
-        "generic_name",
         "brands",
         "food_groups_en",
         "nova_group",
         "pnns_groups_1",
         "categories_tags",
         "additives_n",
+        "quantity",
+        "serving_quantity",
+        "last_modified_t",
     ]
     row = [
         "Spain, United Kingdom ",
         " 455612222",
         " GRANOLA, CINNAMON BAR",
-        "granola and cinnamon bar ",
         " Michele's, Cliff",
         " cereals, snacks , ",
         "2",
         "cereals again",
         "en:cereals",
         "5",
+        "70 g",
+        "70",
+        "1632675242",
     ]
 
     return row, header
@@ -222,7 +269,6 @@ def off_dict():
         "countries": ["Canada", "United Kingdom "],
         "code": " 00455612222",
         "product_name": " GRANOLA, CINNAMON BAR",
-        "generic_name": "granola and cinnamon bar ",
         "brands": " Michele's, CLIFF",
         "brand_owner": " MICHELE'S",
         "food_groups": " cereals, snacks , ",
@@ -230,6 +276,9 @@ def off_dict():
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
         "additives_n": 5,
+        "quantity": " 70 g",
+        "serving_quantity": "70",
+        "last_modified_t": 1632675242,
         "categories": "en:breads, en:meals",
     }
 
@@ -242,7 +291,6 @@ def off_empty_strings_dict():
         "countries": ["Canada", "United Kingdom "],
         "code": " 455612222",
         "product_name": "",
-        "generic_name": " ",
         "brands": " Michele's, CLIFF",
         "brand_owner": " MICHELE'S",
         "food_groups": " cereals, snacks , ",
@@ -250,6 +298,9 @@ def off_empty_strings_dict():
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
         "additives_n": 5,
+        "quantity": " 70 g",
+        "serving_quantity": "70",
+        "last_modified_t": 1632675242,
         "categories": "en:breads",
     }
 
@@ -262,13 +313,15 @@ def off_dict_without_canada():
         "countries": ["Spain", "United Kingdom "],
         "code": " 455612222",
         "product_name": " GRANOLA, CINNAMON BAR",
-        "generic_name": "granola and cinnamon bar ",
         "brands": " Michele's, Cliff",
         "food_groups": " cereals, snacks , ",
         "nova_group": "2",
         "pnns_groups_1": ["cereals again"],
         "categories_tags": ["en:cereals", "en:snacks"],
         "additives_n": 5,
+        "quantity": " 70 g",
+        "serving_quantity": "70",
+        "last_modified_t": 1632675242,
     }
 
     return off_dict
@@ -429,9 +482,6 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
     assert (
         result.product_name == fdc_dict["description"].strip().title()
     ), f"Expected product name field to be {fdc_dict["description"].strip().title()}, got {result.product_name}"
-    assert (
-        result.generic_name_en == fdc_dict["description"].strip().title()
-    ), f"Expected generic name en field to be {fdc_dict["description"].strip().title()}, got {result.generic_name_en}"
     assert (
         result.brand_owner == fdc_dict["brandOwner"].strip().title()
     ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip().title()}, got {result.brand_name}"
@@ -606,9 +656,6 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
     assert (
         result.product_name == row[header.index("product_name")].strip().title()
     ), f"Expected product name field to be {row[header.index("product_name")].strip().title()}, got {result.product_name}"
-    assert (
-        result.generic_name_en == row[header.index("generic_name")].strip().title()
-    ), f"Expected generic name en field to be {row[header.index("generic_name")].strip().title()}, got {result.generic_name_en}"
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_row(
@@ -621,9 +668,6 @@ def test_should_return_empty_string_fields_for_given_empty_strings_in_product_fo
     assert (
         result.product_name is None
     ), f"Expected product name field to be {row[header.index("product_name")].strip().title()}, got {result.product_name}"
-    assert (
-        result.generic_name_en is None
-    ), f"Expected generic name en field to be {row[header.index("generic_name")].strip().title()}, got {result.generic_name_en}"
 
 
 def test_should_return_mapped_brand_owner_name_in_product_for_given_off_row(
@@ -866,9 +910,6 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict
     assert (
         result.product_name == off_dict["product_name"].strip().title()
     ), f"Expected product name field to be {off_dict["product_name"].strip().title()}, got {result.product_name}"
-    assert (
-        result.generic_name_en == off_dict["generic_name"].strip().title()
-    ), f"Expected generic name en field to be {off_dict["generic_name"].strip().title()}, got {result.generic_name_en}"
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_dict(
@@ -879,9 +920,6 @@ def test_should_return_empty_string_fields_for_given_empty_strings_in_product_fo
     assert (
         result.product_name is None
     ), f"Expected product name field to be {None}, got {result.product_name}"
-    assert (
-        result.generic_name_en is None
-    ), f"Expected generic name en field to be {None}, got {result.generic_name_en}"
 
 
 def test_should_return_mapped_brand_owner_name_in_product_for_given_off_dict(
