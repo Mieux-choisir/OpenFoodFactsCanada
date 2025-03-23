@@ -7,6 +7,8 @@ from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.product_mapper import ProductMapper
+from domain.mapper.category_mapper import CategoryMapper
+from domain.utils.category_creator import CategoryCreator
 from domain.utils.ingredient_normalizer import IngredientNormalizer
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
@@ -59,6 +61,7 @@ def main():
             IngredientsMapper(IngredientNormalizer()),
             NutriscoreDataMapper(NumberMapper()),
             NutritionFactsMapper(),
+            CategoryMapper(CategoryCreator()),
         )
     )
 
