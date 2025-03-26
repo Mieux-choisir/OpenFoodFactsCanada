@@ -21,7 +21,6 @@ services:
       - ./domain:/app/domain
       - mongo_data:/data/db  # MongoDB storage
       - ./data:/app/data  # Store downloaded files
-      - ./source_files:/app/source_files # Store source files
     networks:
       - openfoodfacts-net
     command: python -m scripts.2CollectionsImport
