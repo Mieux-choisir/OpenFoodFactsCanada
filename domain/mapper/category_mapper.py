@@ -5,7 +5,12 @@ from domain.utils.category_creator import CategoryCreator
 
 class CategoryMapper:
 
-    def __init__(self, category_creator: CategoryCreator, off_taxonomy_file: str, fdc_off_mapping_file: str):
+    def __init__(
+        self,
+        category_creator: CategoryCreator,
+        off_taxonomy_file: str,
+        fdc_off_mapping_file: str,
+    ):
         self.off_categories: dict = category_creator.create_off_categories(
             off_taxonomy_file
         )

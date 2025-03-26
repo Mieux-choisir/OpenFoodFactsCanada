@@ -74,7 +74,9 @@ def main():
             IngredientsMapper(IngredientNormalizer()),
             NutriscoreDataMapper(NumberMapper()),
             NutritionFactsMapper(),
-            CategoryMapper(CategoryCreator(), categories_taxonomy_file, category_mapping_file),
+            CategoryMapper(
+                CategoryCreator(), categories_taxonomy_file, category_mapping_file
+            ),
         )
     )
 
