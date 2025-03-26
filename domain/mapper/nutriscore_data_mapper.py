@@ -60,7 +60,7 @@ class NutriscoreDataMapper:
             )
 
             nutriscore_data[field] = NutrientAmountMapper().map_nutrient(
-                field, value, unit
+                value, unit
             )
 
         return NutriscoreData(**nutriscore_data)

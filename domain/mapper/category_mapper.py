@@ -5,13 +5,13 @@ from domain.utils.category_creator import CategoryCreator
 
 class CategoryMapper:
 
-    def __init__(self, category_creator: CategoryCreator):
+    def __init__(self, category_creator: CategoryCreator, off_taxonomy_file: str, fdc_off_mapping_file: str):
         self.off_categories: dict = category_creator.create_off_categories(
-            "../categories_taxonomy.txt"
+            off_taxonomy_file
         )
         self.fdc_to_off_categories: dict = (
             category_creator.create_fdc_to_off_categories_mapping(
-                "../categories_mapping_fdc_off.json", self.off_categories
+                fdc_off_mapping_file, self.off_categories
             )
         )
 
