@@ -7,11 +7,11 @@ class CategoryMapper:
 
     def __init__(self, category_creator: CategoryCreator):
         self.off_categories: dict = category_creator.create_off_categories(
-            "../categories_taxonomy.txt"
+            "/app/categories_taxonomy.txt"
         )
         self.fdc_to_off_categories: dict = (
             category_creator.create_fdc_to_off_categories_mapping(
-                "../categories_mapping_fdc_off.json", self.off_categories
+                "/app/categories_mapping_fdc_off.json", self.off_categories
             )
         )
 
