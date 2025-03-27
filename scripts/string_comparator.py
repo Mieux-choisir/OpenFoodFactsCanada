@@ -59,3 +59,16 @@ class StringComparator:
         return StringComparator.is_list_same_length(
             first_list, second_list
         ) and StringComparator.is_lists_have_same_elements(first_list, second_list)
+
+    @staticmethod
+    def replace_null_string(off_field: str, fdc_field: str) -> str:
+        if off_field is None and fdc_field is not None:
+            return fdc_field
+        return off_field
+
+    @staticmethod
+    def replace_null_list(off_list: List[str], fdc_list: List[str]) -> List[str]:
+        if off_list is None and fdc_list is not None:
+            return fdc_list
+        return off_list
+
