@@ -1,5 +1,6 @@
 import csv
 import logging
+import os
 from datetime import datetime
 from decimal import Decimal
 
@@ -7,8 +8,8 @@ from domain.product.product import Product
 
 
 class CsvCreator:
-    def __init__(self, csv_path):
-        self.csv_path = csv_path
+    def __init__(self, csv_files_base_names):
+        self.csv_files_base_names = csv_files_base_names
         self.mandatory_columns = [
             "Barcode",
             "Main language",
@@ -141,10 +142,42 @@ class CsvCreator:
             "nova_data.score": "NOVA group",
         }
 
-    def create_csv_file_for_products_not_existing_in_off(
+    def create_csv_files_for_products_not_existing_in_off(
         self, products: list[Product], existing_off_products_ids: list[str]
     ) -> None:
-        with open(self.csv_path, "w", encoding="utf-8", newline="") as file:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(script_dir)
+
+        batches = self.__create_batches(products, batch_size=10000)
+
+        for i in range(len(batches)):
+            csv_file = os.path.join(
+                parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
+            )
+            logging.info(f"Creating csv file for product: {csv_file}")
+
+            self.__create_csv_file_for_products_not_existing_in_off(
+                csv_file, batches[i], existing_off_products_ids
+            )
+
+        logging.info("Finished creating csv files.")
+
+    @staticmethod
+    def __create_batches(
+        products: list[Product], batch_size=10000
+    ) -> list[list[Product]]:
+        return [
+            products[i : i + batch_size] for i in range(0, len(products), batch_size)
+        ]
+
+    def __create_csv_file_for_products_not_existing_in_off(
+        self,
+        csv_file: str,
+        products: list[Product],
+        existing_off_products_ids: list[str],
+        warn_mandatory_columns: bool = False,
+    ) -> None:
+        with open(csv_file, "w", encoding="utf-8", newline="") as file:
             filewriter = csv.writer(
                 file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -165,10 +198,11 @@ class CsvCreator:
                     empty_mandatory_columns = self.__check_fields_not_empty(
                         self.mandatory_columns, list_to_write
                     )
-                    if empty_mandatory_columns:
+                    if warn_mandatory_columns and empty_mandatory_columns:
                         logging.warning(
                             f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
                         )
+
             logging.info("Csv file created!")
 
     def __create_csv_line_for_product(

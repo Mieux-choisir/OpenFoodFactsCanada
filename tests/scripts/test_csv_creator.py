@@ -1,3 +1,4 @@
+import re
 from unittest.mock import patch, mock_open, MagicMock
 
 import pytest
@@ -95,12 +96,26 @@ def products_mapped_lists(csv_creator, products):
     return mapped_lists
 
 
+def test_should_open_csv_file_with_correct_path(csv_creator):
+    open_mock = mock_open()
+
+    with patch("builtins.open", open_mock):
+        csv_creator.create_csv_files_for_products_not_existing_in_off([Product()], [])
+
+    assert re.match(
+        r".*path_1\.csv", open_mock.call_args[0][0]
+    ), f"Expected file path to match pattern, but got {open_mock.call_args[0][0]}"
+
+
 def test_should_open_csv_file_with_correct_parameters(csv_creator):
     open_mock = mock_open()
-    with patch("builtins.open", open_mock):
-        csv_creator.create_csv_file_for_products_not_existing_in_off([], [])
 
-    open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
+    with patch("builtins.open", open_mock):
+        csv_creator.create_csv_files_for_products_not_existing_in_off([Product()], [])
+
+    open_mock.assert_called_with(
+        open_mock.call_args[0][0], "w", encoding="utf-8", newline=""
+    )
 
 
 def test_should_write_correct_headers_line_in_csv_file(csv_creator):
@@ -109,10 +124,11 @@ def test_should_write_correct_headers_line_in_csv_file(csv_creator):
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products_not_existing_in_off([], [])
+            csv_creator.create_csv_files_for_products_not_existing_in_off(
+                [Product()], []
+            )
 
-    open_mock.assert_called_with("path", "w", encoding="utf-8", newline="")
-    mock_filewriter.writerow.assert_called_with(
+    mock_filewriter.writerow.assert_any_call(
         csv_creator.mandatory_columns
         + csv_creator.recommended_columns
         + csv_creator.optional_columns
@@ -127,7 +143,7 @@ def test_should_write_correctly_formatted_lines_only_for_products_with_ids_to_ad
 
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
-            csv_creator.create_csv_file_for_products_not_existing_in_off(
+            csv_creator.create_csv_files_for_products_not_existing_in_off(
                 products, [products[0].id_match]
             )
 

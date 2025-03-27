@@ -76,8 +76,8 @@ def main():
     product_matcher = ProductMatcher()
 
     ids = product_matcher.match_products()
-    csv_creator = CsvCreator("fdc_products_to_add.csv")
-    csv_creator.create_csv_file_for_products_not_existing_in_off(fdc_products, ids)
+    csv_creator = CsvCreator("fdc_products_to_add")
+    csv_creator.create_csv_files_for_products_not_existing_in_off(fdc_products, ids)
 
 
 if __name__ == "__main__":
