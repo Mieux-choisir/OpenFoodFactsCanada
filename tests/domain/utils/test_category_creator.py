@@ -93,8 +93,11 @@ def fdc_mapping_content():
     mapping_content = '{"categories": [' + first_mapping + ", " + second_mapping + "]}"
 
     off_categories = {
-        "em:off-category1": ["en:off-category1", "en:other-off-category1"],
-        "en:off-category2": ["en:off-category2"],
+        "en:off-category1": {
+            "values": ["en:off-category1", "en:other-off-category1"],
+            "parents": [],
+        },
+        "en:off-category2": {"values": ["en:off-category2"], "parents": []},
     }
 
     return (

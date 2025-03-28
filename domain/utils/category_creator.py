@@ -96,7 +96,7 @@ class CategoryCreator:
     def __is_absent(searched_value: str, categories: dict):
         found = False
         for key, value in categories.items():
-            if searched_value in value:
+            if searched_value in value.get("values"):
                 found = True
                 break
 
