@@ -51,7 +51,7 @@
 { "fdc":"Canned Fish and Meat", "off": ["en: Canned foods"], "sources":["current taxonomy"]},
 { "fdc":"Canned Fruit", "off": ["en:Canned fruits"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
 { "fdc":"Canned Meat", "off": ["en:Canned meats"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
-{ "fdc":"Canned Seafood", "off": ["en:Canned foods", "en:Seafoods"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
+{ "fdc":"Canned Seafood", "off": ["en:Canned foods", "en:Sea foods"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
 { "fdc":"Canned Soup", "off": ["en:Canned soups"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
 { "fdc":"Canned Tuna", "off": ["en:Canned tunas"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
 { "fdc":"Canned Vegetables", "off": ["en:Canned vegetables"], "sources":["https://docs.google.com/spreadsheets/d/1kO8r2OWLLRuqP-NLkAR8gliVELQHqir6HZ-4CIRs4cM/edit?pli=1&gid=0#gid=0"]},
