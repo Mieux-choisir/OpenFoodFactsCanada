@@ -148,17 +148,22 @@ class CsvCreator:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
-        batches = self.__create_batches(products, batch_size=10000)
+        filtered_products = [
+            product
+            for product in products
+            if product.id_match not in existing_off_products_ids
+        ]
+        batches = self.__create_batches(filtered_products, batch_size=10000)
 
         for i in range(len(batches)):
             csv_file = os.path.join(
                 parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
             )
-            logging.info(f"Creating csv file for product: {csv_file}")
-
+            logging.info(f"Creating csv file: {csv_file}")
             self.__create_csv_file_for_products_not_existing_in_off(
                 csv_file, batches[i], existing_off_products_ids
             )
+            logging.info("Csv file created!")
 
         logging.info("Finished creating csv files.")
 
@@ -202,8 +207,6 @@ class CsvCreator:
                         logging.warning(
                             f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
                         )
-
-            logging.info("Csv file created!")
 
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
