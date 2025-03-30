@@ -43,7 +43,7 @@ class CategoryMapper:
                         break
 
         if not off_categories:
-            cat = re.sub(" +[-&/()]* *|[=&/()]", "-", given_category.strip())
+            cat = re.sub(" +[-&/()']* *|[=&/()]", "-", given_category.strip())
             off_categories = ["en:" + cat.rstrip("-").lower().replace(",", "") + "-fdc"]
 
         return off_categories

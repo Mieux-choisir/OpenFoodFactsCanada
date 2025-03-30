@@ -58,10 +58,11 @@ class CategoryCreator:
     @staticmethod
     def __normalize_string(given_string):
         given_string = given_string.lower().strip()
-        given_string = given_string.replace(" ", "-")
-        given_string = given_string.replace("'", "-")
-        given_string = given_string.replace("’", "-")
-        given_string = given_string.replace(".", "-")
+        given_string = re.sub(r"[ '’.()]+", "-", given_string, flags=re.M)
+        if given_string.startswith("-"):
+            given_string = given_string[1:]
+        if given_string.endswith("-"):
+            given_string = given_string[:-1]
 
         normalized_string = unicodedata.normalize("NFKD", given_string)
         formatted_string = "".join(
@@ -70,8 +71,7 @@ class CategoryCreator:
 
         return formatted_string
 
-    @staticmethod
-    def __get_mapping_from_file(file_path: str) -> dict:
+    def __get_mapping_from_file(self, file_path: str) -> dict:
         mapping = {}
 
         with open(file_path, "r", encoding="utf-8") as file:
@@ -79,11 +79,22 @@ class CategoryCreator:
                 matching_categories = obj.get("off")
                 if matching_categories is not None:
                     mapping[obj.get("fdc")] = [
-                        (x.strip().lower().replace("en: ", "en:", 1).replace(" ", "-"))
-                        for x in matching_categories
+                        self.__format_category(x) for x in matching_categories
                     ]
 
         return mapping
+
+    @staticmethod
+    def __format_category(category):
+        category = category.strip().lower().replace("en: ", "en:", 1)
+
+        category = re.sub(r"[ '’.()]+", "-", category, flags=re.M)
+        if category.startswith("-"):
+            category = category[1:]
+        if category.endswith("-"):
+            category = category[:-1]
+
+        return category
 
     def __remove_absent_off_categories(self, mapping: dict, categories: dict) -> dict:
         for mapping_key, mapping_values in mapping.items():
@@ -96,7 +107,7 @@ class CategoryCreator:
     def __is_absent(searched_value: str, categories: dict):
         found = False
         for key, value in categories.items():
-            if searched_value in value:
+            if searched_value in value.get("values"):
                 found = True
                 break
 
