@@ -2,7 +2,6 @@
 import datetime
 from typing import Optional, List
 
-from domain.product.category_enum import CategoryEnum
 from domain.product.complexFields.complex_field import ComplexField
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
@@ -20,7 +19,7 @@ class Product(ComplexField):
     available_date: Optional[datetime.datetime] = None
     publication_date: Optional[datetime.datetime] = None
     quantity: Optional[str] = None
-    category_en: CategoryEnum = CategoryEnum.OTHER
+    categories_en: list[str] = []
     is_raw: Optional[bool] = None
     brands: List[str] = []
     brand_owner: Optional[str] = None

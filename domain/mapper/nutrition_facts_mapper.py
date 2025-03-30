@@ -64,13 +64,13 @@ class NutritionFactsMapper:
 
             if field == "sodium_100g" and value is not None:
                 nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient(
-                    "salt_100g", value * self.sodium_to_salt, unit
+                    value * self.sodium_to_salt, unit
                 )
             if field == "energy_kcal_100g" and value is not None:
                 nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
 
             nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(
-                field, value, unit
+                value, unit
             )
 
         return NutritionFacts(**nutrition_facts_data)

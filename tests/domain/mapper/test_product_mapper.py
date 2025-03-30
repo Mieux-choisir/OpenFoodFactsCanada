@@ -6,6 +6,7 @@ from domain.mapper.brands_mapper import BrandsMapper
 from domain.mapper.ecoscore_data_mapper import EcoscoreDataMapper
 from domain.mapper.food_groups_mapper import FoodGroupsMapper
 from domain.mapper.ingredients_mapper import IngredientsMapper
+from domain.mapper.category_mapper import CategoryMapper
 from domain.mapper.nova_data_mapper import NovaDataMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
@@ -35,9 +36,19 @@ def nutrition_facts_mapper():
 
 
 @pytest.fixture
-def product_mapper(ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper):
+def category_mapper():
+    return MagicMock(spec=CategoryMapper)
+
+
+@pytest.fixture
+def product_mapper(
+    ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper, category_mapper
+):
     return ProductMapper(
-        ingredients_mapper, nutriscore_data_mapper, nutrition_facts_mapper
+        ingredients_mapper,
+        nutriscore_data_mapper,
+        nutrition_facts_mapper,
+        category_mapper,
     )
 
 
@@ -268,6 +279,7 @@ def off_dict():
         "quantity": " 70 g",
         "serving_quantity": "70",
         "last_modified_t": 1632675242,
+        "categories": "en:breads, en:meals",
     }
 
     return off_dict
@@ -289,6 +301,7 @@ def off_empty_strings_dict():
         "quantity": " 70 g",
         "serving_quantity": "70",
         "last_modified_t": 1632675242,
+        "categories": "en:breads",
     }
 
     return off_dict
@@ -520,6 +533,19 @@ def test_should_return_mapped_ingredients_in_product_for_given_fdc_dict(
     assert (
         result.ingredients == mock_fdc_functions["ingredients"]
     ), f"Expected ingredients field to be {mock_fdc_functions["ingredients"]}, got {result.ingredients}"
+
+
+def test_should_return_mapped_category_in_product_for_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
+    product_mapper.category_mapper.get_off_categories_of_fdc_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
+
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+
+    assert result.categories_en == ["en:cereals", "en:snacks"]
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
@@ -801,6 +827,20 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_row(
     ), f"Expected ingredients field to be {mock_off_row_functions["ingredients"]}, got {result.ingredients}"
 
 
+def test_should_return_mapped_category_in_product_for_off_row(
+    product_mapper, off_rows, mock_off_row_functions
+):
+    row, header = off_rows
+    product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
+
+    result = product_mapper.map_off_row_to_product(row, header)
+
+    assert result.categories_en == ["en:cereals", "en:snacks"]
+
+
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
@@ -999,6 +1039,19 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
     assert (
         result.ingredients == mock_off_dict_functions["ingredients"]
     ), f"Expected ingredients field to be {mock_off_dict_functions["ingredients"]}, got {result.ingredients}"
+
+
+def test_should_return_mapped_category_in_product_for_off_dict(
+    product_mapper, off_dict, mock_off_dict_functions
+):
+    product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
+        "en:cereals",
+        "en:snacks",
+    ]
+
+    result = product_mapper.map_off_dict_to_product(off_dict)
+
+    assert result.categories_en == ["en:cereals", "en:snacks"]
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(
