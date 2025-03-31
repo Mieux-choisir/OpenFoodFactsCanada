@@ -131,6 +131,21 @@ venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+---
+
+### 🌐 Lancer l’interface Web de fusion des produits
+
+Une fois les données importées, tu peux lancer une **interface utilisateur locale** pour comparer et fusionner 
+les produits communs entre Open Food Facts et Food Data Central.
+
+📌 **Lancer l’interface Flask localement** :
+
+```bash
+python app.py
+```
+Cela démarre un serveur Flask à l'adresse :
+
+👉 http://127.0.0.1:5000
 
 ---
 ## ✅ Lancer les tests Pytest
