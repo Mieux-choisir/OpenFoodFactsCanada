@@ -23,6 +23,9 @@ class MongoService:
         if not fdc_product:
             return None
 
+        def extract(product, key):
+            return product.get("nutrition_facts", {}).get(key, "")
+
         def extract_nutrient(product, nutrient_key):
             """Récupère un nutriment spécifique si présent."""
             return product.get("nutrition_facts", {}).get("nutrients", {}).get(nutrient_key, "")
@@ -31,16 +34,19 @@ class MongoService:
             "id_match": id_match,
             "off_name": off_product.get("product_name", ""),
             "fdc_name": fdc_product.get("product_name", ""),
-            "off_brand_name": off_product.get("brand_name", ""),
-            "fdc_brand_name": fdc_product.get("brand_name", ""),
+            "off_brand_name": off_product.get("brand_owner", ""),
+            "fdc_brand_name": fdc_product.get("brand_owner", ""),
             "off_ingredients": off_product.get("ingredients", {}).get("ingredients_text", ""),
             "fdc_ingredients": fdc_product.get("ingredients", {}).get("ingredients_text", ""),
-            "off_nutrients_energy_100g": extract_nutrient(off_product, "energy_100g"),
-            "off_nutrients_carbohydrates_100g": extract_nutrient(off_product, "carbohydrates_100g"),
-            "off_nutrients_energy_kcal_100g": extract_nutrient(off_product, "energy_kcal_100g"),
-            "off_nutrients_vitamin_a_100g": extract_nutrient(off_product, "vitamin_a_100g"),
-            "fdc_nutrients_energy_100g": extract_nutrient(fdc_product, "energy_100g"),
-            "fdc_nutrients_carbohydrates_100g": extract_nutrient(fdc_product, "carbohydrates_100g"),
-            "fdc_nutrients_energy_kcal_100g": extract_nutrient(fdc_product, "energy_kcal_100g"),
-            "fdc_nutrients_vitamin_a_100g": extract_nutrient(fdc_product, "vitamin_a_100g"),
+            # Ajout de plusieurs nutriments
+            **{f"off_{key}": extract(off_product, key) for key in self.get_nutrient_keys()},
+            **{f"fdc_{key}": extract(fdc_product, key) for key in self.get_nutrient_keys()},
         }
+
+    def get_nutrient_keys(self):
+        return [
+            "energy_100g", "carbohydrates_100g", "energy_kcal_100g", "vitamin_a_100g",
+            "fat_100g", "salt_100g", "saturated_fats_100g", "sugar_100g",
+            "proteins_100g", "fibers_100g", "sodium_100g", "cholesterol_100g",
+            "iron_100g", "calcium_100g", "potassium_100g"
+        ]

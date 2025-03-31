@@ -3,10 +3,21 @@ document.addEventListener("DOMContentLoaded", function () {
         { key: "name", label: "Name" },
         { key: "brand_name", label: "Brand" },
         { key: "ingredients", label: "Ingredients" },
-        { key: "nutrients_energy_100g", label: "Energy (100g)" },
-        { key: "nutrients_carbohydrates_100g", label: "Carbohydrates (100g)" },
-        { key: "nutrients_energy_kcal_100g", label: "Energy kcal (100g)" },
-        { key: "nutrients_vitamin_a_100g", label: "Vitamin A (100g)" }
+        { key: "energy_100g", label: "Energy (100g)" },
+        { key: "carbohydrates_100g", label: "Carbohydrates (100g)" },
+        { key: "energy_kcal_100g", label: "Energy kcal (100g)" },
+        { key: "vitamin_a_100g", label: "Vitamin A (100g)" },
+        { key: "fat_100g", label: "Fat (100g)" },
+        { key: "salt_100g", label: "Salt (100g)" },
+        { key: "saturated_fats_100g", label: "Saturated Fats (100g)" },
+        { key: "sugar_100g", label: "Sugar (100g)" },
+        { key: "proteins_100g", label: "Proteins (100g)" },
+        { key: "fibers_100g", label: "Fibers (100g)" },
+        { key: "sodium_100g", label: "Sodium (100g)" },
+        { key: "cholesterol_100g", label: "Cholesterol (100g)" },
+        { key: "iron_100g", label: "Iron (100g)" },
+        { key: "calcium_100g", label: "Calcium (100g)" },
+        { key: "potassium_100g", label: "Potassium (100g)" }
     ];
 
     let currentIndex = 0;
