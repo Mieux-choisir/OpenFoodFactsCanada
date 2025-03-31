@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
         { key: "nutrients_vitamin_a_100g", label: "Vitamin A (100g)" }
     ];
 
+    let currentIndex = 0;
+
     function generateTableRows() {
         let tableBody = document.getElementById("product-fields");
 
@@ -30,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function loadProduct() {
-        fetch("/api/get_product")
+    function loadProduct(index) {
+        fetch(`/api/get_product?index=${index}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
@@ -82,6 +84,18 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error merging product:", error));
     });
 
+    document.getElementById("prevBtn").addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadProduct(currentIndex);
+        }
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+        currentIndex++;
+        loadProduct(currentIndex);
+    });
+
     generateTableRows();
-    loadProduct();
+    loadProduct(currentIndex);
 });

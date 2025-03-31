@@ -10,12 +10,13 @@ class MongoService:
         self.fdc_collection = self.db["matched_fdc_products"]
         self.merged_collection = self.db["merged_products"]
 
-    def get_next_matching_product(self):
+    def get_matching_product_by_index(self, index):
         """Récupère un produit ayant un match entre OFF et FDC."""
-        off_product = self.off_collection.find_one()
-        if not off_product:
+        off_products = list(self.off_collection.find().skip(index).limit(1))
+        if not off_products:
             return None
 
+        off_product = off_products[0]
         id_match = off_product["id_match"]
         fdc_product = self.fdc_collection.find_one({"id_match": id_match})
 
