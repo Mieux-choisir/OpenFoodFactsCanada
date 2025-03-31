@@ -89,7 +89,7 @@ def products_mapped_lists(csv_creator, products):
         expected_added_list[language_id] = "English"
 
         expected_added_list[brands_id] = ""
-        if product.brands != []:
+        if product.brands:
             for brand in product.brands:
                 expected_added_list[brands_id] += brand + ", "
         expected_added_list[brands_id] = expected_added_list[brands_id][:-2]
