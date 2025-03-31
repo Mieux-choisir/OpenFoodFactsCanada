@@ -19,17 +19,16 @@ def merge_documents(off_product, fdc_product):
         if isinstance(off_value, dict) and isinstance(fdc_value, dict):
             merged[key] = merge_documents(off_value, fdc_value)
         else:
-
             merged[key] = off_value if off_value is not None else fdc_value
 
     return merged
 
 
-def compare_fields(off_product, fdc_product, merged_off_products_serving_size, matched_fdc_products_serving_size):
+def compare_fields(off_product, fdc_product):
     string_comparator = StringComparator()
     number_comparator = NumberComparator()
 
-    fields_to_skip = ["ecoscore_data", "modified_date", "available_date", "publication_date", "quantity", "data_source"]
+    fields_to_skip = ["ecoscore_data", "modified_date", "available_date", "publication_date", "quantity", "data_source", "food_groups_en", "id_original", "brands", "brand_owner", "product_name"]
 
     for key in set(off_product.keys()).union(fdc_product.keys()):
         off_value = off_product.get(key)
@@ -38,19 +37,24 @@ def compare_fields(off_product, fdc_product, merged_off_products_serving_size, m
         if key in fields_to_skip:
             continue
 
+        if fdc_value is None and off_value is not None:
+            continue
+
         if isinstance(off_value, dict) and isinstance(fdc_value, dict):
-            if not compare_fields(off_value, merged_off_products_serving_size, fdc_value,
-                                  matched_fdc_products_serving_size):
+            if not compare_fields(off_value, fdc_value):
+                logging.info("Field " + key + " did not match" + "( off: " + str(off_value) + " | fdc: " + str(fdc_value) + " )")
                 return False
         elif isinstance(off_value, str) and isinstance(fdc_value, str):
             if not string_comparator.compare_string(off_value, fdc_value):
+                logging.info("Field " + key + " did not match" + "( off: " + str(off_value) + " | fdc: " + str(fdc_value) + " )")
                 return False
         elif isinstance(off_value, List) and isinstance(fdc_value, List):
             if not string_comparator.compare_list(off_value, fdc_value):
+                logging.info("Field " + key + " did not match" + "( off: " + str(off_value) + " | fdc: " + str(fdc_value) + " )")
                 return False
         elif isinstance(off_value, float) and isinstance(fdc_value, float):
-            if not number_comparator.check_value_per_100g(off_value, merged_off_products_serving_size, fdc_value,
-                                                          matched_fdc_products_serving_size):
+            if not number_comparator.is_same_number(off_value, fdc_value):
+                logging.info("Field " + key + " did not match" + "( off: " + str(off_value) + " | fdc: " + str(fdc_value) + " )")
                 return False
     return True
 
@@ -107,7 +111,7 @@ def main():
 
     while off_product and fdc_product:
         if off_product["id_match"] == fdc_product["id_match"]:
-            if compare_fields(off_product, fdc_product, off_product["serving_size"], fdc_product["serving_size"]):
+            if compare_fields(off_product, fdc_product):
                 final_products.insert_one(off_product)
             else:
                 unmergeable_off_products.insert_one(off_product)
