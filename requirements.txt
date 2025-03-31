@@ -12,3 +12,5 @@ numpy
 pandas
 pyarrow
 datetime
+flask
+flask-cors
