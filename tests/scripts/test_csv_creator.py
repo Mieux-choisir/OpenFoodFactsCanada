@@ -28,6 +28,7 @@ def products():
         id_match="55555555",
         product_name="Product 2",
         brands=["brand1", "brand2"],
+        categories_en=["category1", "category2"],
         ingredients=Ingredients(),
         nova_data=NovaData(score="3"),
     )
@@ -56,7 +57,7 @@ def products_mapped_lists(csv_creator, products):
         csv_creator.product_field_to_columns_mapping.get("brands")
     )
     category_id = columns_list.index(
-        csv_creator.product_field_to_columns_mapping.get("category_en")
+        csv_creator.product_field_to_columns_mapping.get("categories_en")
     )
     nova_data_score_id = columns_list.index(
         csv_creator.product_field_to_columns_mapping.get("nova_data.score")
@@ -78,7 +79,9 @@ def products_mapped_lists(csv_creator, products):
             else ""
         )
         expected_added_list[category_id] = (
-            str(product.category_en) if product.category_en is not None else ""
+            ", ".join(product.categories_en)
+            if product.categories_en is not None
+            else ""
         )
         expected_added_list[nova_data_score_id] = (
             str(product.nova_data.score) if product.nova_data.score is not None else ""
@@ -148,4 +151,5 @@ def test_should_write_correctly_formatted_lines_only_for_products_with_ids_to_ad
             )
 
     mock_filewriter.writerow.assert_called_with(products_mapped_lists[1])
+
     assert mock_filewriter.writerow.call_count == 2
