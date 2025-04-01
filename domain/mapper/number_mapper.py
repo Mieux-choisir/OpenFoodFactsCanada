@@ -3,6 +3,7 @@ class NumberMapper:
 
     @staticmethod
     def map_letter_to_number(letter: str) -> int | None:
+        """Maps a given letter to its corresponding alphabetical number"""
         if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
             return None
 

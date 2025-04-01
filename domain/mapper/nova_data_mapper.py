@@ -6,6 +6,9 @@ class NovaDataMapper:
 
     @staticmethod
     def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:
+        """Maps the ingredients origins of a given OFF (csv) product to a NovaData object containing:
+        - score: the nova group of the product
+        - group_markers"""
         score_index = header.index("nova_group")
 
         return NovaData(
@@ -15,6 +18,9 @@ class NovaDataMapper:
 
     @staticmethod
     def map_off_dict_to_nova_data(product_dict: dict) -> NovaData:
+        """Maps the ingredients origins of a given OFF (jsonl) product to a NovaData object containing:
+        - score: the nova group of the product
+        - group_markers"""
         score_field = "nova_group"
 
         return NovaData(
