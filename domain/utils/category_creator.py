@@ -7,6 +7,11 @@ import unicodedata
 class CategoryCreator:
 
     def create_off_categories(self, file_path: str) -> dict:
+        """Creates a mapping of OFF categories based on its taxonomy, where:
+        - each key is the canonical term of a category
+        - each value is a dictionary with:
+            - values: the list of all the terms corresponding to the category
+            - parents: the list of the immediate parents of the category"""
         off_categories = {}
         last_added = None
         parents = []
@@ -44,19 +49,25 @@ class CategoryCreator:
     def create_fdc_to_off_categories_mapping(
         self, file_path: str, off_categories: dict
     ) -> dict:
+        """Creates a dictionary that maps FDC categories to OFF categories, where:
+        - each key is a FDC category
+        - each value is the list of the corresponding OFF categories (canonical terms from the taxonomy)
+        """
         mapping = self.__get_mapping_from_file(file_path)
         mapping = self.__remove_absent_off_categories(mapping, off_categories)
 
         return mapping
 
-    def __normalize_line(self, language_code, line):
+    def __normalize_line(self, language_code: str, line: str) -> list[str]:
+        """Normalizes a category line, which can contain several terms. The result is a list where each element is a normalized term"""
         return [
             language_code + ":" + self.__normalize_string(x)
             for x in re.sub(r"^([a-zA-Z][a-zA-Z]): *", r"", line, flags=re.M).split(",")
         ]
 
     @staticmethod
-    def __normalize_string(given_string):
+    def __normalize_string(given_string: str) -> str:
+        """Normalizes a given category term"""
         given_string = given_string.lower().strip()
         given_string = given_string.replace(" ", "-")
         given_string = given_string.replace("'", "-")
@@ -72,6 +83,7 @@ class CategoryCreator:
 
     @staticmethod
     def __get_mapping_from_file(file_path: str) -> dict:
+        """Returns the mapping of FDC to OFF categories from a json file"""
         mapping = {}
 
         with open(file_path, "r", encoding="utf-8") as file:
@@ -86,6 +98,7 @@ class CategoryCreator:
         return mapping
 
     def __remove_absent_off_categories(self, mapping: dict, categories: dict) -> dict:
+        """Removes OFF categories in the FDC-OFF mapping values if they are not present in the OFF categories dictionary"""
         for mapping_key, mapping_values in mapping.items():
             for value in mapping_values:
                 if self.__is_absent(value, categories):
@@ -93,7 +106,8 @@ class CategoryCreator:
         return mapping
 
     @staticmethod
-    def __is_absent(searched_value: str, categories: dict):
+    def __is_absent(searched_value: str, categories: dict) -> bool:
+        """Returns True if the searched value is absent in the given dictionary, False otherwise"""
         found = False
         for key, value in categories.items():
             if searched_value in value:
