@@ -33,6 +33,7 @@ class Product(ComplexField):
     nova_data: Optional[NovaData] = NovaData()
 
     def has_atleast_one_score(self) -> bool:
+        """Returns true if the product has at least one score available (ie not None)"""
         return self.product_name is not None and (
             self.nutriscore_data.score is not None
             or self.ecoscore_data.score is not None
