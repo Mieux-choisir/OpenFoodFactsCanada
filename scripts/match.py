@@ -5,7 +5,8 @@ from pymongo import MongoClient
 from product_matcher import ProductMatcher
 
 
-def extract_data():
+def extract_data() -> (pd.DataFrame, pd.DataFrame):
+    """Extracts products ids from the collections off_products and fdc_products into dataframes"""
     client = MongoClient("mongodb://localhost:37017/")
     db = client["openfoodfacts"]
 

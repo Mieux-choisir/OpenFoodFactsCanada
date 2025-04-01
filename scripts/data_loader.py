@@ -15,6 +15,7 @@ class DataLoader:
         batch_size: int = 5000,
         max_workers: int = 5,
     ) -> None:
+        """Loads given products into the MongoDB database"""
         try:
             logging.info(
                 f"Loading products into MongoDB ({db_name}.{collection_name})..."
