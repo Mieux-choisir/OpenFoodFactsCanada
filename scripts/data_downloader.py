@@ -8,6 +8,14 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 
 class DataDownloader:
+    """
+    This is a class that downloads files.
+
+    Methods:
+        download_and_decompress_data(source_url, compressed_file, compressed_file_extension, decompressed_file): Downloads and decompresses the file at a
+        given url
+    """
+
     def download_and_decompress_data(
         self,
         source_url: str,

@@ -6,6 +6,14 @@ from pymongo.synchronous.database import Database
 
 
 class ProductMatcher:
+    """
+    This is a class that matches products from different collections.
+
+    Methods:
+        match_products(): Matches products that have the same id between the off_products and the fdc_products collections, and then add the matched
+        products to matched_products collections
+    """
+
     def match_products(self):
         """Matches products that have the same id between the off_products and the fdc_products collections.
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.

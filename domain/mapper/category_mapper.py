@@ -11,7 +11,8 @@ class CategoryMapper:
         off_categories (dict): A dictionary where the keys are the canonical terms of categories and the values are dictionaries with the fields:
             - values: all the possible terms for the category
             - parents: all the immediate parents of the category
-        fdc_to_off_categories (dict): A dictionary where the keys are the fdc categories and the values are the list of their corresponding Open Food Facts categories
+        fdc_to_off_categories (dict): A dictionary where the keys are the fdc categories and the values are the list of their corresponding Open
+        Food Facts categories
 
     Methods:
         get_off_categories_of_off_product(given_categories): Maps the given categories string of a OFF product to a categories list

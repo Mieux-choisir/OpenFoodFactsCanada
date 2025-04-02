@@ -6,6 +6,13 @@ from domain.product.product import Product
 
 
 class DataLoader:
+    """
+    This is a class that loads data into MongoDB.
+
+    Methods:
+        load_products_to_mongo(products, db_name, collection_name, use_docker, batch_size, max_workers): Loads given products into the MongoDB database
+    """
+
     @staticmethod
     def load_products_to_mongo(
         products: List[Product] | Iterator[Product],

@@ -5,6 +5,14 @@ import unicodedata
 
 
 class CategoryCreator:
+    """
+    This is a class that creates the Open Food Facts categories from given files.
+
+    Methods:
+        create_off_categories(file_path): Creates a mapping of OFF categories based on the taxonomy in the given file
+        create_fdc_to_off_categories_mapping(file_path, off_categories): Creates a mapping of FDC to OFF categories based on the
+        mapping in the given file and on the given OFF categories
+    """
 
     def create_off_categories(self, file_path: str) -> dict:
         """Creates a mapping of OFF categories based on its taxonomy, where:

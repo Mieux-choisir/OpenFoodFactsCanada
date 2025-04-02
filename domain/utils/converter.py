@@ -1,4 +1,11 @@
 class Converter:
+    """
+    This is a class that converts strings to different types.
+
+    Methods:
+        safe_int(string):  Converts a string to an integer if possible
+        safe_float(string): Converts a string to a float if possible
+    """
 
     @staticmethod
     def safe_int(string: str) -> int:
