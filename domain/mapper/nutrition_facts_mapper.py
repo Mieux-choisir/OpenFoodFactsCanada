@@ -26,7 +26,7 @@ class NutritionFactsMapper:
     def map_fdc_dict_to_nutrition_facts(
         self, food_nutrients: list[dict]
     ) -> NutritionFacts:
-        """Maps the given food nutrients of a FDC product to a NutritionFacts object"""
+        """Maps the given food nutrients of an FDC product to a NutritionFacts object"""
         nutrient_ids = {
             "fat_100g": 1004,
             "sodium_100g": 1093,

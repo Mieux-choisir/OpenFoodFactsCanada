@@ -19,7 +19,7 @@ class IngredientsMapper:
         self.ingredient_normalizer = ingredient_normalizer
 
     def map_fdc_dict_to_ingredients(self, ingredients: str) -> Ingredients:
-        """Maps the given ingredients string of a FDC product to an Ingredients object containing:
+        """Maps the given ingredients string of an FDC product to an Ingredients object containing:
         - ingredients_list: a normalized list of ingredients
         - ingredients_text: the formatted ingredients string"""
         ingredients_list = self.ingredient_normalizer.normalise_ingredients_list(

@@ -26,7 +26,7 @@ class NutriscoreDataMapper:
     def map_fdc_dict_to_nutriscore_data(
         self, food_nutrients: list[dict]
     ) -> NutriscoreData:
-        """Maps the given food nutrients list of a FDC product to a NutriscoreData object"""
+        """Maps the given food nutrients list of an FDC product to a NutriscoreData object"""
         nutrient_ids = {
             "fibers_100g": 1079,
             "proteins_100g": 1003,

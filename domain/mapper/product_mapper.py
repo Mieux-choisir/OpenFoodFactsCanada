@@ -41,7 +41,7 @@ class ProductMapper:
         self.category_mapper = category_mapper
 
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
-        """Maps a dictionary from a FDC json export to a product object"""
+        """Maps a dictionary from an FDC json export to a product object"""
         id_field = "gtinUpc"
         product_name_field = "description"
         data_source_field = "dataSource"
