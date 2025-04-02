@@ -6,6 +6,19 @@ from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 
 
 class NutriscoreDataMapper:
+    """
+    This is a class that maps products values to NutriscoreData objects.
+
+    Attributes:
+        number_mapper (NumberMapper)
+        energy_kcal_to_kj (Decimal): The decimal value to convert energy value from kcal to kj
+
+    Methods:
+        map_fdc_dict_to_nutriscore_data(food_nutrients): Maps the given food_nutrients list to a NutriscoreData object
+        map_off_row_to_nutriscore_data(row, header): Maps the given csv row to a NutriscoreData object
+        map_off_dict_to_nutriscore_data(product_dict): Maps the given dictionary to a NutriscoreData object
+    """
+
     def __init__(self, number_mapper: NumberMapper):
         self.number_mapper = number_mapper
         self.energy_kcal_to_kj = Decimal(4.1868)

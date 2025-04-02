@@ -6,6 +6,18 @@ from domain.utils.converter import Converter
 
 
 class NutritionFactsMapper:
+    """
+    This is a class that maps products values to NutritionFacts objects.
+
+    Attributes:
+        energy_kcal_to_kj (Decimal): The decimal value to convert energy value from kcal to kj
+        sodium_to_salt (Decimal): The decimal value to convert sodium value to salt value
+
+    Methods:
+        map_fdc_dict_to_nutrition_facts(food_nutrients): Maps the given food nutrients list to a NutritionFacts object
+        map_off_row_to_nutrition_facts(row, header): Maps the given csv row to a NutritionFacts object
+        map_off_dict_to_nutrition_facts(product_dict): Maps the given dictionary to a NutritionFacts object
+    """
 
     def __init__(self):
         self.energy_kcal_to_kj = Decimal(4.1868)

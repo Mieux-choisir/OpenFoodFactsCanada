@@ -2,6 +2,14 @@ from domain.product.complexFields.ingredients_origins import IngredientsOrigins
 
 
 class IngredientsOriginMapper:
+    """
+    This is a class that maps products values to IngredientsOrigins objects.
+
+    Methods:
+        map_off_row_to_ingredients_origin(row, header): Maps the given csv row to an IngredientsOrigins object
+        map_off_dict_to_ingredients_origin(product_dict): Maps the given dictionary to an IngredientsOrigins object
+    """
+
     @staticmethod
     def map_off_row_to_ingredients_origin(
         row: list[str], header: list[str]

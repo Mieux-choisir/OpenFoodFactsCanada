@@ -14,6 +14,18 @@ from datetime import datetime, timezone
 
 
 class ProductMapper:
+    """
+    This is a class that maps objects (rows or dicts) read from different files to Product objects.
+
+    Attributes:
+        WANTED_COUNTRIES (list[str]): A list of the wanted countries in which the products are available
+
+    Methods:
+        map_fdc_dict_to_product(product_dict): Maps the given dictionary to a Product object
+        map_off_row_to_product(row, header): Maps the given csv row to a Product object
+        map_off_dict_to_product(product_dict): Maps the given dictionary to a Product object
+    """
+
     WANTED_COUNTRIES = ["Canada", "United States", "New Zealand"]
 
     def __init__(

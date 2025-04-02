@@ -3,6 +3,13 @@ from domain.utils.converter import Converter
 
 
 class NovaDataMapper:
+    """
+    This is a class that maps products values to NovaData objects.
+
+    Methods:
+       map_off_row_to_nova_data(row, header): Maps the given csv row to a NovaData object
+       map_off_dict_to_nova_data(product_dict): Maps the given dictionary to a NovaData object
+    """
 
     @staticmethod
     def map_off_row_to_nova_data(row: list[str], header: list[str]) -> NovaData:

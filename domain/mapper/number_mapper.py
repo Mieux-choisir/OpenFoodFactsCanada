@@ -1,4 +1,14 @@
 class NumberMapper:
+    """
+    This is a class that maps products values to Ingredients objects.
+
+    Attributes:
+       letter_to_number_ascii_code (int)
+
+    Methods:
+        map_letter_to_number(letter): Maps the given letter string to its corresponding alphabetical number
+    """
+
     letter_to_number_ascii_code = 96
 
     @staticmethod

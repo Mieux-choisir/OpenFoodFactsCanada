@@ -3,6 +3,18 @@ from domain.utils.ingredient_normalizer import IngredientNormalizer
 
 
 class IngredientsMapper:
+    """
+    This is a class that maps products values to Ingredients objects.
+
+    Attributes:
+        ingredient_normalizer (IngredientNormalizer)
+
+    Methods:
+        map_fdc_dict_to_ingredients(ingredients): Maps the given ingredients string to an Ingredients object
+        map_off_row_to_ingredients(row, header): Maps the given csv row to an Ingredients object
+        map_off_dict_to_ingredients(product_dict): Maps the given dictionary to an Ingredients object
+    """
+
     def __init__(self, ingredient_normalizer: IngredientNormalizer):
         self.ingredient_normalizer = ingredient_normalizer
 
