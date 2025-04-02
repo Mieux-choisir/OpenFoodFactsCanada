@@ -77,10 +77,11 @@ class CategoryCreator:
     def __normalize_string(given_string: str) -> str:
         """Normalizes a given category term"""
         given_string = given_string.lower().strip()
-        given_string = given_string.replace(" ", "-")
-        given_string = given_string.replace("'", "-")
-        given_string = given_string.replace("’", "-")
-        given_string = given_string.replace(".", "-")
+        given_string = re.sub(r"[ '’.()]+", "-", given_string, flags=re.M)
+        if given_string.startswith("-"):
+            given_string = given_string[1:]
+        if given_string.endswith("-"):
+            given_string = given_string[:-1]
 
         normalized_string = unicodedata.normalize("NFKD", given_string)
         formatted_string = "".join(
@@ -89,8 +90,7 @@ class CategoryCreator:
 
         return formatted_string
 
-    @staticmethod
-    def __get_mapping_from_file(file_path: str) -> dict:
+    def __get_mapping_from_file(self, file_path: str) -> dict:
         """Returns the mapping of FDC to OFF categories from a json file"""
         mapping = {}
 
@@ -99,11 +99,23 @@ class CategoryCreator:
                 matching_categories = obj.get("off")
                 if matching_categories is not None:
                     mapping[obj.get("fdc")] = [
-                        (x.strip().lower().replace("en: ", "en:", 1).replace(" ", "-"))
-                        for x in matching_categories
+                        self.__format_category(x) for x in matching_categories
                     ]
 
         return mapping
+
+    @staticmethod
+    def __format_category(category):
+        """Formats a given category"""
+        category = category.strip().lower().replace("en: ", "en:", 1)
+
+        category = re.sub(r"[ '’.()]+", "-", category, flags=re.M)
+        if category.startswith("-"):
+            category = category[1:]
+        if category.endswith("-"):
+            category = category[:-1]
+
+        return category
 
     def __remove_absent_off_categories(self, mapping: dict, categories: dict) -> dict:
         """Removes OFF categories in the FDC-OFF mapping values if they are not present in the OFF categories dictionary"""
@@ -118,7 +130,7 @@ class CategoryCreator:
         """Returns True if the searched value is absent in the given dictionary, False otherwise"""
         found = False
         for key, value in categories.items():
-            if searched_value in value:
+            if searched_value in value.get("values"):
                 found = True
                 break
 
