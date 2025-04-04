@@ -180,7 +180,7 @@ def __analyze_obj(
     return fields_types, fields_can_be_none
 
 
-def __add_type_to_dict(fields_types, key, value, nonetype_included: bool):
+def __add_type_to_dict(fields_types, key, value, nonetype_included: bool) -> dict:
     """Adds the registered occurence to the fields_types dictionary that counts the appearing types for each field
     and returns the updated dictionary."""
     if nonetype_included or value is not None:
