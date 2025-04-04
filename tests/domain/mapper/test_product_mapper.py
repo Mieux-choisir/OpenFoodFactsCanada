@@ -20,6 +20,7 @@ from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
 
 
+# TODO
 @pytest.fixture
 def ingredients_mapper():
     return MagicMock(spec=IngredientsMapper)

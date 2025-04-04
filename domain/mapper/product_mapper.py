@@ -46,7 +46,11 @@ class ProductMapper:
         )
 
         return Product(
-            id_match=product_dict[id_field].strip().lstrip("0"),
+            id_match=product_dict[id_field]
+            .strip()
+            .replace(" ", "")
+            .replace("-", "")
+            .lstrip("0"),
             id_original=product_dict[id_field].strip(),
             product_name=product_dict[product_name_field].strip().title(),
             data_source=product_dict[data_source_field],
@@ -79,7 +83,7 @@ class ProductMapper:
             serving_size=product_dict["servingSize"],
             serving_size_unit=product_dict["servingSizeUnit"],
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
-                product_dict[food_nutrients_field]
+                product_dict[food_nutrients_field], product_dict.get("labelNutrients")
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
                 product_dict[food_nutrients_field]

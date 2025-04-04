@@ -2,6 +2,12 @@ from decimal import Decimal
 
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+    NutritionFactsPerHundredGrams,
+)
+from domain.product.complexFields.nutritionFactsPerServing import (
+    NutritionFactsPerServing,
+)
 from domain.utils.converter import Converter
 
 
@@ -10,70 +16,39 @@ class NutritionFactsMapper:
     def __init__(self):
         self.energy_kcal_to_kj = Decimal(4.1868)
         self.sodium_to_salt = Decimal(2.5)
-
-    def map_fdc_dict_to_nutrition_facts(
-        self, food_nutrients: list[dict]
-    ) -> NutritionFacts:
-        nutrient_ids = {
-            "fat_100g": 1004,
-            "sodium_100g": 1093,
-            "saturated_fats_100g": 1258,
-            "sugar_100g": 2000,
-            "carbohydrates_100g": 1005,
-            "energy_kcal_100g": 1008,
-            "vitamin_a_100g": 1104,
-            "proteins_100g": 1003,
-            "fiber_100g": 1079,
-            "monounsaturated_fat_100g": 1292,
-            "polyunsaturated_fat_100g": 1293,
-            "trans_fat_100g": 1257,
-            "cholesterol_100g": 1253,
-            "calcium_100g": 1087,
-            "iron_100g": 1089,
-            "potassium_100g": 1092,
-            "vitamin_b1_100g": 1165,
-            "vitamin_b2_100g": 1166,
-            "vitamin_b6_100g": 1175,
-            "vitamin_b9_100g": 1186,
-            "vitamin_b12_100g": 1178,
-            "vitamin_c_100g": 1162,
-            "vitamin_pp_100g": 1167,
-            "phosphorus_100g": 1091,
-            "magnesium_100g": 1090,
-            "zinc_100g": 1095,
-            "folates_100g": 1177,
-            "pantothenic_acid_100g": 1170,
-            "soluble_fiber_100g": 1082,
-            "insoluble_fiber_100g": 1084,
-            "copper_100g": 1098,
-            "manganese_100g": 1101,
-            "polyols_100g": 1086,
-            "selenium_100g": 1103,
-            "phylloguinone_100g": 1185,
-            "iodine_100g": 1100,
-            "biotin_100g": 1176,
-            "caffeine_100g": 1057,
-            "molybdenum_100g": 1102,
-            "chromium_100g": 1096,
+        self.units_in_nutrition_table = {
+            "fat": "g",
+            "saturatedFat": "g",
+            "transFat": "g",
+            "cholesterol": "mg",
+            "sodium": "mg",
+            "carbohydrates": "g",
+            "fiber": "g",
+            "sugars": "g",
+            "protein": "g",
+            "calcium": "mg",
+            "iron": "mg",
+            "potassium": "mg",
+            "addedSugar": "g",
         }
 
-        nutrition_facts_data = {}
-        for field, nutrient_id in nutrient_ids.items():
-            value = self.__get_nutrient_level(food_nutrients, nutrient_id)
-            unit = self.__get_nutrient_unit(food_nutrients, nutrient_id)
+    def map_fdc_dict_to_nutrition_facts(
+        self, food_nutrients_per_100g: list[dict], food_nutrients_per_serving: dict
+    ) -> NutritionFacts:
 
-            if field == "sodium_100g" and value is not None:
-                nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient(
-                    value * self.sodium_to_salt, unit
-                )
-            if field == "energy_kcal_100g" and value is not None:
-                nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
-
-            nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(
-                value, unit
+        nutrition_facts_per_100g = self.__map_fdc_dict_to_nutrition_facts_per_100g(
+            food_nutrients_per_100g
+        )
+        nutrition_facts_per_serving = (
+            self.__map_fdc_dict_to_nutrition_facts_per_serving(
+                food_nutrients_per_serving
             )
+        )
 
-        return NutritionFacts(**nutrition_facts_data)
+        return NutritionFacts(
+            nutrition_facts_per_100g=nutrition_facts_per_100g,
+            nutrition_facts_per_serving=nutrition_facts_per_serving,
+        )
 
     @staticmethod
     def map_off_row_to_nutrition_facts(
@@ -235,8 +210,131 @@ class NutritionFactsMapper:
 
         return NutritionFacts(**nutrition_facts_data)
 
+    def __map_fdc_dict_to_nutrition_facts_per_100g(
+        self, food_nutrients: list[dict]
+    ) -> NutritionFactsPerHundredGrams:
+        nutrient_ids = {
+            "fat_100g": 1004,
+            "sodium_100g": 1093,
+            "saturated_fats_100g": 1258,
+            "sugar_100g": 2000,
+            "carbohydrates_100g": 1005,
+            "energy_kcal_100g": 1008,
+            "vitamin_a_100g": 1104,
+            "proteins_100g": 1003,
+            "fiber_100g": 1079,
+            "monounsaturated_fat_100g": 1292,
+            "polyunsaturated_fat_100g": 1293,
+            "trans_fat_100g": 1257,
+            "cholesterol_100g": 1253,
+            "calcium_100g": 1087,
+            "iron_100g": 1089,
+            "potassium_100g": 1092,
+            "vitamin_b1_100g": 1165,
+            "vitamin_b2_100g": 1166,
+            "vitamin_b6_100g": 1175,
+            "vitamin_b9_100g": 1186,
+            "vitamin_b12_100g": 1178,
+            "vitamin_c_100g": 1162,
+            "vitamin_pp_100g": 1167,
+            "phosphorus_100g": 1091,
+            "magnesium_100g": 1090,
+            "zinc_100g": 1095,
+            "folates_100g": 1177,
+            "pantothenic_acid_100g": 1170,
+            "soluble_fiber_100g": 1082,
+            "insoluble_fiber_100g": 1084,
+            "copper_100g": 1098,
+            "manganese_100g": 1101,
+            "polyols_100g": 1086,
+            "selenium_100g": 1103,
+            "phylloguinone_100g": 1185,
+            "iodine_100g": 1100,
+            "biotin_100g": 1176,
+            "caffeine_100g": 1057,
+            "molybdenum_100g": 1102,
+            "chromium_100g": 1096,
+        }
+
+        nutrition_facts_data = {}
+        for field, nutrient_id in nutrient_ids.items():
+            value = self.__get_nutrient_level_per_100g(food_nutrients, nutrient_id)
+            unit = self.__get_nutrient_unit(food_nutrients, nutrient_id)
+
+            if field == "sodium_100g" and value is not None:
+                nutrition_facts_data["salt_100g"] = NutrientAmountMapper().map_nutrient(
+                    value * self.sodium_to_salt, unit
+                )
+            if field == "energy_kcal_100g" and value is not None:
+                nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
+
+            nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(
+                value, unit
+            )
+
+        return NutritionFactsPerHundredGrams(**nutrition_facts_data)
+
+    def __map_fdc_dict_to_nutrition_facts_per_serving(
+        self, food_nutrients_per_serving: dict
+    ) -> NutritionFactsPerServing:
+        return NutritionFactsPerServing(
+            fat_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "fat"
+            ),
+            saturated_fats_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "saturatedFat"
+            ),
+            trans_fats_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "transFat"
+            ),
+            cholesterol_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "cholesterol"
+            ),
+            sodium_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "sodium"
+            ),
+            carbohydrates_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "carbohydrates"
+            ),
+            fibers_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "fiber"
+            ),
+            sugar_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "sugars"
+            ),
+            proteins_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "protein"
+            ),
+            calcium_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "calcium"
+            ),
+            iron_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "iron"
+            ),
+            calories_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "calories"
+            ),
+            potassium_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "potassium"
+            ),
+            added_sugar_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "addedSugar"
+            ),
+        )
+
+    def __get_nutrient_level_per_serving(
+        self, food_nutrients_per_serving: dict, nutrient_name: str
+    ) -> float:
+        value = None
+        if food_nutrients_per_serving.get(nutrient_name) is not None:
+            value = food_nutrients_per_serving.get(nutrient_name).get("value")
+            if nutrient_name != "calories":
+                unit = self.units_in_nutrition_table.get(nutrient_name)
+                value = NutrientAmountMapper().map_nutrient(value, unit)
+        return value
+
     @staticmethod
-    def __get_nutrient_level(food_nutrients, searched_id):
+    def __get_nutrient_level_per_100g(food_nutrients, searched_id):
         return next(
             (
                 item["amount"]

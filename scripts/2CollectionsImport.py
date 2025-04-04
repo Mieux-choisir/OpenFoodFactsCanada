@@ -65,10 +65,9 @@ def main():
         )
     )
 
-    off_products = data_importer.import_csv_off_data(off_csv_file)
+    off_products = data_importer.import_csv_off_data(off_csv_file, limit=100)
     # off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
-
     data_loader = DataLoader()
 
     data_loader.load_products_to_mongo(off_products, collection_name="off_products")
