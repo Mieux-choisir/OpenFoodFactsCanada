@@ -1,4 +1,14 @@
 class ProductValidator:
+    """
+    This is a class that validates data related to the products.
+
+    Methods:
+      check_pnns_groups(pnns): Checks if the given pnns group string is either cereals or legumes
+      check_string_categories(category): Checks if the given category is a foundation food AND not a non foundation food
+      check_list_categories(category): Checks if the given category is a foundation food AND not a non foundation food
+      check_additives(additives, nova_group): Checks if there are no additives and the nova group is less than or equal to 2
+    """
+
     raw_food_categories = {
         "en:flours": True,
         "en:rices": True,
@@ -25,10 +35,9 @@ class ProductValidator:
     }
 
     @staticmethod
-    def check_pnns_groups(pnn: str) -> bool:
+    def check_pnns_groups(pnns: str) -> bool:
         """Returns True if the given pnns group is either cereals or legumes, False otherwise"""
-
-        if pnn in ["cereals", "legumes"]:
+        if pnns in ["cereals", "legumes"]:
             return True
         return False
 

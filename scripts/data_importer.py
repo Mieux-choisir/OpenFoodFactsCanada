@@ -9,11 +9,29 @@ from domain.product.product import Product
 
 
 class DataImporter:
+    """
+    This is a class that imports data on products.
+
+    Attributes:
+        product_mapper (ProductMapper)
+
+    Methods:
+        import_json_fdc_data(filename): Imports the data of branded food in a json file into a list of strings for each branded food
+        import_jsonl_off_data(filename, limit): Imports the data of canadian food in a json file into a list of products
+        import_csv_off_data(filename, limit): Imports the data of canadian food in a csv file into a list of products
+    """
+
     def __init__(self, product_mapper: ProductMapper):
         self.product_mapper = product_mapper
 
     def import_json_fdc_data(self, filename: str) -> list[Product]:
-        """Imports the data of branded food in a json file into a list of strings for each branded food"""
+        """Imports the data of branded food in a json file into a list of strings for each branded food
+
+        Args:
+            filename: The path to the imported Food Data Central json file
+        Returns:
+            list[Product]: A list of Product objects extracted from the dataset.
+        """
         products = []
         with open(filename, "r", encoding="utf-8") as file:
             logging.info("Extracting Food Data Central products...")
@@ -27,7 +45,14 @@ class DataImporter:
         return products
 
     def import_jsonl_off_data(self, filename: str, limit: int = None) -> list[Product]:
-        """Imports the data of canadian food in a json file into a list of products"""
+        """Imports the data of canadian food in a json file into a list of products
+
+        Args:
+            filename: The path to the imported Open Food Facts jsonl file
+            limit (int, optional): The number of objects to read from the dataset. Defaults to None.
+        Returns:
+            list[Product]: A list of Product objects extracted from the dataset.
+        """
         if limit is not None:
             logging.info(
                 f"Extracting {limit} products from Open Food Facts jsonl dataset..."

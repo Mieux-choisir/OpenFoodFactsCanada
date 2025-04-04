@@ -14,6 +14,18 @@ from datetime import datetime, timezone
 
 
 class ProductMapper:
+    """
+    This is a class that maps objects (rows or dicts) read from different files to Product objects.
+
+    Attributes:
+        WANTED_COUNTRIES (list[str]): A list of the wanted countries in which the products are available
+
+    Methods:
+        map_fdc_dict_to_product(product_dict): Maps the given dictionary to a Product object
+        map_off_row_to_product(row, header): Maps the given csv row to a Product object
+        map_off_dict_to_product(product_dict): Maps the given dictionary to a Product object
+    """
+
     WANTED_COUNTRIES = ["Canada", "United States", "New Zealand"]
 
     def __init__(
@@ -29,7 +41,7 @@ class ProductMapper:
         self.category_mapper = category_mapper
 
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
-        """Maps a fdc dictionary to a product object"""
+        """Maps a dictionary from an FDC json export to a product object"""
         id_field = "gtinUpc"
         product_name_field = "description"
         data_source_field = "dataSource"
@@ -91,6 +103,7 @@ class ProductMapper:
     def map_off_row_to_product(
         self, row: list[str], header: list[str]
     ) -> Product | None:
+        """Maps a row from a csv export of OFF to a product object if one of its countries is in the wanted countries"""
         country_index = header.index("countries_en")
         if not any(
             country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES
@@ -136,6 +149,7 @@ class ProductMapper:
         )
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
+        """Maps a dictionary from a jsonl export of OFF to a product object if one of its countries is in the wanted countries"""
         country_field = "countries"
         if not any(
             country in product_dict.get(country_field, [])
@@ -192,7 +206,7 @@ class ProductMapper:
         )
 
     @staticmethod
-    def __off_csv_is_raw_aliment(row: list[str], header: list[str]):
+    def __off_csv_is_raw_aliment(row: list[str], header: list[str]) -> bool:
         """Checks if the aliment is raw based on its row values"""
         # Check the NOVA group
         nova_index = header.index("nova_group")
@@ -263,7 +277,8 @@ class ProductMapper:
         return False
 
     @staticmethod
-    def __fdc_is_raw_aliment(category: str):
+    def __fdc_is_raw_aliment(category: str) -> bool:
+        """Checks if the aliment is raw based on its category"""
         is_raw = False
 
         if category in [
