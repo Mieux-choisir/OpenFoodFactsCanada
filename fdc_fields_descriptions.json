@@ -293,7 +293,7 @@
     {
       "name": "publicationDate",
       "schema": "string",
-      "desc": "the date the product record was added (ie published) to the USDA Global Branded Food Products Database in FoodData Central",
+      "desc": "the date the product record was added (ie published) to the USDA Global Branded Fo od Products Database in FoodData Central",
       "sources": [
         "https://fdc.nal.usda.gov/docs/USDA%20GBFPD%20Data%20Quality%20Overview%202024.pdf",
         "https://fdc.nal.usda.gov/docs/Download_Field_Descriptions_Oct2020.pdf",

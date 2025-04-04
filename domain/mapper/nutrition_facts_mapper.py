@@ -46,7 +46,7 @@ class NutritionFactsMapper:
         )
 
         return NutritionFacts(
-            nutrition_facts_per_100g=nutrition_facts_per_100g,
+            nutrition_facts_per_hundred_grams=nutrition_facts_per_100g,
             nutrition_facts_per_serving=nutrition_facts_per_serving,
         )
 

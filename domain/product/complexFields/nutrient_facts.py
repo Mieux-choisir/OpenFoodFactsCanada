@@ -1,5 +1,3 @@
-from typing import Optional
-
 from domain.product.complexFields.nutritionFactsPerHundredGrams import (
     NutritionFactsPerHundredGrams,
 )
