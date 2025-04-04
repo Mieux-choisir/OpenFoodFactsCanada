@@ -88,12 +88,16 @@ def main():
 
     data_loader = DataLoader()
 
-    data_loader.load_products_to_mongo(off_products, collection_name="off_products")
-    data_loader.load_products_to_mongo(fdc_products, collection_name="fdc_products")
+    data_loader.load_products_to_mongo(
+        off_products, collection_name="off_products", use_docker=config.use_docker
+    )
+    data_loader.load_products_to_mongo(
+        fdc_products, collection_name="fdc_products", use_docker=config.use_docker
+    )
 
     product_matcher = ProductMatcher()
 
-    ids = product_matcher.match_products()
+    ids = product_matcher.match_products(use_docker=config.use_docker)
     csv_creator = CsvCreator("fdc_products_to_add")
     csv_creator.create_csv_files_for_products_not_existing_in_off(fdc_products, ids)
 
