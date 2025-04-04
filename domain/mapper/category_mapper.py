@@ -19,13 +19,18 @@ class CategoryMapper:
         get_off_categories_of_fdc_product(given_category): Maps the given category string of an FDC product to a categories list
     """
 
-    def __init__(self, category_creator: CategoryCreator):
+    def __init__(
+        self,
+        category_creator: CategoryCreator,
+        off_taxonomy_file: str,
+        fdc_off_mapping_file: str,
+    ):
         self.off_categories: dict = category_creator.create_off_categories(
-            "/app/categories_taxonomy.txt"
+            off_taxonomy_file
         )
         self.fdc_to_off_categories: dict = (
             category_creator.create_fdc_to_off_categories_mapping(
-                "/app/categories_mapping_fdc_off.json", self.off_categories
+                fdc_off_mapping_file, self.off_categories
             )
         )
 
