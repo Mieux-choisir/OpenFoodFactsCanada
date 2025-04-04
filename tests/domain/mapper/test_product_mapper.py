@@ -69,6 +69,7 @@ def fdc_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -90,6 +91,7 @@ def fdc_no_brand_name_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -112,6 +114,7 @@ def fdc_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -134,6 +137,7 @@ def fdc_not_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -156,6 +160,7 @@ def fdc_not_enough_information_for_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict

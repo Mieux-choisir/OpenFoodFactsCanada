@@ -4,6 +4,7 @@ from domain.product.complexFields.complex_field import ComplexField
 
 
 class NutritionFactsPerServing(ComplexField):
+    is_for_prepared_food: Optional[bool] = None
     fat_serving: Optional[float] = None
     saturated_fats_serving: Optional[float] = None
     trans_fats_serving: Optional[float] = None

@@ -33,7 +33,10 @@ class NutritionFactsMapper:
         }
 
     def map_fdc_dict_to_nutrition_facts(
-        self, food_nutrients_per_100g: list[dict], food_nutrients_per_serving: dict
+        self,
+        food_nutrients_per_100g: list[dict],
+        food_nutrients_per_serving: dict,
+        preparation_state_code: str,
     ) -> NutritionFacts:
 
         nutrition_facts_per_100g = self.__map_fdc_dict_to_nutrition_facts_per_100g(
@@ -41,7 +44,7 @@ class NutritionFactsMapper:
         )
         nutrition_facts_per_serving = (
             self.__map_fdc_dict_to_nutrition_facts_per_serving(
-                food_nutrients_per_serving
+                food_nutrients_per_serving, preparation_state_code
             )
         )
 
@@ -275,9 +278,22 @@ class NutritionFactsMapper:
         return NutritionFactsPerHundredGrams(**nutrition_facts_data)
 
     def __map_fdc_dict_to_nutrition_facts_per_serving(
-        self, food_nutrients_per_serving: dict
+        self, food_nutrients_per_serving: dict, preparation_state_code: str
     ) -> NutritionFactsPerServing:
+        is_for_prepared_food = None
+        if (
+            preparation_state_code is not None
+            and preparation_state_code.strip().upper() == "PREPARED"
+        ):
+            is_for_prepared_food = True
+        elif (
+            preparation_state_code is not None
+            and preparation_state_code == "UNPREPARED"
+        ):
+            is_for_prepared_food = False
+
         return NutritionFactsPerServing(
+            is_for_prepared_food=is_for_prepared_food,
             fat_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "fat"
             ),

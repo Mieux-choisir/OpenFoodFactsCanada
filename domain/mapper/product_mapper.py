@@ -86,7 +86,9 @@ class ProductMapper:
             serving_size=product_dict["servingSize"],
             serving_size_unit=product_dict["servingSizeUnit"],
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
-                product_dict[food_nutrients_field], product_dict.get("labelNutrients")
+                product_dict[food_nutrients_field],
+                product_dict.get("labelNutrients"),
+                product_dict.get("preparationStateCode"),
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
                 product_dict[food_nutrients_field]
