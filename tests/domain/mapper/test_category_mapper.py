@@ -1,3 +1,4 @@
+import re
 from unittest.mock import MagicMock
 
 import pytest
@@ -74,22 +75,36 @@ def test_should_return_only_most_precise_categories_for_found_categories_in_hier
 # ----------------------------------------------------------------
 
 
-def test_should_always_return_fdc_category_in_categories_list(
+def test_should_not_return_any_category_for_no_existing_off_category_in_categories_list(
     category_mapper,
 ):
     absent_category = "Ketchup - Mustard, BBQ & Cheese   Sauce (Shelf Stable)"
 
     result = category_mapper.get_off_categories_of_fdc_product(absent_category)
 
-    expected_category = "en:ketchup-mustard-bbq-cheese-sauce-shelf-stable"
-    assert result == [expected_category]
+    assert result == []
 
 
-def test_should_return_matched_off_categories_and_fdc_category_in_Categories_list(
+def test_should_return_matched_existing_off_categories_in_categories_list(
     category_mapper,
 ):
     present_category = "fdc-category-1"
 
     result = category_mapper.get_off_categories_of_fdc_product(present_category)
 
-    assert result == ["en:category1", "en:fdc-category-1"]
+    assert result == ["en:category1"]
+
+
+# ----------------------------------------------------------------
+# Tests get_fdc_category
+# ----------------------------------------------------------------
+
+def test_should_return_correctly_formatted_category(
+    category_mapper,
+):
+    category = "Ketchup - Mustard, BBQ & Cheese   Sauce (Shelf Stable)"
+
+    result = category_mapper.get_fdc_category(category)
+
+    expected_result = "en:" + re.sub(" +[-&/()']* *|[=&/()]", "-", category.lower().strip().replace(",", ""))[:-1]
+    assert result == expected_result
