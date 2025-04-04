@@ -74,7 +74,9 @@ class ProductMapper:
             off_categories_en=self.category_mapper.get_off_categories_of_fdc_product(
                 product_dict.get(category_field)
             ),
-            fdc_category_en=self.category_mapper.get_fdc_category(product_dict.get(category_field)),
+            fdc_category_en=self.category_mapper.get_fdc_category(
+                product_dict.get(category_field)
+            ),
             food_groups_en=list(
                 filter(None, map(str.strip, product_dict[category_field].split(",")))
             ),  # TODO compléter la liste si possible

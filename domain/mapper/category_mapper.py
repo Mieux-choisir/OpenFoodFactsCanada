@@ -46,7 +46,9 @@ class CategoryMapper:
 
     @staticmethod
     def get_fdc_category(category: str) -> str:
-        formatted_category = re.sub(" +[-&/()']* *|[=&/()]", "-", category.strip().lower().replace(",", ""))
+        formatted_category = re.sub(
+            " +[-&/()']* *|[=&/()]", "-", category.strip().lower().replace(",", "")
+        )
         formatted_category = "en:" + formatted_category.rstrip("-")
 
         return formatted_category

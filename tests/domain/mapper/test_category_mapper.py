@@ -99,6 +99,7 @@ def test_should_return_matched_existing_off_categories_in_categories_list(
 # Tests get_fdc_category
 # ----------------------------------------------------------------
 
+
 def test_should_return_correctly_formatted_category(
     category_mapper,
 ):
@@ -106,5 +107,10 @@ def test_should_return_correctly_formatted_category(
 
     result = category_mapper.get_fdc_category(category)
 
-    expected_result = "en:" + re.sub(" +[-&/()']* *|[=&/()]", "-", category.lower().strip().replace(",", ""))[:-1]
+    expected_result = (
+        "en:"
+        + re.sub(
+            " +[-&/()']* *|[=&/()]", "-", category.lower().strip().replace(",", "")
+        )[:-1]
+    )
     assert result == expected_result
