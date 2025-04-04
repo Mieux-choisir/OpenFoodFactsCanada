@@ -5,9 +5,13 @@ from pymongo import MongoClient
 from product_matcher import ProductMatcher
 
 
-def extract_data() -> (pd.DataFrame, pd.DataFrame):
+def extract_data(use_docker: bool = True) -> (pd.DataFrame, pd.DataFrame):
     """Extracts products ids from the collections off_products and fdc_products into dataframes"""
-    client = MongoClient("mongodb://localhost:37017/")
+    connection_string = (
+        "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+    )
+    client = MongoClient(connection_string)
+    
     db = client["openfoodfacts"]
 
     collection = db["off_products"]

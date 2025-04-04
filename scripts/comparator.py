@@ -6,12 +6,17 @@ import Levenshtein
 from pymongo import MongoClient
 
 
-def extract_data() -> (pd.DataFrame, pd.DataFrame):
+def extract_data(use_docker: bool = True):
     """Extracts the data from the off_products and fdc_products collections as dataframes"""
-    client = MongoClient("mongodb://localhost:37017/")
+    connection_string = (
+        "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+    )
+    client = MongoClient(connection_string)
     db = client["openfoodfacts"]
+
     collection = db["off_products"]
     df1 = pd.DataFrame(list(collection.find({"id_match": "99999967647"})))
+
     collection = db["fdc_products"]
     df2 = pd.DataFrame(list(collection.find({"id_match": "99999967647"})))
 
@@ -53,9 +58,12 @@ def calculate_similarity(row: pd.Series) -> float:
     return sum(similarities) / total_fields
 
 
-def store_mismatched_products(mismatches) -> None:
-    """Stores products with less than 100% similarity in MongoDB"""
-    client = MongoClient("mongodb://localhost:37017/")
+def store_mismatched_products(mismatches, use_docker: bool = True):
+    """Stocke les produits dont la similarité est inférieure à 100% dans MongoDB"""
+    connection_string = (
+        "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+    )
+    client = MongoClient(connection_string)
     db = client["openfoodfacts"]
     collection = db["waiting_for_treatement_products"]
 

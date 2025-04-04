@@ -14,11 +14,14 @@ class ProductMatcher:
         products to matched_products collections
     """
 
-    def match_products(self):
+    def match_products(self, use_docker: bool = True) -> list[str]:
         """Matches products that have the same id between the off_products and the fdc_products collections.
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.
         """
-        client = MongoClient("mongodb://localhost:37017/")
+        connection_string = (
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
+        client = MongoClient(connection_string)
         db = client["openfoodfacts"]
 
         off_collection = db["off_products"]
@@ -59,6 +62,8 @@ class ProductMatcher:
         logging.info(
             f"{len(matched_ids)} matched products between the two collections."
         )
+
+        return matched_ids
 
     @staticmethod
     def __extract_data(db: Database) -> (pd.DataFrame, pd.DataFrame):
