@@ -82,7 +82,7 @@ def main():
         )
     )
 
-    off_products = data_importer.import_csv_off_data(off_csv_file, 100)
+    off_products = data_importer.import_csv_off_data(off_csv_file)
     # off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
 
