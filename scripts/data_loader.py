@@ -23,7 +23,9 @@ class DataLoader:
             connection_string = (
                 "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
             )
+
             client = MongoClient(connection_string)
+
             collection = client[db_name][collection_name]
 
             collection.create_index(

@@ -5,7 +5,7 @@ from typing import Optional, List
 from domain.product.complexFields.complex_field import ComplexField
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
-from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 

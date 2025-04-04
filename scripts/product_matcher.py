@@ -6,8 +6,11 @@ from pymongo.synchronous.database import Database
 
 
 class ProductMatcher:
-    def match_products(self):
-        client = MongoClient("mongodb://localhost:37017/")
+    def match_products(self, use_docker: bool = True) -> list[str]:
+        connection_string = (
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
+        client = MongoClient(connection_string)
         db = client["openfoodfacts"]
 
         off_collection = db["off_products"]
@@ -47,7 +50,10 @@ class ProductMatcher:
 
         logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
 
-    def __extract_data(self, db: Database):
+        return matched_ids
+
+    @staticmethod
+    def __extract_data(db: Database):
 
         collection = db["off_products"]
         df1 = pd.DataFrame(list(collection.find({}, {"id_match": 1, "_id": 0})))

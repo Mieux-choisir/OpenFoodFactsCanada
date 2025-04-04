@@ -13,7 +13,7 @@ from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.product_mapper import ProductMapper
 from domain.product.complexFields.ingredients import Ingredients
 from domain.product.complexFields.nova_data import NovaData
-from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 from domain.validator.nova_data_validator import NovaDataValidator

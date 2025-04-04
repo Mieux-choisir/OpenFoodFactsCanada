@@ -10,6 +10,6 @@ class NutriscoreData(ComplexField):
     saturated_fats_100g: Optional[float] = None
     sodium_100g: Optional[float] = None
     sugar_100g: Optional[float] = None
-    fruit_percentage: Optional[float] = 0.0
+    fruit_percentage: Optional[float] = None
     is_beverage: Optional[bool] = False
     score: Optional[int] = None
