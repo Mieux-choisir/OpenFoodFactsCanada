@@ -116,10 +116,9 @@ def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_fo
     fdc_ids, fdc_dict_100g, fdc_dict_serving = fdc_dict
     product_preparation_state_code = "PREPARED"
 
-    with patch.object(NutrientAmountMapper, "map_nutrient", return_value=10.2):
-        result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
-            fdc_dict_100g, fdc_dict_serving, product_preparation_state_code
-        )
+    result = nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
+        fdc_dict_100g, fdc_dict_serving, product_preparation_state_code
+    )
 
     expected_energy_kcal_100g = next(
         item["amount"]
@@ -129,7 +128,10 @@ def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_fo
     assert result.nutrition_facts_per_hundred_grams.energy_100g == float(
         expected_energy_kcal_100g * CONVERSION_ENERGY_KCAL_TO_KJ
     )
-    assert result.nutrition_facts_per_hundred_grams.energy_kcal_100g == 10.2
+    assert (
+        result.nutrition_facts_per_hundred_grams.energy_kcal_100g
+        == expected_energy_kcal_100g
+    )
 
 
 def test_should_return_true_is_for_prepared_food_field_for_prepared_state_code_in_nutrition_facts_per_serving_for_fdc_dict(
@@ -170,8 +172,6 @@ def test_should_return_empty_is_for_prepared_food_field_for_other_state_code_in_
 
     assert result.nutrition_facts_per_serving.is_for_prepared_food is None
 
-
-# TODO check for calories per serving too
 
 # ----------------------------------------------------------------
 # Tests map_off_row_to_nutrition_facts
