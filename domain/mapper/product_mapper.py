@@ -112,7 +112,7 @@ class ProductMapper:
         category_tag_index = header.index("categories_tags")
 
         return Product(
-            id_match=row[id_index].strip().lstrip("0"),
+            id_match=row[id_index].strip().lstrip("0").replace("-", ""),
             id_original=row[id_index].strip(),
             product_name=(
                 row[product_name_index].strip().title()
@@ -162,7 +162,7 @@ class ProductMapper:
         serving_size_unit_field = "serving_quantity_unit"
 
         return Product(
-            id_match=product_dict.get(id_field).strip().lstrip("0"),
+            id_match=product_dict.get(id_field).strip().lstrip("0").replace("-", ""),
             id_original=product_dict.get(id_field).strip(),
             product_name=product_dict.get(product_name_field, "").strip().title()
             or None,
