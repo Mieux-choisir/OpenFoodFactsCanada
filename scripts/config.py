@@ -1,6 +1,25 @@
 class Config:
+    """
+    This is a class that stores config values used by the scripts.
+
+    Attributes:
+        use_docker(bool): A boolean indicating if the script is executed on Docker
+        off_csv_url(str): The url for downloading the Open Food Facts csv export
+        off_jsonl_url(str): The url for downloading the Open Food Facts jsonl export
+        fdc_json_url(str): The url for downloading the Food Data Central json export
+        off_compressed_csv_file_name(str): The name of the downloaded compressed Open Food Facts csv file
+        off_compressed_jsonl_file_name(str): The name of the downloaded compressed Open Food Facts jsonl file
+        fdc_compressed_json_file_name(str): The name of the downloaded compressed Food Data Central json file
+        off_csv_file_name(str): The name of the decompressed Open Food Facts csv file
+        off_jsonl_file_name(str): The name of the decompressed Open Food Facts jsonl file
+        fdc_json_file_name(str): The name of the decompressed Food Data Central json file
+        categories_taxonomy_file(str): The path from the root of the project to the Open Food Facts categories taxonomy file
+        category_mapping_file(str): The path from the root of the project to the mapping of Food Data Central categories to Open Food Facts categories
+    """
+
     def __init__(self):
-        self.use_docker = True
+
+        self.use_docker: bool = False
 
         self.off_csv_url: str = (
             "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
