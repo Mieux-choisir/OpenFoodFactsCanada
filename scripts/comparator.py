@@ -7,6 +7,7 @@ from pymongo import MongoClient
 
 
 def extract_data(use_docker: bool = True):
+    """Extracts the data from the off_products and fdc_products collections as dataframes"""
     connection_string = (
         "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
     )
@@ -22,8 +23,8 @@ def extract_data(use_docker: bool = True):
     return df1, df2
 
 
-def levenshtein_similarity(str1, str2):
-    """Retourne une similarité basée sur la distance de Levenshtein"""
+def levenshtein_similarity(str1: str, str2: str) -> float:
+    """Returns a similarity score based on Levenshtein distance"""
     if pd.isna(str1) or pd.isna(str2):
         return 0
 
@@ -39,7 +40,8 @@ def levenshtein_similarity(str1, str2):
     return similarity
 
 
-def calculate_similarity(row):
+def calculate_similarity(row: pd.Series) -> float:
+    """Returns the mean similarity based on several fields"""
     fields_to_compare = [
         col for col in row.index if "_src1" in col and "_id" not in col
     ]
@@ -103,7 +105,7 @@ def main():
     avg = merged_df["similarity"].mean()
     logging.info(f"Average similarity: {avg:.2f}%")
 
-    logging.info("Comparaison des valeurs :")
+    logging.info("Values comparison :")
     comparison_results = []
     mismatches = []
 

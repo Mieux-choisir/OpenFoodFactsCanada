@@ -6,6 +6,19 @@ from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 
 
 class NutriscoreDataMapper:
+    """
+    This is a class that maps products values to NutriscoreData objects.
+
+    Attributes:
+        number_mapper (NumberMapper)
+        energy_kcal_to_kj (Decimal): The decimal value to convert energy value from kcal to kj
+
+    Methods:
+        map_fdc_dict_to_nutriscore_data(food_nutrients): Maps the given food_nutrients list to a NutriscoreData object
+        map_off_row_to_nutriscore_data(row, header): Maps the given csv row to a NutriscoreData object
+        map_off_dict_to_nutriscore_data(product_dict): Maps the given dictionary to a NutriscoreData object
+    """
+
     def __init__(self, number_mapper: NumberMapper):
         self.number_mapper = number_mapper
         self.energy_kcal_to_kj = Decimal(4.1868)
@@ -13,6 +26,7 @@ class NutriscoreDataMapper:
     def map_fdc_dict_to_nutriscore_data(
         self, food_nutrients: list[dict]
     ) -> NutriscoreData:
+        """Maps the given food nutrients list of an FDC product to a NutriscoreData object"""
         nutrient_ids = {
             "fibers_100g": 1079,
             "proteins_100g": 1003,
@@ -66,6 +80,7 @@ class NutriscoreDataMapper:
     def map_off_row_to_nutriscore_data(
         self, row: list[str], header: list[str]
     ) -> NutriscoreData:
+        """Maps the values in a given OFF (csv) product to a NutriscoreData object"""
         nutriscore_score_index = header.index("nutriscore_grade")
         energy_index = header.index("energy_100g")
         fibers_index = header.index("fiber_100g")
@@ -92,6 +107,7 @@ class NutriscoreDataMapper:
         )
 
     def map_off_dict_to_nutriscore_data(self, product_dict: dict) -> NutriscoreData:
+        """Maps the values in a given OFF (jsonl) product to a NutriscoreData object"""
         nutrients_field = "nutriments"
         nutriscore_score_field = "nutriscore_grade"
         energy_field = "energy_100g"

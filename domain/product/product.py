@@ -11,6 +11,35 @@ from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 
 
 class Product(ComplexField):
+    """
+    This is a class that stores data on the Nova data of a product.
+
+    Attributes:
+        id_match (Optional[int]): The formatted id used to match the products
+        id_original (dict): The original id (not formatted) of the product
+        product_name (Optional[str]): The name of the product
+        data_source (Optional[str]): The source of the data obtained from the product
+        modified_date (Optional[datetime.datetime]): The last date data of the product was modified
+        available_date (Optional[datetime.datetime]): The date data of the product became first available
+        publication_date (Optional[datetime.datetime]): The date data of the product was published
+        quantity (Optional[str]): Quantity of the product
+        categories_en (list[str]): List of the different categories of the product
+        is_raw (Optional[bool]): Boolean indicating if the product is a raw product
+        brands (list[str]): List of the brands of the product
+        brand_owner (Optional[str]): Brand owner of the product
+        food_groups_en (list[str]): List of the food groups of the product
+        ingredients (Optional[Ingredients]): Data about the ingredients of the product
+        serving_size (Optional[float]): The serving size of the product
+        serving_size_unit (Optional[str]): The unit of the serving size of the product
+        nutrition_facts (Optional[NutritionFacts]): Data about the nutrition facts of the product
+        nutriscore_data (Optional[NutriscoreData]): Data about the NutriScore of the product
+        ecoscore_data (Optional[EcoscoreData]): Data about the Eco-score of the product
+        nova_data (Optional[NovaData]): Data about the Nova group of the product
+
+    Methods:
+        has_at_least_one_score(): Indicates whether the product has at least one score available (NutriScore, Eco-score or Nova group)
+    """
+
     id_match: Optional[str] = None
     id_original: Optional[str] = None
     product_name: Optional[str] = None
@@ -32,7 +61,8 @@ class Product(ComplexField):
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()
     nova_data: Optional[NovaData] = NovaData()
 
-    def has_atleast_one_score(self) -> bool:
+    def has_at_least_one_score(self) -> bool:
+        """Returns true if the product has at least one score available (ie not None)"""
         return self.product_name is not None and (
             self.nutriscore_data.score is not None
             or self.ecoscore_data.score is not None

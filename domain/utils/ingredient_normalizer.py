@@ -2,6 +2,13 @@ import re
 
 
 class IngredientNormalizer:
+    """
+    This is a class that normalizes given ingredients strings to formatted lists.
+
+    Methods:
+       normalise_ingredients_list(ingredients_text): Converts the given ingredients text to a formatted ingredients list
+    """
+
     def normalise_ingredients_list(self, ingredients_text: str) -> list[str]:
         """Creates a normalised ingredients list based on a given text of ingredients.
         ingredients_text is an enumeration of the ingredients separated by a comma"""
