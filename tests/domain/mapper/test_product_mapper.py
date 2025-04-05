@@ -548,19 +548,6 @@ def test_should_return_mapped_category_in_product_for_fdc_dict(
     assert result.categories_en == ["en:cereals", "en:snacks"]
 
 
-def test_should_return_mapped_category_in_product_for_fdc_dict(
-    product_mapper, fdc_dict, mock_fdc_functions
-):
-    product_mapper.category_mapper.get_off_categories_of_fdc_product.return_value = [
-        "en:cereals",
-        "en:snacks",
-    ]
-
-    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
-
-    assert result.categories_en == ["en:cereals", "en:snacks"]
-
-
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):

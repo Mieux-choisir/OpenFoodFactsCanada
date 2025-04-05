@@ -1,10 +1,6 @@
 import logging
-from typing import List
 
 from pymongo import MongoClient
-
-from scripts.number_comparator import NumberComparator
-from scripts.string_comparator import StringComparator
 
 
 def merge_documents(off_product, fdc_product):
