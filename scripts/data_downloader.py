@@ -8,6 +8,14 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 
 class DataDownloader:
+    """
+    This is a class that downloads files.
+
+    Methods:
+        download_and_decompress_data(source_url, compressed_file, compressed_file_extension, decompressed_file): Downloads and decompresses the file at a
+        given url
+    """
+
     def download_and_decompress_data(
         self,
         source_url: str,
@@ -15,6 +23,12 @@ class DataDownloader:
         compressed_file_extension: str,
         decompressed_file: str,
     ) -> None:
+        """Downloads and decompresses the file at a given url
+        Args:
+            source_url: the url to download the file from
+            compressed_file: the path to the downloaded compressed file
+            compressed_file_extension: the extension of the downloaded compressed file
+            decompressed_file: the path to the decompressed file"""
         if os.path.exists(decompressed_file):
             logging.info(f"File {decompressed_file} already exists. Skipping download.")
             return
@@ -61,6 +75,7 @@ class DataDownloader:
         output_file: str,
         buffer_size: int = 1024 * 1024,
     ) -> None:
+        """Decompresses a given file into a file named output_file"""
         logging.info(f"Decompressing {compressed_file} into {output_file}...")
 
         if compressed_file_extension == ".gz":

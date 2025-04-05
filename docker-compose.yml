@@ -21,9 +21,7 @@ services:
       - ./domain:/app/domain
       - mongo_data:/data/db  # MongoDB storage
       - ./data:/app/data  # Store downloaded files
-      - ./categories_taxonomy.txt:/app/categories_taxonomy.txt
-      - ./categories_mapping_fdc_off.json:/app/categories_mapping_fdc_off.json
-
+      - ./source_files:/app/source_files # Store source files
     networks:
       - openfoodfacts-net
     command: python -m scripts.2CollectionsImport

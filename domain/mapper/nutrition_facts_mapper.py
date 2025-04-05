@@ -1,11 +1,23 @@
 from decimal import Decimal
 
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
-from domain.product.complexFields.nutrient_facts import NutritionFacts
+from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.utils.converter import Converter
 
 
 class NutritionFactsMapper:
+    """
+    This is a class that maps products values to NutritionFacts objects.
+
+    Attributes:
+        energy_kcal_to_kj (Decimal): The decimal value to convert energy value from kcal to kj
+        sodium_to_salt (Decimal): The decimal value to convert sodium value to salt value
+
+    Methods:
+        map_fdc_dict_to_nutrition_facts(food_nutrients): Maps the given food nutrients list to a NutritionFacts object
+        map_off_row_to_nutrition_facts(row, header): Maps the given csv row to a NutritionFacts object
+        map_off_dict_to_nutrition_facts(product_dict): Maps the given dictionary to a NutritionFacts object
+    """
 
     def __init__(self):
         self.energy_kcal_to_kj = Decimal(4.1868)
@@ -14,6 +26,7 @@ class NutritionFactsMapper:
     def map_fdc_dict_to_nutrition_facts(
         self, food_nutrients: list[dict]
     ) -> NutritionFacts:
+        """Maps the given food nutrients of an FDC product to a NutritionFacts object"""
         nutrient_ids = {
             "fat_100g": 1004,
             "sodium_100g": 1093,
@@ -79,6 +92,7 @@ class NutritionFactsMapper:
     def map_off_row_to_nutrition_facts(
         row: list[str], header: list[str]
     ) -> NutritionFacts:
+        """Maps the values in a given OFF (csv) product to a NutritionFacts object"""
         field_mapping = {
             "saturated-fat_100g": "saturated_fats_100g",
             "sugars_100g": "sugar_100g",
@@ -158,6 +172,7 @@ class NutritionFactsMapper:
 
     @staticmethod
     def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
+        """Maps the values in a given OFF (jsonl) product to a NutritionFacts object"""
         nutriments = product_dict.get("nutriments", {})
 
         field_mapping = {
@@ -237,6 +252,10 @@ class NutritionFactsMapper:
 
     @staticmethod
     def __get_nutrient_level(food_nutrients, searched_id):
+        """Returns the nutrient level of a nutrient by its id in a given food nutrients dictionary
+        Args:
+            food_nutrients: the nutrients dictionary in which the specific nutrient level is searched
+            searched_id: the id of the wanted nutrient"""
         return next(
             (
                 item["amount"]
@@ -248,6 +267,10 @@ class NutritionFactsMapper:
 
     @staticmethod
     def __get_nutrient_unit(food_nutrients, searched_id):
+        """Returns the nutrient unit of a nutrient by its id in a given food nutrients dictionary
+        Args:
+            food_nutrients: the nutrients dictionary in which the specific nutrient unit is searched
+            searched_id: the id of the wanted nutrient"""
         return next(
             (
                 item["nutrient"]["unitName"].lower()

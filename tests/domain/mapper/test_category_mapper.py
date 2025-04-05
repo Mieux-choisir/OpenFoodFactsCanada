@@ -29,7 +29,9 @@ def category_mapper(category_creator):
         "fdc-category-2": ["category2", "category3"],
     }
 
-    category_mapper = CategoryMapper(category_creator)
+    category_mapper = CategoryMapper(
+        category_creator, "taxonomy_file.txt", "mapping_file.txt"
+    )
 
     return category_mapper
 

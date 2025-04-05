@@ -3,7 +3,7 @@ import ijson
 import json
 
 
-def show_all_off_csv_fields(dataset: str):
+def show_all_off_csv_fields(dataset: str) -> None:
     """Shows the names of all the fields in the documentation"""
     files = {
         "OFF": r"../../off_csv_fields_descriptions.json",
@@ -26,7 +26,7 @@ def show_all_off_csv_fields(dataset: str):
         return
 
 
-def show_field_description(dataset: str, field_name: str):
+def show_field_description(dataset: str, field_name: str) -> None:
     """Shows the description of a given field name in the documentation"""
     files = {
         "OFF": r"../../off_csv_fields_descriptions.json",
@@ -63,7 +63,7 @@ def show_field_description(dataset: str, field_name: str):
         return
 
 
-def show_all_fields_descriptions(dataset: str):
+def show_all_fields_descriptions(dataset: str) -> None:
     """Shows the descriptions of all the fields in the chosen documentation"""
     files = {
         "OFF": r"../../off_csv_fields_descriptions.json",
