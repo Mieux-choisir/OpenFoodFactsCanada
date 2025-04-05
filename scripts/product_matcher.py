@@ -27,6 +27,7 @@ class ProductMatcher:
 
         matched_off_collection = db["matched_off_products"]
         matched_fdc_collection = db["matched_fdc_products"]
+        final_products_collection = db["final_products"]
 
         if matched_off_collection.count_documents({}) > 0:
             logging.info("Matched OFF products already exist. Skipping insert.")
@@ -44,6 +45,21 @@ class ProductMatcher:
                 {"id_match": {"$in": list(matched_ids)}}
             )
             matched_fdc_collection.insert_many(matched_fdc_products)
+
+        all_fdc_ids = df2["id_match"].tolist()
+        unmatched_ids = list(set(all_fdc_ids) - set(matched_ids))
+
+        if final_products_collection.count_documents({}) > 0:
+            logging.info("Final products already exist. Skipping insert.")
+        else:
+            unmatched_fdc_products = list(fdc_collection.find(
+                {"id_match": {"$in": unmatched_ids}}
+            ))
+            if unmatched_fdc_products:
+                final_products_collection.insert_many(unmatched_fdc_products)
+                logging.info(f"Inserted {len(unmatched_fdc_products)} unmatched FDC products into final_products.")
+            else:
+                logging.info("No unmatched FDC products to insert.")
 
         logging.info(f"{len(matched_ids)} produits matchés entre les deux collections.")
 
