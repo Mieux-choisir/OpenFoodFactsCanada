@@ -93,4 +93,3 @@ class StringComparator:
         if off_list is None and fdc_list is not None:
             return fdc_list
         return off_list
-

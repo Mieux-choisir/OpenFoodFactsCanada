@@ -547,6 +547,7 @@ def test_should_return_mapped_category_in_product_for_fdc_dict(
 
     assert result.categories_en == ["en:cereals", "en:snacks"]
 
+
 def test_should_return_mapped_category_in_product_for_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):

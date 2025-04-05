@@ -64,7 +64,9 @@ def main():
                 off_product = next(off_cursor, None)
                 fdc_product = next(fdc_cursor, None)
 
-        logging.info(f"Product merge completed. Inserted: {count_merged}, Skipped: {count_skipped}")
+        logging.info(
+            f"Product merge completed. Inserted: {count_merged}, Skipped: {count_skipped}"
+        )
 
 
 if __name__ == "__main__":

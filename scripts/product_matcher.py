@@ -66,12 +66,14 @@ class ProductMatcher:
         if final_products_collection.count_documents({}) > 0:
             logging.info("Final products already exist. Skipping insert.")
         else:
-            unmatched_fdc_products = list(fdc_collection.find(
-                {"id_match": {"$in": unmatched_ids}}
-            ))
+            unmatched_fdc_products = list(
+                fdc_collection.find({"id_match": {"$in": unmatched_ids}})
+            )
             if unmatched_fdc_products:
                 final_products_collection.insert_many(unmatched_fdc_products)
-                logging.info(f"Inserted {len(unmatched_fdc_products)} unmatched FDC products into final_products.")
+                logging.info(
+                    f"Inserted {len(unmatched_fdc_products)} unmatched FDC products into final_products."
+                )
             else:
                 logging.info("No unmatched FDC products to insert.")
 
