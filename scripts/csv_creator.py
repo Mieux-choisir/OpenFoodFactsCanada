@@ -119,7 +119,7 @@ class CsvCreator:
             "ingredients.ingredients_text": "Ingredients list",
             "ingredients.ingredients_list": None,
             "serving_size": "Serving size",
-            "serving_size_unit": "Serving size",  # TODO handle serving size + unit
+            "serving_size_unit": "Serving size",
             "nutrition_facts.fat_100g": "Fat for 100 g / 100 ml",
             "nutrition_facts.salt_100g": "Salt for 100 g / 100 ml",
             "nutrition_facts.saturated_fats_100g": "Saturated fat for 100 g / 100 ml",
@@ -229,7 +229,13 @@ class CsvCreator:
                 if isinstance(column_mapping, str):
                     column_id = columns.index(column_mapping)
                     value = self.__format_value(value)
-                    line[column_id] = value
+                    if current_key_name in ["serving_size", "serving_size_unit"]:
+                        if line[column_id]:
+                            line[column_id] = f"{line[column_id]} {value}"
+                        else:
+                            line[column_id] = value
+                    else:
+                        line[column_id] = value
                 elif isinstance(column_mapping, list):
                     column_ids = [columns.index(cat) for cat in column_mapping]
                     for column_id in column_ids:

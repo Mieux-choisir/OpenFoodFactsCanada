@@ -284,7 +284,7 @@ class NutritionFactsMapper:
                 )
             if field == "energy_kcal_100g" and value is not None:
                 nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
-                nutrition_facts_data["energy_kcal_100g"] = value
+                nutrition_facts_data["energy_kcal_100g"] = round(value)
 
             if field != "energy_kcal_100g":
                 nutrition_facts_data[field] = NutrientAmountMapper().map_nutrient(
@@ -343,9 +343,9 @@ class NutritionFactsMapper:
             iron_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "iron"
             ),
-            energy_kcal_serving=self.__get_nutrient_level_per_serving(
+            energy_kcal_serving=round(self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "calories"
-            ),
+            )) if food_nutrients_per_serving.get("calories") else None,
             potassium_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "potassium"
             ),

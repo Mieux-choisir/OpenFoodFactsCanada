@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+from datetime import datetime
 
 from domain.mapper.ingredients_mapper import IngredientsMapper
 from domain.mapper.number_mapper import NumberMapper
@@ -35,7 +36,7 @@ def main():
 
     config = Config()
 
-    data_dir = "/app/data"
+    data_dir = "../data"
     os.makedirs(data_dir, exist_ok=True)
 
     data_downloader = DataDownloader()
@@ -82,7 +83,7 @@ def main():
         )
     )
 
-    off_products = data_importer.import_csv_off_data(off_csv_file, limit=100)
+    off_products = data_importer.import_csv_off_data(off_csv_file)
     # off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
     data_loader = DataLoader()
@@ -97,7 +98,7 @@ def main():
     product_matcher = ProductMatcher()
 
     ids = product_matcher.match_products(use_docker=config.use_docker)
-    csv_creator = CsvCreator("fdc_products_to_add")
+    csv_creator = CsvCreator(f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}")
     csv_creator.create_csv_files_for_products_not_existing_in_off(fdc_products, ids)
 
 
