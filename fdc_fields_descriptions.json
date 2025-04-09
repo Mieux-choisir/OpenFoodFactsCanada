@@ -224,7 +224,7 @@
           "optional": true
         }
       },
-      "desc": "document with the value for each nutriment. des données sont présentes dans foodAttributes mais pas dans labelNutrients",
+      "desc": "documents with the value for each nutriment as shown on the product",
       "sources": [
         "analysis with python script"
       ]

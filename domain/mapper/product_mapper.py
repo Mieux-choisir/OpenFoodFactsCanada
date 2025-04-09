@@ -58,7 +58,11 @@ class ProductMapper:
         )
 
         return Product(
-            id_match=product_dict[id_field].strip().lstrip("0"),
+            id_match=product_dict[id_field]
+            .strip()
+            .replace(" ", "")
+            .replace("-", "")
+            .lstrip("0"),
             id_original=product_dict[id_field].strip(),
             product_name=product_dict[product_name_field].strip().title(),
             data_source=product_dict[data_source_field],
@@ -79,7 +83,10 @@ class ProductMapper:
                 else []
             ),
             brand_owner=product_dict[brand_owner_field].strip().title(),
-            categories_en=self.category_mapper.get_off_categories_of_fdc_product(
+            off_categories_en=self.category_mapper.get_off_categories_of_fdc_product(
+                product_dict.get(category_field)
+            ),
+            fdc_category_en=self.category_mapper.get_fdc_category(
                 product_dict.get(category_field)
             ),
             food_groups_en=list(
@@ -91,7 +98,9 @@ class ProductMapper:
             serving_size=product_dict["servingSize"],
             serving_size_unit=product_dict["servingSizeUnit"],
             nutrition_facts=self.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts(
-                product_dict[food_nutrients_field]
+                product_dict[food_nutrients_field],
+                product_dict.get("labelNutrients"),
+                product_dict.get("preparationStateCode"),
             ),
             nutriscore_data=self.nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(
                 product_dict[food_nutrients_field]
@@ -118,7 +127,7 @@ class ProductMapper:
         category_tag_index = header.index("categories_tags")
 
         return Product(
-            id_match=row[id_index].strip().lstrip("0"),
+            id_match=row[id_index].strip().lstrip("0").replace("-", ""),
             id_original=row[id_index].strip(),
             product_name=(
                 row[product_name_index].strip().title()
@@ -132,7 +141,7 @@ class ProductMapper:
             is_raw=self.__off_csv_is_raw_aliment(row, header),
             brands=BrandsMapper.map_off_row_to_brands(row, header),
             brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
-            categories_en=self.category_mapper.get_off_categories_of_off_product(
+            off_categories_en=self.category_mapper.get_off_categories_of_off_product(
                 row[category_tag_index]
             ),
             food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
@@ -169,7 +178,7 @@ class ProductMapper:
         serving_size_unit_field = "serving_quantity_unit"
 
         return Product(
-            id_match=product_dict.get(id_field).strip().lstrip("0"),
+            id_match=product_dict.get(id_field).strip().lstrip("0").replace("-", ""),
             id_original=product_dict.get(id_field).strip(),
             product_name=product_dict.get(product_name_field, "").strip().title()
             or None,
@@ -177,7 +186,7 @@ class ProductMapper:
                 product_dict.get(modified_date_field), tz=timezone.utc
             ),
             quantity=product_dict.get(quantity_name_field),
-            categories_en=self.category_mapper.get_off_categories_of_off_product(
+            off_categories_en=self.category_mapper.get_off_categories_of_off_product(
                 product_dict[category_field]
             ),
             is_raw=self.__off_json_is_raw_aliment(product_dict),

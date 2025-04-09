@@ -28,7 +28,7 @@ def products():
         id_match="55555555",
         product_name="Product 2",
         brands=["brand1", "brand2"],
-        categories_en=["category1", "category2"],
+        off_categories_en=["category1", "category2"],
         ingredients=Ingredients(),
         nova_data=NovaData(score="3"),
     )
@@ -57,7 +57,7 @@ def products_mapped_lists(csv_creator, products):
         csv_creator.product_field_to_columns_mapping.get("brands")
     )
     category_id = columns_list.index(
-        csv_creator.product_field_to_columns_mapping.get("categories_en")
+        csv_creator.product_field_to_columns_mapping.get("off_categories_en")
     )
     nova_data_score_id = columns_list.index(
         csv_creator.product_field_to_columns_mapping.get("nova_data.score")
@@ -79,8 +79,8 @@ def products_mapped_lists(csv_creator, products):
             else ""
         )
         expected_added_list[category_id] = (
-            ", ".join(product.categories_en)
-            if product.categories_en is not None
+            ", ".join(product.off_categories_en)
+            if product.off_categories_en is not None
             else ""
         )
         expected_added_list[nova_data_score_id] = (

@@ -111,7 +111,7 @@ class CsvCreator:
             "id_match": "Barcode",
             "product_name": "Product name",
             "quantity": "Quantity",
-            "categories_en": "Categories",
+            "off_categories_en": "Categories",
             "is_raw": None,
             "brands": "Brands",
             "brand_owner": "Brand owner",

@@ -69,6 +69,7 @@ def fdc_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -90,6 +91,7 @@ def fdc_no_brand_name_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -112,6 +114,7 @@ def fdc_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -134,6 +137,7 @@ def fdc_not_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -156,6 +160,7 @@ def fdc_not_enough_information_for_raw_dict():
         "householdServingFullText": "0.25 cup",
         "servingSize": 28,
         "servingSizeUnit": "g",
+        "preparationStateCode": "PREPARED",
     }
 
     return fdc_dict
@@ -179,7 +184,7 @@ def off_rows():
     ]
     row = [
         "Canada, United Kingdom ",
-        " 00455612222",
+        " 004556-12222",
         " GRANOLA, CINNAMON BAR",
         " Michele's, Cliff",
         " cereals, snacks , ",
@@ -267,7 +272,7 @@ def off_rows_without_canada():
 def off_dict():
     off_dict = {
         "countries": ["Canada", "United Kingdom "],
-        "code": " 00455612222",
+        "code": " 0045-5612222",
         "product_name": " GRANOLA, CINNAMON BAR",
         "brands": " Michele's, CLIFF",
         "brand_owner": " MICHELE'S",
@@ -342,6 +347,7 @@ def mock_fdc_functions(product_mapper):
     product_mapper.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts.return_value = (
         nutrition_facts
     )
+    product_mapper.category_mapper.get_fdc_category.return_value = "fdc-category"
 
     with patch.object(
         NutritionFactsMapper,
@@ -497,14 +503,15 @@ def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
     ), f"Expected original id field to be {fdc_dict["gtinUpc"].strip()}, got {result.id_original}"
 
 
-def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_fdc_dict(
+def test_should_return_id_without_zeros_at_the_beginning_and_without_hyphens_for_id_match_in_product_for_given_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
-    assert result.id_match == fdc_dict["gtinUpc"].strip().lstrip(
-        "0"
-    ), f"Expected match id field to be {fdc_dict["gtinUpc"].strip().lstrip("0")}, got {result.id_match}"
+    expected_result = fdc_dict["gtinUpc"].strip().lstrip("0").replace("-", "")
+    assert (
+        result.id_match == expected_result
+    ), f"Expected match id field to be {expected_result}, got {result.id_match}"
 
 
 def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_dict(
@@ -535,7 +542,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_fdc_dict(
     ), f"Expected ingredients field to be {mock_fdc_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_fdc_dict(
+def test_should_return_mapped_off_categories_in_product_for_fdc_dict(
     product_mapper, fdc_dict, mock_fdc_functions
 ):
     product_mapper.category_mapper.get_off_categories_of_fdc_product.return_value = [
@@ -545,7 +552,15 @@ def test_should_return_mapped_category_in_product_for_fdc_dict(
 
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
-    assert result.categories_en == ["en:cereals", "en:snacks"]
+    assert result.off_categories_en == ["en:cereals", "en:snacks"]
+
+
+def test_should_return_mapped_fdc_category_in_product_for_fdc_dict(
+    product_mapper, fdc_dict, mock_fdc_functions
+):
+    result = product_mapper.map_fdc_dict_to_product(fdc_dict)
+
+    assert result.fdc_category_en == "fdc-category"
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
@@ -694,16 +709,17 @@ def test_should_return_given_id_for_id_original_in_product_for_given_off_row(
     ), f"Expected original id field to be {row[header.index("code")].strip()}, got {result.id_original}"
 
 
-def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_off_row(
+def test_should_return_id_without_zeros_at_the_beginning_and_without_hyphens_for_id_match_in_product_for_given_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
 
     result = product_mapper.map_off_row_to_product(row, header)
 
-    assert result.id_match == row[header.index("code")].strip().lstrip(
-        "0"
-    ), f"Expected match id field to be {row[header.index("code")].strip()}, got {result.id_match}"
+    expected_result = row[header.index("code")].strip().replace("-", "").lstrip("0")
+    assert (
+        result.id_match == expected_result
+    ), f"Expected match id field to be {expected_result}, got {result.id_match}"
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_row(
@@ -827,7 +843,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_row(
     ), f"Expected ingredients field to be {mock_off_row_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_off_row(
+def test_should_return_mapped_off_categories_in_product_for_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
     row, header = off_rows
@@ -838,7 +854,17 @@ def test_should_return_mapped_category_in_product_for_off_row(
 
     result = product_mapper.map_off_row_to_product(row, header)
 
-    assert result.categories_en == ["en:cereals", "en:snacks"]
+    assert result.off_categories_en == ["en:cereals", "en:snacks"]
+
+
+def test_should_return_no_fdc_category_in_product_for_off_row(
+    product_mapper, off_rows, mock_off_row_functions
+):
+    row, header = off_rows
+
+    result = product_mapper.map_off_row_to_product(row, header)
+
+    assert result.fdc_category_en is None
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
@@ -939,17 +965,18 @@ def test_should_return_given_id_for_id_original_in_product_for_given_off_dict(
 
     assert (
         result.id_original == off_dict["code"].strip()
-    ), f"Expected original id field to be {off_dict["code"].strip()}, got {result.id_match}"
+    ), f"Expected original id field to be {off_dict["code"].strip()}, got {result.id_original}"
 
 
-def test_should_return_id_without_zeros_at_the_beginning_for_id_match_in_product_for_given_off_dict(
+def test_should_return_id_without_zeros_at_the_beginning_id_and_without_hyphens_for_id_match_in_product_for_given_off_dict(
     product_mapper, off_dict, mock_off_dict_functions
 ):
     result = product_mapper.map_off_dict_to_product(off_dict)
 
-    assert result.id_match == off_dict["code"].strip().lstrip(
-        "0"
-    ), f"Expected match id field to be {off_dict["code"].strip().lstrip("0")}, got {result.id_match}"
+    expected_result = off_dict["code"].strip().lstrip("0").replace("-", "")
+    assert (
+        result.id_match == expected_result
+    ), f"Expected match id field to be {expected_result}, got {result.id_match}"
 
 
 def test_should_return_true_is_raw_field_for_raw_nova_group_in_product_for_given_off_dict(
@@ -1041,7 +1068,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
     ), f"Expected ingredients field to be {mock_off_dict_functions["ingredients"]}, got {result.ingredients}"
 
 
-def test_should_return_mapped_category_in_product_for_off_dict(
+def test_should_return_mapped_off_categories_in_product_for_off_dict(
     product_mapper, off_dict, mock_off_dict_functions
 ):
     product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
@@ -1051,7 +1078,15 @@ def test_should_return_mapped_category_in_product_for_off_dict(
 
     result = product_mapper.map_off_dict_to_product(off_dict)
 
-    assert result.categories_en == ["en:cereals", "en:snacks"]
+    assert result.off_categories_en == ["en:cereals", "en:snacks"]
+
+
+def test_should_return_no_fdc_category_in_product_for_off_dict(
+    product_mapper, off_dict, mock_off_dict_functions
+):
+    result = product_mapper.map_off_dict_to_product(off_dict)
+
+    assert result.fdc_category_en is None
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(

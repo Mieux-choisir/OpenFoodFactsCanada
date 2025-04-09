@@ -63,11 +63,16 @@ class CategoryMapper:
                         off_categories.append(key)
                         break
 
-        if not off_categories:
-            cat = re.sub(" +[-&/()']* *|[=&/()]", "-", given_category.strip())
-            off_categories = ["en:" + cat.rstrip("-").lower().replace(",", "") + "-fdc"]
-
         return off_categories
+
+    @staticmethod
+    def get_fdc_category(category: str) -> str:
+        formatted_category = re.sub(
+            " +[-&/()']* *|[=&/()]", "-", category.strip().lower().replace(",", "")
+        )
+        formatted_category = "en:" + formatted_category.rstrip("-")
+
+        return formatted_category
 
     def __get_off_categories_from_given_categories(
         self, given_categories_list: list[str]
