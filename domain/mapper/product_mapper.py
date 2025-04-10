@@ -43,6 +43,7 @@ class ProductMapper:
     def map_fdc_dict_to_product(self, product_dict: dict) -> Product:
         """Maps a dictionary from an FDC json export to a product object"""
         id_field = "gtinUpc"
+        fdc_id_field = "fdcId"
         product_name_field = "description"
         data_source_field = "dataSource"
         modified_date_field = "modifiedDate"
@@ -64,6 +65,7 @@ class ProductMapper:
             .replace("-", "")
             .lstrip("0"),
             id_original=product_dict[id_field].strip(),
+            fdc_id=str(product_dict[fdc_id_field]).strip(),
             product_name=product_dict[product_name_field].strip().title(),
             data_source=product_dict[data_source_field],
             modified_date=datetime.strptime(

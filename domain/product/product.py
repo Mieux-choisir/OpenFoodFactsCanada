@@ -42,6 +42,7 @@ class Product(ComplexField):
 
     id_match: Optional[str] = None
     id_original: Optional[str] = None
+    fdc_id: Optional[str] = None
     product_name: Optional[str] = None
     data_source: Optional[str] = None
     modified_date: Optional[datetime.datetime] = None
