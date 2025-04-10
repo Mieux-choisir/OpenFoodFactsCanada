@@ -56,6 +56,7 @@ def product_mapper(
 def fdc_dict():
     fdc_dict = {
         "gtinUpc": " 00445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -79,6 +80,7 @@ def fdc_dict():
 def fdc_no_brand_name_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandOwner": " MICHELE'S",
         "ingredients": None,
@@ -101,6 +103,7 @@ def fdc_no_brand_name_dict():
 def fdc_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -124,6 +127,7 @@ def fdc_raw_dict():
 def fdc_not_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -147,6 +151,7 @@ def fdc_not_raw_dict():
 def fdc_not_enough_information_for_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",

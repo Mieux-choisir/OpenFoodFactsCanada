@@ -343,9 +343,15 @@ class NutritionFactsMapper:
             iron_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "iron"
             ),
-            energy_kcal_serving=round(self.__get_nutrient_level_per_serving(
-                food_nutrients_per_serving, "calories"
-            )) if food_nutrients_per_serving.get("calories") else None,
+            energy_kcal_serving=(
+                round(
+                    self.__get_nutrient_level_per_serving(
+                        food_nutrients_per_serving, "calories"
+                    )
+                )
+                if food_nutrients_per_serving.get("calories")
+                else None
+            ),
             potassium_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "potassium"
             ),
