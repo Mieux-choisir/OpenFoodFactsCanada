@@ -492,10 +492,10 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
 
     assert (
         result.product_name == fdc_dict["description"].strip().title()
-    ), f"Expected product name field to be {fdc_dict["description"].strip().title()}, got {result.product_name}"
+    ), f"Expected product name field to be {fdc_dict["description"].strip()}, got {result.product_name}"
     assert (
-        result.brand_owner == fdc_dict["brandOwner"].strip().title()
-    ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip().title()}, got {result.brand_name}"
+        result.brand_owner == fdc_dict["brandOwner"].strip()
+    ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip()}, got {result.brand_owner}"
 
 
 def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
@@ -525,8 +525,8 @@ def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert result.brands == [
-        fdc_dict["brandName"].strip().title()
-    ], f"Expected brands field to be {[fdc_dict["gtinUpc"].strip().title()]}, got {result.brands}"
+        fdc_dict["brandName"].strip()
+    ], f"Expected brands field to be {[fdc_dict["gtinUpc"].strip()]}, got {result.brands}"
 
 
 def test_should_return_empty_brands_list_in_product_for_given_fdc_dict(

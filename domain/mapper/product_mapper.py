@@ -80,11 +80,11 @@ class ProductMapper:
             quantity=product_dict["householdServingFullText"],
             is_raw=self.__fdc_is_raw_aliment(product_dict[category_field]),
             brands=(
-                [product_dict[brands_field].strip().title()]
+                [product_dict[brands_field].strip()]
                 if brands_field in product_dict.keys()
                 else []
             ),
-            brand_owner=product_dict[brand_owner_field].strip().title(),
+            brand_owner=product_dict[brand_owner_field].strip(),
             off_categories_en=self.category_mapper.get_off_categories_of_fdc_product(
                 product_dict.get(category_field)
             ),
