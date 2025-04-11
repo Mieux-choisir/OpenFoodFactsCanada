@@ -95,24 +95,3 @@ def test_should_return_matched_existing_off_categories_in_categories_list(
     result = category_mapper.get_off_categories_of_fdc_product(present_category)
 
     assert result == ["en:category1"]
-
-
-# ----------------------------------------------------------------
-# Tests get_fdc_category
-# ----------------------------------------------------------------
-
-
-def test_should_return_correctly_formatted_category(
-    category_mapper,
-):
-    category = "Ketchup - Mustard, BBQ & Cheese   Sauce (Shelf Stable)"
-
-    result = category_mapper.get_fdc_category(category)
-
-    expected_result = (
-        "en:"
-        + re.sub(
-            " +[-&/()']* *|[=&/()]", "-", category.lower().strip().replace(",", "")
-        )[:-1]
-    )
-    assert result == expected_result

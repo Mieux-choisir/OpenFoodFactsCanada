@@ -48,9 +48,10 @@ class Product(ComplexField):
     modified_date: Optional[datetime.datetime] = None
     available_date: Optional[datetime.datetime] = None
     publication_date: Optional[datetime.datetime] = None
+    household_serving_fulltext: Optional[str] = None
     quantity: Optional[str] = None
     off_categories_en: list[str] = []
-    fdc_category_en: str = None
+    fdc_category_en: Optional[str] = None
     is_raw: Optional[bool] = None
     brands: List[str] = []
     brand_owner: Optional[str] = None

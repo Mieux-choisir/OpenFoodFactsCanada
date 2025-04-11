@@ -37,10 +37,10 @@ def fdc_dict():
     ]
 
     fdc_dict_serving = {
-        "fat": {"value": Decimal(14.0)},
-        "sodium": {"value": Decimal(50)},
-        "cholesterol": {"value": Decimal(6.7)},
-        "fiber": {"value": Decimal(0.04)},
+        "fat": {"value": 14.0},
+        "sodium": {"value": 50},
+        "cholesterol": {"value": 6.7},
+        "fiber": {"value": 0.04},
     }
 
     return ids, fdc_dict_100g, fdc_dict_serving

@@ -68,6 +68,7 @@ def fdc_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -91,6 +92,7 @@ def fdc_no_brand_name_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -115,6 +117,7 @@ def fdc_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -139,6 +142,7 @@ def fdc_not_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -163,6 +167,7 @@ def fdc_not_enough_information_for_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -352,7 +357,6 @@ def mock_fdc_functions(product_mapper):
     product_mapper.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts.return_value = (
         nutrition_facts
     )
-    product_mapper.category_mapper.get_fdc_category.return_value = "fdc-category"
 
     with patch.object(
         NutritionFactsMapper,
@@ -565,7 +569,7 @@ def test_should_return_mapped_fdc_category_in_product_for_fdc_dict(
 ):
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
-    assert result.fdc_category_en == "fdc-category"
+    assert result.fdc_category_en == fdc_dict.get("brandedFoodCategory")
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(

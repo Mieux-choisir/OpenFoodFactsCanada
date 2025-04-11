@@ -308,6 +308,25 @@ class NutritionFactsMapper:
         ):
             is_for_prepared_food = False
 
+        sodium_serving = self.__get_nutrient_level_per_serving(
+            food_nutrients_per_serving, "sodium"
+        )
+        calories_per_serving = self.__get_nutrient_level_per_serving(
+            food_nutrients_per_serving, "calories"
+        )
+
+        salt_serving = (
+            float(sodium_serving) * float(self.sodium_to_salt)
+            if sodium_serving is not None
+            else None
+        )
+
+        energy_serving = (
+            round(float(calories_per_serving) * float(self.energy_kcal_to_kj))
+            if calories_per_serving is not None
+            else None
+        )
+
         return NutritionFactsPerServing(
             is_for_prepared_food=is_for_prepared_food,
             fat_serving=self.__get_nutrient_level_per_serving(
@@ -322,9 +341,7 @@ class NutritionFactsMapper:
             cholesterol_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "cholesterol"
             ),
-            sodium_serving=self.__get_nutrient_level_per_serving(
-                food_nutrients_per_serving, "sodium"
-            ),
+            sodium_serving=sodium_serving,
             carbohydrates_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "carbohydrates"
             ),
@@ -344,12 +361,8 @@ class NutritionFactsMapper:
                 food_nutrients_per_serving, "iron"
             ),
             energy_kcal_serving=(
-                round(
-                    self.__get_nutrient_level_per_serving(
-                        food_nutrients_per_serving, "calories"
-                    )
-                )
-                if food_nutrients_per_serving.get("calories")
+                round(calories_per_serving)
+                if calories_per_serving is not None
                 else None
             ),
             potassium_serving=self.__get_nutrient_level_per_serving(
@@ -358,6 +371,8 @@ class NutritionFactsMapper:
             added_sugar_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "addedSugar"
             ),
+            salt_serving=salt_serving,
+            energy_serving=energy_serving,
         )
 
     def __get_nutrient_level_per_serving(

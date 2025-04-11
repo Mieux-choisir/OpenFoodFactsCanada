@@ -30,6 +30,7 @@ class NutritionFactsPerServing(ComplexField):
     saturated_fats_serving: Optional[float] = None
     trans_fats_serving: Optional[float] = None
     cholesterol_serving: Optional[float] = None
+    salt_serving: Optional[float] = None
     sodium_serving: Optional[float] = None
     carbohydrates_serving: Optional[float] = None
     fibers_serving: Optional[float] = None
@@ -37,6 +38,7 @@ class NutritionFactsPerServing(ComplexField):
     proteins_serving: Optional[float] = None
     calcium_serving: Optional[float] = None
     iron_serving: Optional[float] = None
+    energy_serving: Optional[float] = None
     energy_kcal_serving: Optional[float] = None
     potassium_serving: Optional[float] = None
     added_sugar_serving: Optional[float] = None

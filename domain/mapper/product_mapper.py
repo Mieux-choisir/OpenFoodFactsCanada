@@ -77,20 +77,24 @@ class ProductMapper:
             publication_date=datetime.strptime(
                 product_dict[publication_date_field], "%m/%d/%Y"
             ),
-            quantity=product_dict["householdServingFullText"],
+            quantity=product_dict.get("packageWeight"),
+            household_serving_fulltext=product_dict["householdServingFullText"],
             is_raw=self.__fdc_is_raw_aliment(product_dict[category_field]),
             brands=(
                 [product_dict[brands_field].strip()]
                 if brands_field in product_dict.keys()
                 else []
             ),
-            brand_owner=product_dict[brand_owner_field].strip(),
+            brand_owner=(
+                None
+                if product_dict[brand_owner_field].strip().upper()
+                == "NOT A BRANDED ITEM"
+                else product_dict[brand_owner_field].strip()
+            ),
             off_categories_en=self.category_mapper.get_off_categories_of_fdc_product(
                 product_dict.get(category_field)
             ),
-            fdc_category_en=self.category_mapper.get_fdc_category(
-                product_dict.get(category_field)
-            ),
+            fdc_category_en=product_dict.get(category_field),
             food_groups_en=list(
                 filter(None, map(str.strip, product_dict[category_field].split(",")))
             ),  # TODO compléter la liste si possible
