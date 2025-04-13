@@ -139,7 +139,7 @@ class NutritionFactsMapper:
         nutrition_facts_data = {
             field_mapping.get(field, field): (
                 Converter.safe_float(row[header.index(field)])
-                if field in header
+                if field in header and header.index(field) < len(row)
                 else None
             )
             for field in fields

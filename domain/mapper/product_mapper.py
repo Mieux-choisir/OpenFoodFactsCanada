@@ -26,8 +26,6 @@ class ProductMapper:
         map_off_dict_to_product(product_dict): Maps the given dictionary to a Product object
     """
 
-    WANTED_COUNTRIES = ["Canada", "United States", "New Zealand"]
-
     def __init__(
         self,
         ingredients_mapper: IngredientsMapper,
@@ -119,11 +117,6 @@ class ProductMapper:
         self, row: list[str], header: list[str]
     ) -> Product | None:
         """Maps a row from a csv export of OFF to a product object if one of its countries is in the wanted countries"""
-        country_index = header.index("countries_en")
-        if not any(
-            country in row[country_index] for country in ProductMapper.WANTED_COUNTRIES
-        ):
-            return None
 
         id_index = header.index("code")
         product_name_index = header.index("product_name")
@@ -165,12 +158,6 @@ class ProductMapper:
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         """Maps a dictionary from a jsonl export of OFF to a product object if one of its countries is in the wanted countries"""
-        country_field = "countries"
-        if not any(
-            country in product_dict.get(country_field, [])
-            for country in ProductMapper.WANTED_COUNTRIES
-        ):
-            return None
 
         id_field = "code"
         product_name_field = "product_name"

@@ -245,40 +245,6 @@ def off_emtpy_strings_rows():
 
 
 @pytest.fixture
-def off_rows_without_canada():
-    header = [
-        "countries_en",
-        "code",
-        "product_name",
-        "brands",
-        "food_groups_en",
-        "nova_group",
-        "pnns_groups_1",
-        "categories_tags",
-        "additives_n",
-        "quantity",
-        "serving_quantity",
-        "last_modified_t",
-    ]
-    row = [
-        "Spain, United Kingdom ",
-        " 455612222",
-        " GRANOLA, CINNAMON BAR",
-        " Michele's, Cliff",
-        " cereals, snacks , ",
-        "2",
-        "cereals again",
-        "en:cereals",
-        "5",
-        "70 g",
-        "70",
-        "1632675242",
-    ]
-
-    return row, header
-
-
-@pytest.fixture
 def off_dict():
     off_dict = {
         "countries": ["Canada", "United Kingdom "],
@@ -660,16 +626,6 @@ def test_should_return_empty_nova_data_field_in_product_for_given_fdc_dict(
 # ----------------------------------------------------------------
 
 
-def test_should_return_no_product_if_canada_not_in_countries_for_given_off_row(
-    product_mapper, off_rows_without_canada
-):
-    row, header = off_rows_without_canada
-
-    result = product_mapper.map_off_row_to_product(row, header)
-
-    assert result is None, f"Expected no product returned, got {result}"
-
-
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
     product_mapper, off_rows, mock_off_row_functions
 ):
@@ -927,14 +883,6 @@ def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(
 # ----------------------------------------------------------------
 # Tests map_off_dict_to_product
 # ----------------------------------------------------------------
-
-
-def test_should_return_no_product_if_canada_not_in_countries_for_given_off_dict(
-    product_mapper, off_dict_without_canada
-):
-    result = product_mapper.map_off_dict_to_product(off_dict_without_canada)
-
-    assert result is None, f"Expected no product returned, got {result}"
 
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict(
