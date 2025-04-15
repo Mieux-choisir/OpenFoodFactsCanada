@@ -18,11 +18,11 @@ from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
 from scripts.product_matcher import ProductMatcher
 
-# off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
+off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
 
-off_csv_url = (
-    "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
-)
+# off_csv_url = (
+#     "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
+# )
 
 fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
 
@@ -44,21 +44,23 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.dirname(script_dir)
 
-    # off_jsonl_gz_file = os.path.join(parent_dir, "data", config.off_compressed_jsonl_file_name)
-    # off_jsonl_file = os.path.join(parent_dir, "data", config.off_jsonl_file_name)
-
-    # data_downloader.download_and_decompress_data(
-    #     off_jsonl_url, off_jsonl_gz_file, ".gz", off_jsonl_file
-    # )
-
-    off_csv_gz_file = os.path.join(
-        parent_dir, "data", config.off_compressed_csv_file_name
+    off_jsonl_gz_file = os.path.join(
+        parent_dir, "data", config.off_compressed_jsonl_file_name
     )
-    off_csv_file = os.path.join(parent_dir, "data", config.off_csv_file_name)
+    off_jsonl_file = os.path.join(parent_dir, "data", config.off_jsonl_file_name)
 
     data_downloader.download_and_decompress_data(
-        config.off_csv_url, off_csv_gz_file, ".gz", off_csv_file
+        off_jsonl_url, off_jsonl_gz_file, ".gz", off_jsonl_file
     )
+
+    # off_csv_gz_file = os.path.join(
+    #     parent_dir, "data", config.off_compressed_csv_file_name
+    # )
+    # off_csv_file = os.path.join(parent_dir, "data", config.off_csv_file_name)
+    #
+    # data_downloader.download_and_decompress_data(
+    #     config.off_csv_url, off_csv_gz_file, ".gz", off_csv_file
+    # )
 
     fdc_zip_file = os.path.join(
         parent_dir, "data", config.fdc_compressed_json_file_name
@@ -83,8 +85,8 @@ def main():
         )
     )
 
-    off_products = data_importer.import_csv_off_data(off_csv_file)
-    # off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
+    # off_products = data_importer.import_csv_off_data(off_csv_file)
+    off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
     data_loader = DataLoader()
 

@@ -170,17 +170,22 @@ class ProductMapper:
         serving_size_field = "serving_quantity"
         serving_size_unit_field = "serving_quantity_unit"
 
+        modified_timestamp = product_dict.get(modified_date_field)
+        modified_date = (
+            datetime.fromtimestamp(modified_timestamp, tz=timezone.utc)
+            if modified_timestamp is not None
+            else None
+        )
+
         return Product(
             id_match=product_dict.get(id_field).strip().lstrip("0").replace("-", ""),
             id_original=product_dict.get(id_field).strip(),
             product_name=product_dict.get(product_name_field, "").strip().title()
             or None,
-            modified_date=datetime.fromtimestamp(
-                product_dict.get(modified_date_field), tz=timezone.utc
-            ),
+            modified_date=modified_date,
             quantity=product_dict.get(quantity_name_field),
             off_categories_en=self.category_mapper.get_off_categories_of_off_product(
-                product_dict[category_field]
+                product_dict.get(category_field)
             ),
             is_raw=self.__off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
