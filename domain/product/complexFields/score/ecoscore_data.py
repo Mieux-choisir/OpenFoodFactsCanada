@@ -36,10 +36,14 @@ class EcoscoreData(ComplexField):
             else None
         )
         packaging_data = data.get("packaging")
-        packaging = Packaging.from_dict(packaging_data) if packaging_data is not None else None
+        packaging = (
+            Packaging.from_dict(packaging_data) if packaging_data is not None else None
+        )
         production_system_data = data.get("production_system")
         production_system = (
-            ProductionSystem.from_dict(production_system_data) if production_system_data is not None else None
+            ProductionSystem.from_dict(production_system_data)
+            if production_system_data is not None
+            else None
         )
         threatened_species = data.get("threatened_species", {})
         return cls(

@@ -20,6 +20,8 @@ class Packaging(ComplexField):
         if not data:
             return cls()
         return cls(
-            non_recyclable_and_non_biodegradable_materials=data.get("non_recyclable_and_non_biodegradable_materials"),
+            non_recyclable_and_non_biodegradable_materials=data.get(
+                "non_recyclable_and_non_biodegradable_materials"
+            ),
             packaging=data.get("packaging", []),
         )

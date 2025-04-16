@@ -97,12 +97,14 @@ class DataLoader:
 
     @staticmethod
     def fetch_products_from_mongo(
-            db_name: str = "openfoodfacts",
-            collection_name: str = "fdc_products",
-            use_docker: bool = True
+        db_name: str = "openfoodfacts",
+        collection_name: str = "fdc_products",
+        use_docker: bool = True,
     ) -> list[Product]:
         try:
-            logging.info(f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})...")
+            logging.info(
+                f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})..."
+            )
             connection_string = (
                 "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
             )

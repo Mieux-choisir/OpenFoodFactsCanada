@@ -31,6 +31,8 @@ class NutritionFacts(ComplexField):
                 NutritionFactsPerHundredGrams.from_dict(nhg_data) if nhg_data else None
             ),
             nutrition_facts_per_serving=(
-                NutritionFactsPerServing.from_dict(nserving_data) if nserving_data else None
+                NutritionFactsPerServing.from_dict(nserving_data)
+                if nserving_data
+                else None
             ),
         )

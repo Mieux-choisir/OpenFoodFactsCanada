@@ -10,6 +10,7 @@ from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.product.complexFields.score.ecoscore_data import EcoscoreData
 from domain.product.complexFields.score.nutriscore_data import NutriscoreData
 
+
 class Product(ComplexField):
     """
     This is a class that stores data on the Nova data of a product.
@@ -175,5 +176,3 @@ class Product(ComplexField):
             except ValueError:
                 return None
         return None
-
-

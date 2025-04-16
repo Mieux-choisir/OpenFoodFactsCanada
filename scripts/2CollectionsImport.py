@@ -99,13 +99,17 @@ def main():
 
     product_matcher = ProductMatcher()
 
-    fdc_products_from_db = data_loader.fetch_products_from_mongo(use_docker=config.use_docker)
+    fdc_products_from_db = data_loader.fetch_products_from_mongo(
+        use_docker=config.use_docker
+    )
 
     ids = product_matcher.match_products(use_docker=config.use_docker)
     csv_creator = CsvCreator(
         f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
-    csv_creator.create_csv_files_for_products_not_existing_in_off(fdc_products_from_db, ids)
+    csv_creator.create_csv_files_for_products_not_existing_in_off(
+        fdc_products_from_db, ids
+    )
 
 
 if __name__ == "__main__":
