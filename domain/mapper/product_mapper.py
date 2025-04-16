@@ -17,9 +17,6 @@ class ProductMapper:
     """
     This is a class that maps objects (rows or dicts) read from different files to Product objects.
 
-    Attributes:
-        WANTED_COUNTRIES (list[str]): A list of the wanted countries in which the products are available
-
     Methods:
         map_fdc_dict_to_product(product_dict): Maps the given dictionary to a Product object
         map_off_row_to_product(row, header): Maps the given csv row to a Product object
@@ -116,7 +113,7 @@ class ProductMapper:
     def map_off_row_to_product(
         self, row: list[str], header: list[str]
     ) -> Product | None:
-        """Maps a row from a csv export of OFF to a product object if one of its countries is in the wanted countries"""
+        """Maps a row from a csv export of OFF to a product object"""
 
         id_index = header.index("code")
         product_name_index = header.index("product_name")
@@ -157,7 +154,7 @@ class ProductMapper:
         )
 
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
-        """Maps a dictionary from a jsonl export of OFF to a product object if one of its countries is in the wanted countries"""
+        """Maps a dictionary from a jsonl export of OFF to a product object"""
 
         id_field = "code"
         product_name_field = "product_name"
