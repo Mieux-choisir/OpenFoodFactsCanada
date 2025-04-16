@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -16,3 +16,13 @@ class ProductionSystem(ComplexField):
     labels: List = []
     value: Optional[int] = None
     warning: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ProductionSystem":
+        if not data:
+            return cls()
+        return cls(
+            labels=data.get("labels", []),
+            value=data.get("value"),
+            warning=data.get("warning"),
+        )

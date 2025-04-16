@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -42,3 +42,27 @@ class NutritionFactsPerServing(ComplexField):
     energy_kcal_serving: Optional[float] = None
     potassium_serving: Optional[float] = None
     added_sugar_serving: Optional[float] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "NutritionFactsPerServing":
+        if not data:
+            return cls()
+        return cls(
+            is_for_prepared_food=data.get("is_for_prepared_food"),
+            fat_serving=data.get("fat_serving"),
+            saturated_fats_serving=data.get("saturated_fats_serving"),
+            trans_fats_serving=data.get("trans_fats_serving"),
+            cholesterol_serving=data.get("cholesterol_serving"),
+            salt_serving=data.get("salt_serving"),
+            sodium_serving=data.get("sodium_serving"),
+            carbohydrates_serving=data.get("carbohydrates_serving"),
+            fibers_serving=data.get("fibers_serving"),
+            sugar_serving=data.get("sugar_serving"),
+            proteins_serving=data.get("proteins_serving"),
+            calcium_serving=data.get("calcium_serving"),
+            iron_serving=data.get("iron_serving"),
+            energy_serving=data.get("energy_serving"),
+            energy_kcal_serving=data.get("energy_kcal_serving"),
+            potassium_serving=data.get("potassium_serving"),
+            added_sugar_serving=data.get("added_sugar_serving"),
+        )

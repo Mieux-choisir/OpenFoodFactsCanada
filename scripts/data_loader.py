@@ -94,3 +94,36 @@ class DataLoader:
         except Exception as e:
             logging.error(f"Error loading products in {db_name}.{collection_name}: {e}")
             raise
+
+    @staticmethod
+    def fetch_products_from_mongo(
+            db_name: str = "openfoodfacts",
+            collection_name: str = "fdc_products",
+            use_docker: bool = True
+    ) -> list[Product]:
+        try:
+            logging.info(f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})...")
+            connection_string = (
+                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+            )
+            client = MongoClient(connection_string)
+            collection = client[db_name][collection_name]
+
+            raw_products = list(collection.find({}))
+
+            if raw_products:
+                logging.info("Contenu du premier raw_products: %s", raw_products[0])
+            else:
+                logging.info("Aucun document raw récupéré.")
+
+            products = [Product.from_dict(doc) for doc in raw_products]
+            if products:
+                logging.info("Contenu du premier Product: %s", products[0])
+            else:
+                logging.info("Aucun objet Product converti.")
+
+            logging.info(f"Nombre de produits récupérés: {len(products)}")
+            return products
+        except Exception as e:
+            logging.error("Erreur lors de la récupération des produits: %s", e)
+            return []

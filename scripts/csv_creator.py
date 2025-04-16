@@ -162,10 +162,14 @@ class CsvCreator:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
+        logging.info(f"Number of products in FDC : {len(products)}")
+        logging.info(f"Number of products that matches : {len(existing_off_products_ids)}")
+
         test_set = set(existing_off_products_ids)
         filtered_products = [
             product for product in products if product.id_match not in test_set
         ]
+        logging.info(f"Number of products to create csv files for: {len(filtered_products)}")
         batches = self.__create_batches(filtered_products, batch_size=10000)
 
         for i in range(len(batches)):

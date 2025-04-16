@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -27,3 +27,19 @@ class NutriscoreData(ComplexField):
     fruit_percentage: Optional[float] = None
     is_beverage: Optional[bool] = False
     score: Optional[int] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "NutriscoreData":
+        if not data:
+            return cls()
+        return cls(
+            energy_100g=data.get("energy_100g"),
+            fibers_100g=data.get("fibers_100g"),
+            proteins_100g=data.get("proteins_100g"),
+            saturated_fats_100g=data.get("saturated_fats_100g"),
+            sodium_100g=data.get("sodium_100g"),
+            sugar_100g=data.get("sugar_100g"),
+            fruit_percentage=data.get("fruit_percentage"),
+            is_beverage=data.get("is_beverage", False),
+            score=data.get("score"),
+        )
