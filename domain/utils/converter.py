@@ -16,9 +16,9 @@ class Converter:
             return None
 
     @staticmethod
-    def safe_float(variable_to_convert: str) -> float:
+    def safe_float(variable_to_convert: str) -> float | None:
         """Returns the string converted to a float if it is possible, None otherwise"""
         try:
             return float(variable_to_convert)
-        except ValueError:
+        except (ValueError, TypeError):
             return None

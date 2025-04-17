@@ -36,6 +36,9 @@ class CategoryMapper:
 
     def get_off_categories_of_off_product(self, given_categories: str) -> list[str]:
         """Maps the values in a given OFF product to a list of its OFF categories"""
+        if not given_categories:
+            return ["en:other"]
+
         given_categories_list = list(
             filter(None, map(str.strip, given_categories.split(",")))
         )

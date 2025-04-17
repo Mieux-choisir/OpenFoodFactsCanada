@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -14,3 +14,14 @@ class Packaging(ComplexField):
 
     non_recyclable_and_non_biodegradable_materials: Optional[int] = None
     packaging: List = []
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Packaging":
+        if not data:
+            return cls()
+        return cls(
+            non_recyclable_and_non_biodegradable_materials=data.get(
+                "non_recyclable_and_non_biodegradable_materials"
+            ),
+            packaging=data.get("packaging", []),
+        )

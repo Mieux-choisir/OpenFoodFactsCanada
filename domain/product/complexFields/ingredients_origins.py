@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -16,3 +16,13 @@ class IngredientsOrigins(ComplexField):
     origins: list[str] = []
     percent: Optional[int] = None
     transportation_score: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "IngredientsOrigins":
+        if not data:
+            return cls()
+        return cls(
+            origins=data.get("origins", []),
+            percent=data.get("percent"),
+            transportation_score=data.get("transportation_score"),
+        )

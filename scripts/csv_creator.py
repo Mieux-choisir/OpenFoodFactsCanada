@@ -13,9 +13,15 @@ class CsvCreator:
         self.mandatory_columns = [
             "Barcode",
             "Main language",
+            "sources_fields:org-database-usda:fdc_id",
             "Product name",
+            "sources_fields:org-database-usda:fdc_data_source",
+            "sources_fields:org-database-usda:modified_date",
+            "sources_fields:org-database-usda:available_date",
+            "sources_fields:org-database-usda:publication_date",
             "Quantity",
             "Brands",
+            "sources_fields:org-database-usda:fdc_category",
             "Categories",
             "Labels",
             "Origins of ingredients",
@@ -109,27 +115,34 @@ class CsvCreator:
         ]
         self.product_field_to_columns_mapping = {
             "id_match": "Barcode",
+            "fdc_id": "sources_fields:org-database-usda:fdc_id",
             "product_name": "Product name",
+            "data_source": "sources_fields:org-database-usda:fdc_data_source",
+            "modified_date": "sources_fields:org-database-usda:modified_date",
+            "available_date": "sources_fields:org-database-usda:available_date",
+            "publication_date": "sources_fields:org-database-usda:publication_date",
             "quantity": "Quantity",
             "off_categories_en": "Categories",
             "is_raw": None,
             "brands": "Brands",
+            "fdc_category_en": "sources_fields:org-database-usda:fdc_category",
             "brand_owner": "Brand owner",
             "food_groups_en": None,
             "ingredients.ingredients_text": "Ingredients list",
             "ingredients.ingredients_list": None,
+            "household_serving_fulltext": "Serving size",
             "serving_size": "Serving size",
-            "serving_size_unit": "Serving size",  # TODO handle serving size + unit
-            "nutrition_facts.fat_100g": "Fat for 100 g / 100 ml",
-            "nutrition_facts.salt_100g": "Salt for 100 g / 100 ml",
-            "nutrition_facts.saturated_fats_100g": "Saturated fat for 100 g / 100 ml",
-            "nutrition_facts.sugar_100g": "Sugars for 100 g / 100 ml",
-            "nutrition_facts.carbohydrates_100g": "Carbohydrates for 100 g / 100 ml",
-            "nutrition_facts.energy_100g": "Energy (kJ) for 100 g / 100 ml",
-            "nutrition_facts.energy_kcal_100g": "Energy (kcal) for 100 g / 100 ml",
-            "nutrition_facts.proteins_100g": "Proteins for 100 g / 100 ml",
-            "nutrition_facts.fibers_100g": "Fiber for 100 g / 100 ml",
-            "nutrition_facts.sodium_100g": "Sodium for 100 g / 100 ml",
+            "serving_size_unit": "Serving size",
+            "nutrition_facts.nutrition_facts_per_serving.fat_serving": "Fat for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.salt_serving": "Salt for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.saturated_fats_serving": "Saturated fat for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.sugar_serving": "Sugars for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.carbohydrates_serving": "Carbohydrates for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.energy_serving": "Energy (kJ) for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.energy_kcal_serving": "Energy (kcal) for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.proteins_serving": "Proteins for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.fibers_serving": "Fiber for 100 g / 100 ml",
+            "nutrition_facts.nutrition_facts_per_serving.sodium_serving": "Sodium for 100 g / 100 ml",
             "nutriscore_data.fruit_percentage": [
                 "Fruits‚ vegetables‚ nuts and rapeseed‚ walnut and olive oils for 100 g / 100 ml",  # [
                 "Fruits‚ vegetables and nuts - dried for 100 g / 100 ml",
@@ -149,10 +162,18 @@ class CsvCreator:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
+        logging.info(f"Number of products in FDC : {len(products)}")
+        logging.info(
+            f"Number of products that matches : {len(existing_off_products_ids)}"
+        )
+
         test_set = set(existing_off_products_ids)
         filtered_products = [
             product for product in products if product.id_match not in test_set
         ]
+        logging.info(
+            f"Number of products to create csv files for: {len(filtered_products)}"
+        )
         batches = self.__create_batches(filtered_products, batch_size=10000)
 
         for i in range(len(batches)):
@@ -212,8 +233,35 @@ class CsvCreator:
         self, product: Product, columns: list[str]
     ) -> list[str]:
         line = [""] * len(columns)
+        serving_size_index = columns.index("Serving size")
+
+        household_serving_fulltext = getattr(
+            product, "household_serving_fulltext", None
+        )
+        serving_size = getattr(product, "serving_size", None)
+        serving_size_unit = getattr(product, "serving_size_unit", None)
+
+        if serving_size is not None:
+            if household_serving_fulltext is not None and str(serving_size) in str(
+                household_serving_fulltext
+            ):
+                final_serving_size_str = (
+                    f"{serving_size} {serving_size_unit or ''}".strip()
+                )
+            else:
+                final_serving_size_str = f"{household_serving_fulltext or ''} ({serving_size} {serving_size_unit or ''})".strip()
+        else:
+            final_serving_size_str = household_serving_fulltext or ""
+
+        line[serving_size_index] = final_serving_size_str
 
         for key, value in vars(product).items():
+            if key in [
+                "household_serving_fulltext",
+                "serving_size",
+                "serving_size_unit",
+            ]:
+                continue
             self.__add_values(columns, line, key, value, "")
 
         line[columns.index("Main language")] = "English"

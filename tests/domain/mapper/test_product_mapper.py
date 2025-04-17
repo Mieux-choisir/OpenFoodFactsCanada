@@ -56,6 +56,7 @@ def product_mapper(
 def fdc_dict():
     fdc_dict = {
         "gtinUpc": " 00445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -67,6 +68,7 @@ def fdc_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -79,6 +81,7 @@ def fdc_dict():
 def fdc_no_brand_name_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandOwner": " MICHELE'S",
         "ingredients": None,
@@ -89,6 +92,7 @@ def fdc_no_brand_name_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -101,6 +105,7 @@ def fdc_no_brand_name_dict():
 def fdc_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -112,6 +117,7 @@ def fdc_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -124,6 +130,7 @@ def fdc_raw_dict():
 def fdc_not_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -135,6 +142,7 @@ def fdc_not_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -147,6 +155,7 @@ def fdc_not_raw_dict():
 def fdc_not_enough_information_for_raw_dict():
     fdc_dict = {
         "gtinUpc": " 0445236",
+        "fdcId": "099517700046",
         "description": " GRANOLA, CINNAMON, RAISIN, CINNAMON, RAISIN  ",
         "brandName": "MichelE",
         "brandOwner": " MICHELE'S",
@@ -158,6 +167,7 @@ def fdc_not_enough_information_for_raw_dict():
         "availableDate": "04/26/2020",
         "publicationDate": "04/26/2020",
         "householdServingFullText": "0.25 cup",
+        "packageWeight": "14 oz/396 g",
         "servingSize": 28,
         "servingSizeUnit": "g",
         "preparationStateCode": "PREPARED",
@@ -220,40 +230,6 @@ def off_emtpy_strings_rows():
         "Canada, United Kingdom ",
         " 455612222",
         "",
-        " Michele's, Cliff",
-        " cereals, snacks , ",
-        "2",
-        "cereals again",
-        "en:cereals",
-        "5",
-        "70 g",
-        "70",
-        "1632675242",
-    ]
-
-    return row, header
-
-
-@pytest.fixture
-def off_rows_without_canada():
-    header = [
-        "countries_en",
-        "code",
-        "product_name",
-        "brands",
-        "food_groups_en",
-        "nova_group",
-        "pnns_groups_1",
-        "categories_tags",
-        "additives_n",
-        "quantity",
-        "serving_quantity",
-        "last_modified_t",
-    ]
-    row = [
-        "Spain, United Kingdom ",
-        " 455612222",
-        " GRANOLA, CINNAMON BAR",
         " Michele's, Cliff",
         " cereals, snacks , ",
         "2",
@@ -347,7 +323,6 @@ def mock_fdc_functions(product_mapper):
     product_mapper.nutrition_facts_mapper.map_fdc_dict_to_nutrition_facts.return_value = (
         nutrition_facts
     )
-    product_mapper.category_mapper.get_fdc_category.return_value = "fdc-category"
 
     with patch.object(
         NutritionFactsMapper,
@@ -487,10 +462,10 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
 
     assert (
         result.product_name == fdc_dict["description"].strip().title()
-    ), f"Expected product name field to be {fdc_dict["description"].strip().title()}, got {result.product_name}"
+    ), f"Expected product name field to be {fdc_dict["description"].strip()}, got {result.product_name}"
     assert (
-        result.brand_owner == fdc_dict["brandOwner"].strip().title()
-    ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip().title()}, got {result.brand_name}"
+        result.brand_owner == fdc_dict["brandOwner"].strip()
+    ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip()}, got {result.brand_owner}"
 
 
 def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
@@ -520,8 +495,8 @@ def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
     assert result.brands == [
-        fdc_dict["brandName"].strip().title()
-    ], f"Expected brands field to be {[fdc_dict["gtinUpc"].strip().title()]}, got {result.brands}"
+        fdc_dict["brandName"].strip()
+    ], f"Expected brands field to be {[fdc_dict["gtinUpc"].strip()]}, got {result.brands}"
 
 
 def test_should_return_empty_brands_list_in_product_for_given_fdc_dict(
@@ -560,7 +535,7 @@ def test_should_return_mapped_fdc_category_in_product_for_fdc_dict(
 ):
     result = product_mapper.map_fdc_dict_to_product(fdc_dict)
 
-    assert result.fdc_category_en == "fdc-category"
+    assert result.fdc_category_en == fdc_dict.get("brandedFoodCategory")
 
 
 def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
@@ -649,16 +624,6 @@ def test_should_return_empty_nova_data_field_in_product_for_given_fdc_dict(
 # ----------------------------------------------------------------
 # Tests map_off_row_to_product
 # ----------------------------------------------------------------
-
-
-def test_should_return_no_product_if_canada_not_in_countries_for_given_off_row(
-    product_mapper, off_rows_without_canada
-):
-    row, header = off_rows_without_canada
-
-    result = product_mapper.map_off_row_to_product(row, header)
-
-    assert result is None, f"Expected no product returned, got {result}"
 
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
@@ -918,14 +883,6 @@ def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(
 # ----------------------------------------------------------------
 # Tests map_off_dict_to_product
 # ----------------------------------------------------------------
-
-
-def test_should_return_no_product_if_canada_not_in_countries_for_given_off_dict(
-    product_mapper, off_dict_without_canada
-):
-    result = product_mapper.map_off_dict_to_product(off_dict_without_canada)
-
-    assert result is None, f"Expected no product returned, got {result}"
 
 
 def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict(

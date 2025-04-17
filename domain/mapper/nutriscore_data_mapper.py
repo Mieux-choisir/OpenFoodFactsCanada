@@ -81,28 +81,29 @@ class NutriscoreDataMapper:
         self, row: list[str], header: list[str]
     ) -> NutriscoreData:
         """Maps the values in a given OFF (csv) product to a NutriscoreData object"""
-        nutriscore_score_index = header.index("nutriscore_grade")
-        energy_index = header.index("energy_100g")
-        fibers_index = header.index("fiber_100g")
-        fruit_percentage_index = header.index("fruits-vegetables-nuts_100g")
-        proteins_index = header.index("proteins_100g")
-        saturated_fats_index = header.index("saturated-fat_100g")
-        sodium_index = header.index("sodium_100g")
-        sugar_index = header.index("sugars_100g")
+
+        def safe_get(field_name: str):
+            try:
+                idx = header.index(field_name)
+                return row[idx] if idx < len(row) and row[idx] != "" else None
+            except ValueError:
+                return None
 
         return NutriscoreData(
             score=(
-                self.number_mapper.map_letter_to_number(row[nutriscore_score_index])
-                if row[nutriscore_score_index]
+                self.number_mapper.map_letter_to_number(safe_get("nutriscore_grade"))
+                if safe_get("nutriscore_grade")
                 else None
             ),
-            energy_100g=Converter.safe_float(row[energy_index]),
-            fibers_100g=row[fibers_index],
-            fruit_percentage=Converter.safe_float(row[fruit_percentage_index]),
-            proteins_100g=row[proteins_index],
-            saturated_fats_100g=Converter.safe_float(row[saturated_fats_index]),
-            sodium_100g=row[sodium_index],
-            sugar_100g=row[sugar_index],
+            energy_100g=Converter.safe_float(safe_get("energy_100g")),
+            fibers_100g=safe_get("fiber_100g"),
+            fruit_percentage=Converter.safe_float(
+                safe_get("fruits-vegetables-nuts_100g")
+            ),
+            proteins_100g=safe_get("proteins_100g"),
+            saturated_fats_100g=Converter.safe_float(safe_get("saturated-fat_100g")),
+            sodium_100g=safe_get("sodium_100g"),
+            sugar_100g=safe_get("sugars_100g"),
             is_beverage=None,
         )
 

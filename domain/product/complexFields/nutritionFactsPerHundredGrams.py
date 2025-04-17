@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from domain.product.complexFields.complex_field import ComplexField
 
@@ -94,3 +94,52 @@ class NutritionFactsPerHundredGrams(ComplexField):
     caffeine_100g: Optional[float] = None
     molybdenum_100g: Optional[float] = None
     chromium_100g: Optional[float] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "NutritionFactsPerHundredGrams":
+        if not data:
+            return cls()
+        return cls(
+            fat_100g=data.get("fat_100g"),
+            salt_100g=data.get("salt_100g"),
+            saturated_fats_100g=data.get("saturated_fats_100g"),
+            sugar_100g=data.get("sugar_100g"),
+            carbohydrates_100g=data.get("carbohydrates_100g"),
+            energy_100g=data.get("energy_100g"),
+            energy_kcal_100g=data.get("energy_kcal_100g"),
+            proteins_100g=data.get("proteins_100g"),
+            fibers_100g=data.get("fibers_100g"),
+            sodium_100g=data.get("sodium_100g"),
+            monounsaturated_fats_100g=data.get("monounsaturated_fats_100g"),
+            polyunsaturated_fats_100g=data.get("polyunsaturated_fats_100g"),
+            trans_fats_100g=data.get("trans_fats_100g"),
+            cholesterol_100g=data.get("cholesterol_100g"),
+            calcium_100g=data.get("calcium_100g"),
+            iron_100g=data.get("iron_100g"),
+            potassium_100g=data.get("potassium_100g"),
+            vitamin_a_100g=data.get("vitamin_a_100g"),
+            vitamin_b1_100g=data.get("vitamin_b1_100g"),
+            vitamin_b2_100g=data.get("vitamin_b2_100g"),
+            vitamin_b6_100g=data.get("vitamin_b6_100g"),
+            vitamin_b9_100g=data.get("vitamin_b9_100g"),
+            vitamin_b12_100g=data.get("vitamin_b12_100g"),
+            vitamin_c_100g=data.get("vitamin_c_100g"),
+            vitamin_pp_100g=data.get("vitamin_pp_100g"),
+            phosphorus_100g=data.get("phosphorus_100g"),
+            magnesium_100g=data.get("magnesium_100g"),
+            zinc_100g=data.get("zinc_100g"),
+            folates_100g=data.get("folates_100g"),
+            pantothenic_acid_100g=data.get("pantothenic_acid_100g"),
+            soluble_fiber_100g=data.get("soluble_fiber_100g"),
+            insoluble_fiber_100g=data.get("insoluble_fiber_100g"),
+            copper_100g=data.get("copper_100g"),
+            manganese_100g=data.get("manganese_100g"),
+            polyols_100g=data.get("polyols_100g"),
+            selenium_100g=data.get("selenium_100g"),
+            phylloguinone_100g=data.get("phylloguinone_100g"),
+            iodine_100g=data.get("iodine_100g"),
+            biotin_100g=data.get("biotin_100g"),
+            caffeine_100g=data.get("caffeine_100g"),
+            molybdenum_100g=data.get("molybdenum_100g"),
+            chromium_100g=data.get("chromium_100g"),
+        )
