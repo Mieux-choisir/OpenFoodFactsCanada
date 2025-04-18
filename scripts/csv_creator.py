@@ -3,6 +3,7 @@ import logging
 import os
 from datetime import datetime
 from decimal import Decimal
+from typing import Iterator
 
 from domain.product.product import Product
 
@@ -156,78 +157,57 @@ class CsvCreator:
         }
 
     def create_csv_files_for_products_not_existing_in_off(
-        self, products: list[Product], existing_off_products_ids: list[str]
+        self,
+        products_iter: Iterator[Product],
+        existing_off_products_ids: list[str],
+        batch_size: int = 10000,
     ) -> None:
         logging.info("Creating csv files...")
+
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
-
-        logging.info(f"Number of products in FDC : {len(products)}")
-        logging.info(
-            f"Number of products that matches : {len(existing_off_products_ids)}"
-        )
+        os.makedirs(os.path.join(parent_dir, "data"), exist_ok=True)
 
         test_set = set(existing_off_products_ids)
-        filtered_products = [
-            product for product in products if product.id_match not in test_set
-        ]
-        logging.info(
-            f"Number of products to create csv files for: {len(filtered_products)}"
+        columns = (
+            self.mandatory_columns + self.recommended_columns + self.optional_columns
         )
-        batches = self.__create_batches(filtered_products, batch_size=10000)
 
-        for i in range(len(batches)):
-            csv_file = os.path.join(
-                parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
-            )
-            logging.info(f"Creating csv file: {csv_file}")
-            self.__create_csv_file_for_products_not_existing_in_off(
-                csv_file, batches[i], existing_off_products_ids
-            )
-            logging.info("Csv file created!")
+        file_idx = 1
+        written = 0
+        csv_file = None
+        writer = None
 
-        logging.info("Finished creating csv files.")
+        for prod in products_iter:
+            if prod.id_match in test_set:
+                continue
 
-    @staticmethod
-    def __create_batches(
-        products: list[Product], batch_size=10000
-    ) -> list[list[Product]]:
-        return [
-            products[i : i + batch_size] for i in range(0, len(products), batch_size)
-        ]
+            if written % batch_size == 0:
+                if csv_file:
+                    csv_file.close()
 
-    def __create_csv_file_for_products_not_existing_in_off(
-        self,
-        csv_file: str,
-        products: list[Product],
-        existing_off_products_ids: list[str],
-        warn_mandatory_columns: bool = False,
-    ) -> None:
-        with open(csv_file, "w", encoding="utf-8", newline="") as file:
-            filewriter = csv.writer(
-                file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
-            )
+                path = os.path.join(
+                    parent_dir, "data", f"{self.csv_files_base_names}_{file_idx}.csv"
+                )
+                logging.info(f"Opening new CSV: {path}")
+                csv_file = open(path, "w", encoding="utf-8", newline="")
+                writer = csv.writer(
+                    csv_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                )
+                writer.writerow(columns)
 
-            columns = (
-                self.mandatory_columns
-                + self.recommended_columns
-                + self.optional_columns
-            )
+                file_idx += 1
 
-            filewriter.writerow(columns)
+            row = self.__create_csv_line_for_product(prod, columns)
+            writer.writerow(row)
+            written += 1
 
-            for product in products:
-                if product.id_match not in existing_off_products_ids:
-                    list_to_write = self.__create_csv_line_for_product(product, columns)
-                    filewriter.writerow(list_to_write)
+        if csv_file:
+            csv_file.close()
 
-                    empty_mandatory_columns = self.__check_fields_not_empty(
-                        self.mandatory_columns, list_to_write
-                    )
-                    if warn_mandatory_columns and empty_mandatory_columns:
-                        logging.warning(
-                            f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
-                        )
+        logging.info(
+            f"Finished: {written} products written into {file_idx - 1} file(s)."
+        )
 
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
@@ -314,15 +294,3 @@ class CsvCreator:
         else:
             formatted_value = str(value) if not isinstance(value, list) else value
         return formatted_value
-
-    @staticmethod
-    def __check_fields_not_empty(
-        checked_columns: list[str], values_list: list[str]
-    ) -> list[str]:
-        empty_fields = []
-
-        for i in range(len(checked_columns)):
-            if values_list[i] == "":
-                empty_fields.append(checked_columns[i])
-
-        return empty_fields

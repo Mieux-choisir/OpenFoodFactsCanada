@@ -99,7 +99,7 @@ def main():
 
     product_matcher = ProductMatcher()
 
-    fdc_products_from_db = data_loader.fetch_products_from_mongo(
+    fdc_products_from_db_stream = data_loader.stream_products_from_mongo(
         use_docker=config.use_docker
     )
 
@@ -108,7 +108,7 @@ def main():
         f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
     csv_creator.create_csv_files_for_products_not_existing_in_off(
-        fdc_products_from_db, ids
+        fdc_products_from_db_stream, ids
     )
 
 

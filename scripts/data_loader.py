@@ -96,36 +96,24 @@ class DataLoader:
             raise
 
     @staticmethod
-    def fetch_products_from_mongo(
+    def stream_products_from_mongo(
         db_name: str = "openfoodfacts",
         collection_name: str = "fdc_products",
         use_docker: bool = True,
-    ) -> list[Product]:
-        try:
-            logging.info(
-                f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})..."
-            )
-            connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
-            )
-            client = MongoClient(connection_string)
-            collection = client[db_name][collection_name]
+        batch_size: int = 5000,
+    ) -> Iterator[Product]:
 
-            raw_products = list(collection.find({}))
+        logging.info(
+            f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})..."
+        )
+        connection_string = (
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
+        client = MongoClient(connection_string)
+        collection = client[db_name][collection_name]
 
-            if raw_products:
-                logging.info("Contenu du premier raw_products: %s", raw_products[0])
-            else:
-                logging.info("Aucun document raw récupéré.")
+        cursor = collection.find({}).batch_size(batch_size)
 
-            products = [Product.from_dict(doc) for doc in raw_products]
-            if products:
-                logging.info("Contenu du premier Product: %s", products[0])
-            else:
-                logging.info("Aucun objet Product converti.")
-
-            logging.info(f"Nombre de produits récupérés: {len(products)}")
-            return products
-        except Exception as e:
-            logging.error("Erreur lors de la récupération des produits: %s", e)
-            return []
+        for raw_product in cursor:
+            product = Product.from_dict(raw_product)
+            yield product
