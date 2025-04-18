@@ -145,7 +145,11 @@ class NutritionFactsMapper:
             for field in fields
         }
 
-        return NutritionFacts(nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(**nutrition_facts_data))
+        return NutritionFacts(
+            nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(
+                **nutrition_facts_data
+            )
+        )
 
     @staticmethod
     def map_off_dict_to_nutrition_facts(product_dict: dict) -> NutritionFacts:
@@ -225,7 +229,11 @@ class NutritionFactsMapper:
             for field in fields
         }
 
-        return NutritionFacts(nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(**nutrition_facts_data))
+        return NutritionFacts(
+            nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(
+                **nutrition_facts_data
+            )
+        )
 
     def __map_fdc_dict_to_nutrition_facts_per_100g(
         self, food_nutrients: list[dict]
