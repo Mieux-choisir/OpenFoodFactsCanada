@@ -6,6 +6,9 @@ from decimal import Decimal
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.complexFields.nutrition_facts import NutritionFacts
+from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+    NutritionFactsPerHundredGrams,
+)
 
 CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
@@ -186,6 +189,7 @@ def test_should_return_correct_nutrition_facts_for_given_off_row(
     result = nutrition_facts_mapper.map_off_row_to_nutrition_facts(row, header)
 
     expected_nutrition_facts = NutritionFacts(
+        nutrition_facts_per_hundred_grams = NutritionFactsPerHundredGrams(
         fat_100g=row[header.index("fat_100g")],
         salt_100g=row[header.index("salt_100g")],
         saturated_fats_100g=row[header.index("saturated-fat_100g")],
@@ -193,7 +197,7 @@ def test_should_return_correct_nutrition_facts_for_given_off_row(
         carbohydrates_100g=row[header.index("carbohydrates_100g")],
         energy_100g=row[header.index("energy_100g")],
         energy_kcal_100g=row[header.index("energy-kcal_100g")],
-        vitamin_a_100g=row[header.index("vitamin-a_100g")],
+        vitamin_a_100g=row[header.index("vitamin-a_100g")])
     )
 
     assert (
@@ -212,6 +216,7 @@ def test_should_return_correct_nutrition_facts_for_given_off_dict(
     result = nutrition_facts_mapper.map_off_dict_to_nutrition_facts(off_dict)
 
     expected_nutrition_facts = NutritionFacts(
+        nutrition_facts_per_hundred_grams = NutritionFactsPerHundredGrams(
         fat_100g=float(off_dict["nutriments"].get("fat_100g")),
         salt_100g=float(off_dict["nutriments"].get("salt_100g")),
         saturated_fats_100g=float(off_dict["nutriments"].get("saturated-fat_100g")),
@@ -219,7 +224,7 @@ def test_should_return_correct_nutrition_facts_for_given_off_dict(
         carbohydrates_100g=float(off_dict["nutriments"].get("carbohydrates_100g")),
         energy_100g=float(off_dict["nutriments"].get("energy_100g")),
         energy_kcal_100g=float(off_dict["nutriments"].get("energy-kcal_100g")),
-        vitamin_a_100g=float(off_dict["nutriments"].get("vitamin-a_100g")),
+        vitamin_a_100g=float(off_dict["nutriments"].get("vitamin-a_100g")))
     )
 
     assert (
