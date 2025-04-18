@@ -6,7 +6,9 @@ from decimal import Decimal
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.complexFields.nutrition_facts import NutritionFacts
-from domain.product.complexFields.nutritionFactsPerHundredGrams import NutritionFactsPerHundredGrams
+from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+    NutritionFactsPerHundredGrams,
+)
 
 
 CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
