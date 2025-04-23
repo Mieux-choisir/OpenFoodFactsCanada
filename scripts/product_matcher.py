@@ -41,7 +41,6 @@ class ProductMatcher:
 
         matched_off_collection = db["matched_off_products"]
         matched_fdc_collection = db["matched_fdc_products"]
-        final_products_collection = db["final_products"]
 
         if matched_off_collection.count_documents({}) > 0:
             logging.info("Matched OFF products already exist. Skipping insert.")

@@ -193,9 +193,7 @@ class CsvCreator:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
-        logging.info(
-            f"Number of products to create csv files for: {len(products)}"
-        )
+        logging.info(f"Number of products to create csv files for: {len(products)}")
         batches = self.__create_batches(products, batch_size=10000)
 
         for i in range(len(batches)):
@@ -203,13 +201,10 @@ class CsvCreator:
                 parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
             )
             logging.info(f"Creating csv file: {csv_file}")
-            self.__create_csv_file_for_products(
-                csv_file, batches[i]
-            )
+            self.__create_csv_file_for_products(csv_file, batches[i])
             logging.info("Csv file created!")
 
         logging.info("Finished creating csv files.")
-
 
     @staticmethod
     def __create_batches(
