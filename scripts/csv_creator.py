@@ -188,6 +188,29 @@ class CsvCreator:
 
         logging.info("Finished creating csv files.")
 
+    def create_csv_files_for_products(self, products: list[Product]):
+        logging.info("Creating csv files...")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(script_dir)
+
+        logging.info(
+            f"Number of products to create csv files for: {len(products)}"
+        )
+        batches = self.__create_batches(products, batch_size=10000)
+
+        for i in range(len(batches)):
+            csv_file = os.path.join(
+                parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
+            )
+            logging.info(f"Creating csv file: {csv_file}")
+            self.__create_csv_file_for_products(
+                csv_file, batches[i]
+            )
+            logging.info("Csv file created!")
+
+        logging.info("Finished creating csv files.")
+
+
     @staticmethod
     def __create_batches(
         products: list[Product], batch_size=10000
@@ -228,6 +251,37 @@ class CsvCreator:
                         logging.warning(
                             f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
                         )
+
+    def __create_csv_file_for_products(
+        self,
+        csv_file: str,
+        products: list[Product],
+        warn_mandatory_columns: bool = False,
+    ) -> None:
+        with open(csv_file, "w", encoding="utf-8", newline="") as file:
+            filewriter = csv.writer(
+                file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            columns = (
+                self.mandatory_columns
+                + self.recommended_columns
+                + self.optional_columns
+            )
+
+            filewriter.writerow(columns)
+
+            for product in products:
+                list_to_write = self.__create_csv_line_for_product(product, columns)
+                filewriter.writerow(list_to_write)
+
+                empty_mandatory_columns = self.__check_fields_not_empty(
+                    self.mandatory_columns, list_to_write
+                )
+                if warn_mandatory_columns and empty_mandatory_columns:
+                    logging.warning(
+                        f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
+                    )
 
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
