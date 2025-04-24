@@ -241,17 +241,8 @@ class CsvCreator:
         serving_size = getattr(product, "serving_size", None)
         serving_size_unit = getattr(product, "serving_size_unit", None)
 
-        if serving_size is not None:
-            if household_serving_fulltext is not None and str(serving_size) in str(
-                household_serving_fulltext
-            ):
-                final_serving_size_str = (
-                    f"{serving_size} {serving_size_unit or ''}".strip()
-                )
-            else:
-                final_serving_size_str = f"{household_serving_fulltext or ''} ({serving_size} {serving_size_unit or ''})".strip()
-        else:
-            final_serving_size_str = household_serving_fulltext or ""
+        final_serving_size_str = self.__format_serving_size(household_serving_fulltext, serving_size, serving_size_unit)
+        line[serving_size_index] = final_serving_size_str
 
         line[serving_size_index] = final_serving_size_str
 
@@ -265,6 +256,7 @@ class CsvCreator:
             self.__add_values(columns, line, key, value, "")
 
         line[columns.index("Main language")] = "English"
+        line[columns.index("Countries")] = "United States"
 
         return line
 
@@ -326,3 +318,34 @@ class CsvCreator:
                 empty_fields.append(checked_columns[i])
 
         return empty_fields
+
+
+    @staticmethod
+    def __format_serving_size(household_text, size, unit):
+        if size is None:
+            return household_text or ""
+
+        formatted_size = CsvCreator.__format_decimal(size)
+
+        if not formatted_size:
+            return household_text or ""
+
+        unit = unit or ""
+
+        if household_text and formatted_size in household_text and unit in household_text:
+            return household_text.strip()
+
+        if household_text:
+            return f"{household_text.strip()} ({formatted_size} {unit})".strip()
+        else:
+            return f"{formatted_size} {unit}".strip()
+
+    @staticmethod
+    def __format_decimal(value: float | str | None, max_decimals: int = 5) -> str:
+        try:
+            number = float(value)
+            rounded = round(number, max_decimals)
+
+            return f"{rounded:.{max_decimals}f}".rstrip("0").rstrip(".")
+        except (ValueError, TypeError):
+            return ""
