@@ -333,9 +333,10 @@ class CsvCreator:
         if not formatted_size:
             return household_text or ""
 
-        unit = unit or ""
+        unit = (unit or "").strip()
+        full_match = f"{formatted_size} {unit}".lower()
 
-        if household_text and formatted_size in household_text and unit in household_text:
+        if household_text and full_match in household_text.lower():
             return household_text.strip()
 
         if household_text:
