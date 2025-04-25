@@ -63,6 +63,7 @@ def products_mapped_lists(csv_creator, products):
         csv_creator.product_field_to_columns_mapping.get("nova_data.score")
     )
     language_id = columns_list.index("Main language")
+    countries_id = columns_list.index("Countries")
 
     mapped_lists = []
     for product in products:
@@ -87,6 +88,7 @@ def products_mapped_lists(csv_creator, products):
             str(product.nova_data.score) if product.nova_data.score is not None else ""
         )
         expected_added_list[language_id] = "English"
+        expected_added_list[countries_id] = "United States"
 
         expected_added_list[brands_id] = ""
         if product.brands:

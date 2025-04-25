@@ -241,7 +241,9 @@ class CsvCreator:
         serving_size = getattr(product, "serving_size", None)
         serving_size_unit = getattr(product, "serving_size_unit", None)
 
-        final_serving_size_str = self.__format_serving_size(household_serving_fulltext, serving_size, serving_size_unit)
+        final_serving_size_str = self.__format_serving_size(
+            household_serving_fulltext, serving_size, serving_size_unit
+        )
         line[serving_size_index] = final_serving_size_str
 
         line[serving_size_index] = final_serving_size_str
@@ -318,7 +320,6 @@ class CsvCreator:
                 empty_fields.append(checked_columns[i])
 
         return empty_fields
-
 
     @staticmethod
     def __format_serving_size(household_text, size, unit):
