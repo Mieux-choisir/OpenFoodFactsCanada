@@ -322,6 +322,9 @@ class CsvCreator:
 
     @staticmethod
     def __format_serving_size(household_text, size, unit):
+        if isinstance(household_text, str) and household_text.strip().lower() == "none":
+            household_text = ""
+
         if size is None:
             return household_text or ""
 
