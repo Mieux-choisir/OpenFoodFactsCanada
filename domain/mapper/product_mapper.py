@@ -166,6 +166,7 @@ class ProductMapper:
         quantity_name_field = "quantity"
         serving_size_field = "serving_quantity"
         serving_size_unit_field = "serving_quantity_unit"
+        nutrition_data_per_field = "nutrition_data_per"
 
         modified_timestamp = product_dict.get(modified_date_field)
         modified_date = (
@@ -197,6 +198,7 @@ class ProductMapper:
             ),
             serving_size=product_dict.get(serving_size_field),
             serving_size_unit=product_dict.get(serving_size_unit_field),
+            nutrition_data_per_field=product_dict.get(nutrition_data_per_field),
             nutrition_facts=self.nutrition_facts_mapper.map_off_dict_to_nutrition_facts(
                 product_dict
             ),
