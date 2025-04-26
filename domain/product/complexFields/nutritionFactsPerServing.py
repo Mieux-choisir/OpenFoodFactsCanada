@@ -40,35 +40,6 @@ class NutritionFactsPerServing(ComplexField):
     calcium_serving: Optional[float] = None
     iron_serving: Optional[float] = None
     potassium_serving: Optional[float] = None
-
-    # monounsaturated_fats_100g: Optional[float] = None
-    # polyunsaturated_fats_100g: Optional[float] = None
-    # vitamin_a_100g: Optional[float] = None
-    # vitamin_b1_100g: Optional[float] = None
-    # vitamin_b2_100g: Optional[float] = None
-    # vitamin_b6_100g: Optional[float] = None
-    # vitamin_b9_100g: Optional[float] = None
-    # vitamin_b12_100g: Optional[float] = None
-    # vitamin_c_100g: Optional[float] = None
-    # vitamin_pp_100g: Optional[float] = None
-    # phosphorus_100g: Optional[float] = None
-    # magnesium_100g: Optional[float] = None
-    # zinc_100g: Optional[float] = None
-    # folates_100g: Optional[float] = None
-    # pantothenic_acid_100g: Optional[float] = None
-    # soluble_fiber_100g: Optional[float] = None
-    # insoluble_fiber_100g: Optional[float] = None
-    # copper_100g: Optional[float] = None
-    # manganese_100g: Optional[float] = None
-    # polyols_100g: Optional[float] = None
-    # selenium_100g: Optional[float] = None
-    # phylloguinone_100g: Optional[float] = None
-    # iodine_100g: Optional[float] = None
-    # biotin_100g: Optional[float] = None
-    # caffeine_100g: Optional[float] = None
-    # molybdenum_100g: Optional[float] = None
-    # chromium_100g: Optional[float] = None
-
     is_for_prepared_food: Optional[bool] = None
     added_sugar_serving: Optional[float] = None
 

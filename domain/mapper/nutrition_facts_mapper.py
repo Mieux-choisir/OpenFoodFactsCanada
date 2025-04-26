@@ -337,9 +337,6 @@ class NutritionFactsMapper:
     def __map_fdc_dict_to_nutrition_facts_per_serving(
         self, food_nutrients_per_serving: dict, preparation_state_code: str
     ) -> NutritionFactsPerServing:
-        print("Contenu de food_nutrients_per_serving :")
-        for key, value in food_nutrients_per_serving.items():
-            print(f"{key}: {value}")
         is_for_prepared_food = None
         if (
             preparation_state_code is not None
