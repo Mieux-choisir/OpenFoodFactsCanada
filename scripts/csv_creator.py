@@ -366,12 +366,11 @@ class CsvCreator:
     def __add_values(self, columns, line, key, value, old_key_name, nutrition_data_per):
         current_key_name = old_key_name + "." + key if old_key_name != "" else key
 
-        if nutrition_data_per is None:
-            if "_100g" in current_key_name:
-                return
-        elif nutrition_data_per == "100g" and "_serving" in current_key_name:
-            return
-        elif nutrition_data_per == "serving" and "_100g" in current_key_name:
+        if (
+            (nutrition_data_per is None and "_100g" in current_key_name)
+            or (nutrition_data_per == "100g" and "_serving" in current_key_name)
+            or (nutrition_data_per == "serving" and "_100g" in current_key_name)
+        ):
             return
 
         if self.__is_simple_field(value):
