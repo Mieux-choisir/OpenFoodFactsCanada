@@ -9,6 +9,9 @@ from domain.product.complexFields.nutrition_facts import NutritionFacts
 from domain.product.complexFields.nutritionFactsPerHundredGrams import (
     NutritionFactsPerHundredGrams,
 )
+from domain.product.complexFields.nutritionFactsPerServing import (
+    NutritionFactsPerServing,
+)
 
 
 CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
@@ -227,7 +230,8 @@ def test_should_return_correct_nutrition_facts_for_given_off_dict(
             energy_100g=float(off_dict["nutriments"].get("energy_100g")),
             energy_kcal_100g=float(off_dict["nutriments"].get("energy-kcal_100g")),
             vitamin_a_100g=float(off_dict["nutriments"].get("vitamin-a_100g")),
-        )
+        ),
+        nutrition_facts_per_serving=NutritionFactsPerServing(),
     )
 
     assert (

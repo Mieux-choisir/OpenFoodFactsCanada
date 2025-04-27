@@ -156,28 +156,7 @@ class NutritionFactsMapper:
         """Maps the values in a given OFF (jsonl) product to a NutritionFacts object"""
         nutriments = product_dict.get("nutriments", {})
 
-        field_mapping = {
-            "saturated-fat_100g": "saturated_fats_100g",
-            "sugars_100g": "sugar_100g",
-            "trans-fat_100g": "trans_fats_100g",
-            "fiber_100g": "fibers_100g",
-            "monounsaturated-fat_100g": "monounsaturated_fats_100g",
-            "polyunsaturated-fat_100g": "polyunsaturated_fats_100g",
-            "energy-kcal_100g": "energy_kcal_100g",
-            "vitamin-a_100g": "vitamin_a_100g",
-            "vitamin-b1_100g": "vitamin_b1_100g",
-            "vitamin-b2_100g": "vitamin_b2_100g",
-            "vitamin-b6_100g": "vitamin_b6_100g",
-            "vitamin-b9_100g": "vitamin_b9_100g",
-            "vitamin-b12_100g": "vitamin_b12_100g",
-            "vitamin-c_100g": "vitamin_c_100g",
-            "vitamin-pp_100g": "vitamin_pp_100g",
-            "pantothenic-acid_100g": "pantothenic_acid_100g",
-            "soluble-fiber_100g": "soluble_fiber_100g",
-            "insoluble-fiber_100g": "insoluble_fiber_100g",
-        }
-
-        fields = [
+        fields_100g = [
             "fat_100g",
             "salt_100g",
             "saturated-fat_100g",
@@ -222,17 +201,71 @@ class NutritionFactsMapper:
             "chromium_100g",
         ]
 
-        nutrition_facts_data = {
+        field_mapping = {
+            "saturated-fat_100g": "saturated_fats_100g",
+            "sugars_100g": "sugar_100g",
+            "trans-fat_100g": "trans_fats_100g",
+            "fiber_100g": "fibers_100g",
+            "monounsaturated-fat_100g": "monounsaturated_fats_100g",
+            "polyunsaturated-fat_100g": "polyunsaturated_fats_100g",
+            "energy-kcal_100g": "energy_kcal_100g",
+            "vitamin-a_100g": "vitamin_a_100g",
+            "vitamin-b1_100g": "vitamin_b1_100g",
+            "vitamin-b2_100g": "vitamin_b2_100g",
+            "vitamin-b6_100g": "vitamin_b6_100g",
+            "vitamin-b9_100g": "vitamin_b9_100g",
+            "vitamin-b12_100g": "vitamin_b12_100g",
+            "vitamin-c_100g": "vitamin_c_100g",
+            "vitamin-pp_100g": "vitamin_pp_100g",
+            "pantothenic-acid_100g": "pantothenic_acid_100g",
+            "soluble-fiber_100g": "soluble_fiber_100g",
+            "insoluble-fiber_100g": "insoluble_fiber_100g",
+        }
+
+        nutrition_facts_100g = {
             field_mapping.get(field, field): (
                 float(nutriments[field]) if field in nutriments else None
             )
-            for field in fields
+            for field in fields_100g
+        }
+
+        fields_serving = [
+            "fat_serving",
+            "salt_serving",
+            "saturated_fats_serving",
+            "sugars_serving",
+            "carbohydrates_serving",
+            "energy_serving",
+            "energy-kcal_serving",
+            "proteins_serving",
+            "fibers_serving",
+            "sodium_serving",
+            "trans_fats_serving",
+            "cholesterol_serving",
+            "calcium_serving",
+            "iron_serving",
+            "potassium_serving",
+        ]
+
+        serving_mapping = {
+            "energy-kcal_serving": "energy_kcal_serving",
+            "sugars_serving": "sugar_serving",
+        }
+
+        nutrition_facts_serving = {
+            serving_mapping.get(field, field): (
+                float(nutriments[field]) if field in nutriments else None
+            )
+            for field in fields_serving
         }
 
         return NutritionFacts(
             nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(
-                **nutrition_facts_data
-            )
+                **nutrition_facts_100g
+            ),
+            nutrition_facts_per_serving=NutritionFactsPerServing(
+                **nutrition_facts_serving
+            ),
         )
 
     def __map_fdc_dict_to_nutrition_facts_per_100g(
