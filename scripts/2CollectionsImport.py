@@ -25,7 +25,7 @@ off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.js
 #     "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"
 # )
 
-fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2024-10-31.zip"
+fdc_json_url = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_json_2025-04-24.zip"
 
 
 def main():

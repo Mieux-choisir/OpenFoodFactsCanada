@@ -60,6 +60,7 @@ class Product(ComplexField):
     ingredients: Optional[Ingredients] = None
     serving_size: Optional[float] = None
     serving_size_unit: Optional[str] = None
+    nutrition_data_per: Optional[str] = None
     nutrition_facts: Optional[NutritionFacts] = None
     nutriscore_data: Optional[NutriscoreData] = NutriscoreData()
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()
@@ -106,6 +107,7 @@ class Product(ComplexField):
         food_groups_en = data.get("food_groups_en", [])
         serving_size = data.get("serving_size")
         serving_size_unit = data.get("serving_size_unit")
+        nutrition_data_per = data.get("nutrition_data_per")
 
         ingredients_data = data.get("ingredients")
         ingredients = (
@@ -162,6 +164,7 @@ class Product(ComplexField):
             ingredients=ingredients,
             serving_size=serving_size,
             serving_size_unit=serving_size_unit,
+            nutrition_data_per=nutrition_data_per,
             nutrition_facts=nutrition_facts,
             nutriscore_data=nutriscore_data,
             ecoscore_data=ecoscore_data,

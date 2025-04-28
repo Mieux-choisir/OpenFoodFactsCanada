@@ -72,6 +72,7 @@ class DataImporter:
                     prod = self.product_mapper.map_off_dict_to_product(obj)
                     if prod is not None:
                         products.append(prod)
+                    logging.info(f"Added product {n}")
                     n += 1
                     if limit is not None and n >= limit:
                         break
