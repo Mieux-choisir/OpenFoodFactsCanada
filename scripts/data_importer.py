@@ -33,15 +33,17 @@ class DataImporter:
             list[Product]: A list of Product objects extracted from the dataset.
         """
         products = []
+        count = 0
         with open(filename, "r", encoding="utf-8") as file:
             logging.info("Extracting Food Data Central products...")
             for obj in ijson.items(file, "BrandedFoods.item"):
-                if (
-                    obj["marketCountry"] == "United States"
-                ):  # there are also products from New Zealand
+                if obj.get("marketCountry") == "United States":
                     prod = self.product_mapper.map_fdc_dict_to_product(obj)
                     products.append(prod)
-        logging.info("FDC data imported")
+                    count += 1
+                    if count % 10000 == 0:
+                        print(f"{count} products imported so far...")
+        logging.info(f"FDC data imported, total: {count}")
         return products
 
     def import_jsonl_off_data(self, filename: str, limit: int = None) -> list[Product]:
