@@ -60,6 +60,8 @@ class ProductCompleter:
             for field, count in complete_counter.most_common():
                 logging.info(f"  {field}: {count} times")
 
+            logging.info(f"Total skipped products: {count_skipped}")
+
     def merge_documents(self, off_product, fdc_product, parent_key=''):
         if not isinstance(off_product, dict) or not isinstance(fdc_product, dict):
             return off_product if off_product is not None else fdc_product, [], []
@@ -73,7 +75,7 @@ class ProductCompleter:
             off_value = off_product.get(key)
             fdc_value = fdc_product.get(key)
 
-            if key in ["_id", "brand", "fdc_products"]:
+            if key in ["_id", "brands", "fdc_products", "food_groups_en", "off_categories_en", "product_name", "id_original", "brand_owner", "ingredients_text"]:
                 merged[key] = off_value
             elif isinstance(off_value, dict) and isinstance(fdc_value, dict):
                 merged_value, sub_overwritten, sub_completed = self.merge_documents(off_value, fdc_value, full_key)
