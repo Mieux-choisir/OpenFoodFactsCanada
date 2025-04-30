@@ -182,9 +182,7 @@ class ProductMapper:
             or None,
             modified_date=modified_date,
             quantity=product_dict.get(quantity_name_field),
-            off_categories_en=self.category_mapper.get_off_categories_of_off_product(
-                product_dict.get(category_field)
-            ),
+            off_categories_en=product_dict.get(category_field),
             is_raw=self.__off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(
