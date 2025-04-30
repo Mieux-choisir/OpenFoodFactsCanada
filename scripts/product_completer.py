@@ -32,7 +32,9 @@ class ProductCompleter:
 
             while off_product and fdc_product:
                 if off_product["id_match"] == fdc_product["id_match"]:
-                    merged_off_product, overwritten, completed = self.merge_documents(off_product, fdc_product)
+                    merged_off_product, overwritten, completed = self.merge_documents(
+                        off_product, fdc_product
+                    )
 
                     overwrite_counter.update(overwritten)
                     complete_counter.update(completed)
@@ -62,7 +64,7 @@ class ProductCompleter:
 
             logging.info(f"Total skipped products: {count_skipped}")
 
-    def merge_documents(self, off_product, fdc_product, parent_key=''):
+    def merge_documents(self, off_product, fdc_product, parent_key=""):
         if not isinstance(off_product, dict) or not isinstance(fdc_product, dict):
             return off_product if off_product is not None else fdc_product, [], []
 
@@ -75,10 +77,33 @@ class ProductCompleter:
             off_value = off_product.get(key)
             fdc_value = fdc_product.get(key)
 
-            if key in ["_id", "brands", "fdc_products", "food_groups_en", "off_categories_en", "product_name", "id_original", "brand_owner", "ingredients_text"]:
+            if key == "off_categories_en":
+                if isinstance(off_value, list) and isinstance(fdc_value, list):
+                    new_items = [item for item in fdc_value if item not in off_value]
+                    if new_items:
+                        merged[key] = off_value + new_items
+                        completed_fields.extend(
+                            [f"{full_key}[{item}]" for item in new_items]
+                        )
+                    else:
+                        merged[key] = off_value
+                else:
+                    merged[key] = off_value
+            elif key in [
+                "_id",
+                "brands",
+                "fdc_products",
+                "food_groups_en",
+                "product_name",
+                "id_original",
+                "brand_owner",
+                "ingredients_text",
+            ]:
                 merged[key] = off_value
             elif isinstance(off_value, dict) and isinstance(fdc_value, dict):
-                merged_value, sub_overwritten, sub_completed = self.merge_documents(off_value, fdc_value, full_key)
+                merged_value, sub_overwritten, sub_completed = self.merge_documents(
+                    off_value, fdc_value, full_key
+                )
                 merged[key] = merged_value
                 overwritten_fields.extend(sub_overwritten)
                 completed_fields.extend(sub_completed)

@@ -175,6 +175,8 @@ class ProductMapper:
             else None
         )
 
+        raw_categories = product_dict.get(category_field)
+
         return Product(
             id_match=product_dict.get(id_field).strip().lstrip("0").replace("-", ""),
             id_original=product_dict.get(id_field).strip(),
@@ -182,7 +184,11 @@ class ProductMapper:
             or None,
             modified_date=modified_date,
             quantity=product_dict.get(quantity_name_field),
-            off_categories_en=product_dict.get(category_field),
+            off_categories_en=(
+                list(filter(None, map(str.strip, raw_categories.split(","))))
+                if raw_categories
+                else []
+            ),
             is_raw=self.__off_json_is_raw_aliment(product_dict),
             brands=BrandsMapper.map_off_dict_to_brands(product_dict, brands_field),
             brand_owner=BrandsMapper.map_off_dict_to_brand_owner(
