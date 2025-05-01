@@ -118,7 +118,7 @@ pip install -r requirements.txt
 
 📌 **Run import script manually** (if required) :
 ```bash
-python ./scripts/import.py
+python ./scripts/collection_import.py
 ```
 
 ---
@@ -268,7 +268,7 @@ pip install -r requirements.txt
 
 📌 **Exécuter le script d’import manuellement** (si besoin) :
 ```bash
-python ./scripts/import.py
+python ./scripts/collection_import.py
 ```
 
 ---

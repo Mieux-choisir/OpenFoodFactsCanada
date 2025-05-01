@@ -185,7 +185,7 @@ class ProductMapper:
             modified_date=modified_date,
             quantity=product_dict.get(quantity_name_field),
             off_categories_en=(
-                list(filter(None, map(str.strip, raw_categories.split(","))))
+                [cat for cat in map(str.strip, raw_categories.split(",")) if cat and cat.lower() != "null"]
                 if raw_categories
                 else []
             ),
