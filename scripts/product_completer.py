@@ -82,9 +82,7 @@ class ProductCompleter:
                     new_items = [item for item in fdc_value if item not in off_value]
                     if new_items:
                         merged[key] = off_value + new_items
-                        completed_fields.extend(
-                            [f"{full_key}[{item}]" for item in new_items]
-                        )
+                        completed_fields.append(full_key)
                     else:
                         merged[key] = off_value
                 else:
