@@ -24,7 +24,7 @@ services:
       - ./source_files:/app/source_files # Store source files
     networks:
       - openfoodfacts-net
-    command: python -m scripts.2CollectionsImport
+    command: python -m scripts.collection_import
     
 networks:
   openfoodfacts-net:

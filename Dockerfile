@@ -20,4 +20,4 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
 
 # Set command to run Python script after MongoDB is ready
-CMD ["/wait-for-it.sh", "mongo:27017", "--", "python", "./scripts/import.py"]
+CMD ["/wait-for-it.sh", "mongo:27017", "--", "python", "./scripts/collection_import.py"]

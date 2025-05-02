@@ -1,5 +1,4 @@
 import os
-import sys
 import logging
 from datetime import datetime
 
@@ -16,6 +15,7 @@ from scripts.csv_creator import CsvCreator
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
 from scripts.data_loader import DataLoader
+from scripts.product_completer import ProductCompleter
 from scripts.product_matcher import ProductMatcher
 
 off_jsonl_url = "https://static.openfoodfacts.org/data/openfoodfacts-products.jsonl.gz"
@@ -86,13 +86,14 @@ def main():
     )
 
     # off_products = data_importer.import_csv_off_data(off_csv_file)
-    off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
+    off_products = data_importer.import_jsonl_off_data(off_jsonl_file, limit=1000)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
     data_loader = DataLoader()
 
     data_loader.load_products_to_mongo(
         off_products, collection_name="off_products", use_docker=config.use_docker
     )
+
     data_loader.load_products_to_mongo(
         fdc_products, collection_name="fdc_products", use_docker=config.use_docker
     )
@@ -107,11 +108,25 @@ def main():
     csv_creator = CsvCreator(
         f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
+
     csv_creator.create_csv_files_for_products_not_existing_in_off(
         fdc_products_from_db, ids
     )
 
+    product_completer = ProductCompleter()
+
+    product_completer.complete_products(use_docker=config.use_docker)
+
+    final_products_from_db = data_loader.fetch_products_from_mongo(
+        collection_name="final_products", use_docker=config.use_docker
+    )
+
+    csv_creator_completed = CsvCreator(
+        f"completed_off_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
+    )
+
+    csv_creator_completed.create_csv_files_for_products(final_products_from_db)
+
 
 if __name__ == "__main__":
     main()
-    sys.exit(1)
