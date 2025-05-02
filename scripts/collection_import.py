@@ -86,17 +86,10 @@ def main():
     )
 
     # off_products = data_importer.import_csv_off_data(off_csv_file)
-    off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
-    fdc_products = data_importer.import_json_fdc_data(fdc_file)
+    # data_importer.import_jsonl_off_data(off_jsonl_file, 100000)
+    # data_importer.import_json_fdc_data(fdc_file)
+
     data_loader = DataLoader()
-
-    data_loader.load_products_to_mongo(
-        off_products, collection_name="off_products", use_docker=config.use_docker
-    )
-
-    data_loader.load_products_to_mongo(
-        fdc_products, collection_name="fdc_products", use_docker=config.use_docker
-    )
 
     product_matcher = ProductMatcher()
 
@@ -112,6 +105,8 @@ def main():
     csv_creator.create_csv_files_for_products_not_existing_in_off(
         fdc_products_from_db, ids
     )
+
+    del fdc_products_from_db, ids
 
     product_completer = ProductCompleter()
 

@@ -6,6 +6,8 @@ import ijson
 
 from domain.mapper.product_mapper import ProductMapper
 from domain.product.product import Product
+from scripts.data_loader import DataLoader
+from scripts.config import Config
 
 
 class DataImporter:
@@ -23,17 +25,22 @@ class DataImporter:
 
     def __init__(self, product_mapper: ProductMapper):
         self.product_mapper = product_mapper
+        self.data_loader = DataLoader()
+        self.config = Config()
 
-    def import_json_fdc_data(self, filename: str) -> list[Product]:
+    def import_json_fdc_data(self, filename: str, batch_size: int) -> list[Product]:
         """Imports the data of branded food in a json file into a list of strings for each branded food
 
         Args:
             filename: The path to the imported Food Data Central json file
+            batch_size: The amount of rows treated by batch. Helps keeping RAM consumption in check.
         Returns:
             list[Product]: A list of Product objects extracted from the dataset.
         """
         products = []
         count = 0
+        batch = batch_size
+
         with open(filename, "r", encoding="utf-8") as file:
             logging.info("Extracting Food Data Central products...")
             for obj in ijson.items(file, "BrandedFoods.item"):
@@ -43,21 +50,30 @@ class DataImporter:
                     count += 1
                     if count % 10000 == 0:
                         logging.info(f"{count} products imported so far...")
+                    if count >= batch:
+                        self.data_loader.load_products_to_mongo(
+                            products, collection_name="off_products", use_docker=self.config.use_docker
+                        )
+                        batch = batch_size + batch
+                        products = []
         logging.info(f"FDC data imported, total: {count}")
-        return products
+        self.data_loader.load_products_to_mongo(
+            products, collection_name="fdc_products", use_docker=self.config.use_docker
+        )
 
-    def import_jsonl_off_data(self, filename: str, limit: int = None) -> list[Product]:
+    def import_jsonl_off_data(self, filename: str, batch_size: int, limit: int = None):
         """Imports the data of canadian food in a json file into a list of products
 
         Args:
             filename: The path to the imported Open Food Facts jsonl file
+            batch_size: The amount of rows treated by batch. Helps keeping RAM consumption in check.
             limit (int, optional): The number of objects to read from the dataset. Defaults to None.
         Returns:
             list[Product]: A list of Product objects extracted from the dataset.
         """
         if limit is not None:
             logging.info(
-                f"Extracting {limit} products from Open Food Facts jsonl dataset..."
+                f"Extracting {limit} products from Open Food Facts csv dataset..."
             )
         else:
             logging.info(
@@ -66,6 +82,7 @@ class DataImporter:
 
         products = []
         count = 0
+        batch = batch_size
 
         with open(filename, "r", encoding="utf-8") as file:
             for line in file:
@@ -79,11 +96,19 @@ class DataImporter:
                         logging.info(f"{count} products imported so far...")
                     if limit is not None and count >= limit:
                         break
+                    if count >= batch:
+                        self.data_loader.load_products_to_mongo(
+                            products, collection_name="off_products", use_docker=self.config.use_docker
+                        )
+                        batch = batch_size + batch
+                        products = []
                 except json.JSONDecodeError as e:
                     logging.info(f"Error parsing line: {line}. Error: {e}")
 
         logging.info("OFF data imported")
-        return products
+        self.data_loader.load_products_to_mongo(
+                            products, collection_name="off_products", use_docker=self.config.use_docker
+                        )
 
     def import_csv_off_data(self, filename: str, limit: int = None) -> list[Product]:
         """Imports the data of canadian food in a csv file into a list of products
