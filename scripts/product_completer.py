@@ -5,8 +5,13 @@ from pymongo import MongoClient
 
 
 class ProductCompleter:
-    def complete_products(self):
-        client = MongoClient("mongodb://localhost:37017/")
+    def complete_products(self, use_docker=True):
+
+        connection_string = (
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
+
+        client = MongoClient(connection_string)
         db = client["openfoodfacts"]
 
         matched_off_products = db["matched_off_products"].find().sort("id_match", 1)

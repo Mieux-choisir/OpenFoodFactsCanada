@@ -19,13 +19,13 @@ def csv_creator():
 @pytest.fixture
 def products():
     product1 = Product(
-        id_match="00145887",
+        id_original="00145887",
         product_name="Product 1",
         ingredients=Ingredients(ingredients_text="ingredient1, ingredient2"),
         nova_data=NovaData(),
     )
     product2 = Product(
-        id_match="55555555",
+        id_original="55555555",
         product_name="Product 2",
         brands=["brand1", "brand2"],
         off_categories_en=["category1", "category2"],
@@ -44,8 +44,8 @@ def products_mapped_lists(csv_creator, products):
         + csv_creator.optional_columns
     )
 
-    id_match_id = columns_list.index(
-        csv_creator.product_field_to_columns_mapping.get("id_match")
+    id_original = columns_list.index(
+        csv_creator.product_field_to_columns_mapping.get("id_original")
     )
     product_name_id = columns_list.index(
         csv_creator.product_field_to_columns_mapping.get("product_name")
@@ -68,8 +68,8 @@ def products_mapped_lists(csv_creator, products):
     mapped_lists = []
     for product in products:
         expected_added_list = [""] * len(columns_list)
-        expected_added_list[id_match_id] = (
-            product.id_match if product.id_match is not None else ""
+        expected_added_list[id_original] = (
+            product.id_original if product.id_original is not None else ""
         )
         expected_added_list[product_name_id] = (
             product.product_name if product.product_name is not None else ""
@@ -149,9 +149,9 @@ def test_should_write_correctly_formatted_lines_only_for_products_with_ids_to_ad
     with patch("csv.writer", return_value=mock_filewriter):
         with patch("builtins.open", open_mock):
             csv_creator.create_csv_files_for_products_not_existing_in_off(
-                products, [products[0].id_match]
+                products, [products[0].id_original]
             )
 
     mock_filewriter.writerow.assert_called_with(products_mapped_lists[1])
 
-    assert mock_filewriter.writerow.call_count == 2
+    assert mock_filewriter.writerow.call_count == 3

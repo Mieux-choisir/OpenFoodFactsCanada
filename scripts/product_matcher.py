@@ -18,9 +18,7 @@ class ProductMatcher:
         """Matches products that have the same id between the off_products and the fdc_products collections.
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.
         """
-        connection_string = (
-            "mongodb://localhost:37017"
-        )
+        connection_string = "mongodb://localhost:37017"
         client = MongoClient(connection_string)
         db = client["openfoodfacts"]
 

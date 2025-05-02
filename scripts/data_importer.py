@@ -42,7 +42,7 @@ class DataImporter:
                     products.append(prod)
                     count += 1
                     if count % 10000 == 0:
-                        print(f"{count} products imported so far...")
+                        logging.info(f"{count} products imported so far...")
         logging.info(f"FDC data imported, total: {count}")
         return products
 
@@ -76,7 +76,7 @@ class DataImporter:
                         products.append(prod)
                     count += 1
                     if count % 10000 == 0:
-                        print(f"{count} products imported so far...")
+                        logging.info(f"{count} products imported so far...")
                     if limit is not None and count >= limit:
                         break
                 except json.JSONDecodeError as e:

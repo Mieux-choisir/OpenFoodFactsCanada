@@ -19,7 +19,7 @@ class Config:
 
     def __init__(self):
 
-        self.use_docker: bool = False
+        self.use_docker: bool = True
 
         self.off_csv_url: str = (
             "https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz"

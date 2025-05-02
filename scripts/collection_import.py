@@ -83,11 +83,10 @@ def main():
                 CategoryCreator(), categories_taxonomy_file, category_mapping_file
             ),
         )
-
     )
 
     # off_products = data_importer.import_csv_off_data(off_csv_file)
-    off_products = data_importer.import_jsonl_off_data(off_jsonl_file)
+    off_products = data_importer.import_jsonl_off_data(off_jsonl_file, limit=1000)
     fdc_products = data_importer.import_json_fdc_data(fdc_file)
     data_loader = DataLoader()
 
@@ -116,7 +115,7 @@ def main():
 
     product_completer = ProductCompleter()
 
-    product_completer.complete_products()
+    product_completer.complete_products(use_docker=config.use_docker)
 
     final_products_from_db = data_loader.fetch_products_from_mongo(
         collection_name="final_products", use_docker=config.use_docker
