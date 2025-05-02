@@ -161,7 +161,7 @@ class CsvCreator:
             "Link to other product photo",
         ]
         self.product_field_to_columns_mapping = {
-            "id_match": "Barcode",
+            "id_original": "Barcode",
             "fdc_id": "sources_fields:org-database-usda:fdc_id",
             "product_name": "Product name",
             "data_source": "sources_fields:org-database-usda:fdc_data_source",

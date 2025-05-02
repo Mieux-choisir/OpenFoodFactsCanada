@@ -41,11 +41,6 @@ class ProductCompleter:
 
                     if merged_off_product != off_product:
                         final_products.insert_one(merged_off_product)
-                        logging.info(
-                            f"id_match={off_product['id_match']}:\n"
-                            f"  Overwritten fields: {overwritten}\n"
-                            f"  Completed fields: {completed}"
-                        )
                         count_merged += 1
                     else:
                         count_skipped += 1
@@ -78,15 +73,21 @@ class ProductCompleter:
             fdc_value = fdc_product.get(key)
 
             if key == "off_categories_en":
-                if isinstance(off_value, list) and isinstance(fdc_value, list):
+                if (
+                    off_value is not None
+                    and fdc_value is not None
+                    and isinstance(off_value, list)
+                    and isinstance(fdc_value, list)
+                ):
                     new_items = [item for item in fdc_value if item not in off_value]
                     if new_items:
                         merged[key] = off_value + new_items
-                        completed_fields.extend(
-                            [f"{full_key}[{item}]" for item in new_items]
-                        )
+                        overwritten_fields.append(full_key)
                     else:
                         merged[key] = off_value
+                elif isinstance(fdc_value, list) and off_value is None:
+                    merged[key] = fdc_value
+                    completed_fields.append(full_key)
                 else:
                     merged[key] = off_value
             elif key in [

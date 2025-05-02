@@ -65,7 +65,7 @@ class DataImporter:
             )
 
         products = []
-        n = 0
+        count = 0
 
         with open(filename, "r", encoding="utf-8") as file:
             for line in file:
@@ -74,9 +74,10 @@ class DataImporter:
                     prod = self.product_mapper.map_off_dict_to_product(obj)
                     if prod is not None:
                         products.append(prod)
-                    logging.info(f"Added product {n}")
-                    n += 1
-                    if limit is not None and n >= limit:
+                    count += 1
+                    if count % 10000 == 0:
+                        print(f"{count} products imported so far...")
+                    if limit is not None and count >= limit:
                         break
                 except json.JSONDecodeError as e:
                     logging.info(f"Error parsing line: {line}. Error: {e}")
