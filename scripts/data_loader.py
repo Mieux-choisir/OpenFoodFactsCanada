@@ -29,7 +29,7 @@ class DataLoader:
             )
 
             connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+                "mongodb://localhost:37017"
             )
 
             client = MongoClient(connection_string)
@@ -106,7 +106,7 @@ class DataLoader:
                 f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})..."
             )
             connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+                "mongodb://localhost:37017"
             )
             client = MongoClient(connection_string)
             collection = client[db_name][collection_name]

@@ -83,6 +83,7 @@ def main():
                 CategoryCreator(), categories_taxonomy_file, category_mapping_file
             ),
         )
+
     )
 
     # off_products = data_importer.import_csv_off_data(off_csv_file)
@@ -93,6 +94,7 @@ def main():
     data_loader.load_products_to_mongo(
         off_products, collection_name="off_products", use_docker=config.use_docker
     )
+
     data_loader.load_products_to_mongo(
         fdc_products, collection_name="fdc_products", use_docker=config.use_docker
     )

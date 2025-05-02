@@ -19,7 +19,7 @@ class ProductMatcher:
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.
         """
         connection_string = (
-            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+            "mongodb://localhost:37017"
         )
         client = MongoClient(connection_string)
         db = client["openfoodfacts"]
