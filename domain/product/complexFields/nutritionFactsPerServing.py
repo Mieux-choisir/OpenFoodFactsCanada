@@ -30,7 +30,6 @@ class NutritionFactsPerServing(ComplexField):
     saturated_fats_serving: Optional[float] = None
     sugar_serving: Optional[float] = None
     carbohydrates_serving: Optional[float] = None
-    energy_serving: Optional[float] = None
     energy_kcal_serving: Optional[float] = None
     proteins_serving: Optional[float] = None
     fibers_serving: Optional[float] = None
@@ -61,7 +60,6 @@ class NutritionFactsPerServing(ComplexField):
             proteins_serving=data.get("proteins_serving"),
             calcium_serving=data.get("calcium_serving"),
             iron_serving=data.get("iron_serving"),
-            energy_serving=data.get("energy_serving"),
             energy_kcal_serving=data.get("energy_kcal_serving"),
             potassium_serving=data.get("potassium_serving"),
             added_sugar_serving=data.get("added_sugar_serving"),

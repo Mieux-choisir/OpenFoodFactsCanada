@@ -13,7 +13,6 @@ class NutritionFactsPerHundredGrams(ComplexField):
         saturated_fats_100g (Optional[float]): The amount of saturated fats (g) in 100g of the product
         sugar_100g (Optional[float]): The amount of sugar (g) in 100g of the product
         carbohydrates_100g (Optional[float]): The amount of carbohydrates (g) in 100g of the product
-        energy_100g (Optional[float]): The amount of energy (kJ) in 100g of the product
         energy_kcal_100g (Optional[float]): The amount of energy (kcal) in 100g of the product
         proteins_100g (Optional[float]): The amount of proteins (g) in 100g of the product
         fibers_100g (Optional[float]): The amount of fibers (g) in 100g of the product
@@ -57,7 +56,6 @@ class NutritionFactsPerHundredGrams(ComplexField):
     saturated_fats_100g: Optional[float] = None
     sugar_100g: Optional[float] = None
     carbohydrates_100g: Optional[float] = None
-    energy_100g: Optional[float] = None
     energy_kcal_100g: Optional[float] = None
     proteins_100g: Optional[float] = None
     fibers_100g: Optional[float] = None
@@ -105,7 +103,6 @@ class NutritionFactsPerHundredGrams(ComplexField):
             saturated_fats_100g=data.get("saturated_fats_100g"),
             sugar_100g=data.get("sugar_100g"),
             carbohydrates_100g=data.get("carbohydrates_100g"),
-            energy_100g=data.get("energy_100g"),
             energy_kcal_100g=data.get("energy_kcal_100g"),
             proteins_100g=data.get("proteins_100g"),
             fibers_100g=data.get("fibers_100g"),

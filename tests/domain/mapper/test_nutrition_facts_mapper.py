@@ -1,7 +1,6 @@
 from unittest.mock import patch
 
 import pytest
-from decimal import Decimal
 
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
@@ -12,9 +11,6 @@ from domain.product.complexFields.nutritionFactsPerHundredGrams import (
 from domain.product.complexFields.nutritionFactsPerServing import (
     NutritionFactsPerServing,
 )
-
-
-CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
 
 @pytest.fixture
@@ -61,11 +57,10 @@ def off_rows():
         "saturated-fat_100g",
         "sugars_100g",
         "carbohydrates_100g",
-        "energy_100g",
         "energy-kcal_100g",
         "vitamin-a_100g",
     ]
-    row = ["45.2", "2.2", "63.78", "45.14", "423", "15", "10", "120"]
+    row = ["45.2", "2.2", "63.78", "45.14", "423", "10", "120"]
 
     return row, header
 
@@ -79,7 +74,6 @@ def off_dict():
             "saturated-fat_100g": 63.78,
             "sugars_100g": 45.14,
             "carbohydrates_100g": 423,
-            "energy_100g": 15,
             "energy-kcal_100g": 10,
             "vitamin-a_100g": 120,
         }
@@ -131,9 +125,6 @@ def test_should_return_correct_energy_values_for_nutrients_in_nutrition_facts_fo
         item["amount"]
         for item in fdc_dict_100g
         if item["nutrient"]["id"] == fdc_ids["energy_kcal"]
-    )
-    assert result.nutrition_facts_per_hundred_grams.energy_100g == float(
-        expected_energy_kcal_100g * CONVERSION_ENERGY_KCAL_TO_KJ
     )
     assert (
         result.nutrition_facts_per_hundred_grams.energy_kcal_100g
@@ -199,7 +190,6 @@ def test_should_return_correct_nutrition_facts_for_given_off_row(
             saturated_fats_100g=row[header.index("saturated-fat_100g")],
             sugar_100g=row[header.index("sugars_100g")],
             carbohydrates_100g=row[header.index("carbohydrates_100g")],
-            energy_100g=row[header.index("energy_100g")],
             energy_kcal_100g=row[header.index("energy-kcal_100g")],
             vitamin_a_100g=row[header.index("vitamin-a_100g")],
         )
@@ -227,7 +217,6 @@ def test_should_return_correct_nutrition_facts_for_given_off_dict(
             saturated_fats_100g=float(off_dict["nutriments"].get("saturated-fat_100g")),
             sugar_100g=float(off_dict["nutriments"].get("sugars_100g")),
             carbohydrates_100g=float(off_dict["nutriments"].get("carbohydrates_100g")),
-            energy_100g=float(off_dict["nutriments"].get("energy_100g")),
             energy_kcal_100g=float(off_dict["nutriments"].get("energy-kcal_100g")),
             vitamin_a_100g=float(off_dict["nutriments"].get("vitamin-a_100g")),
         ),

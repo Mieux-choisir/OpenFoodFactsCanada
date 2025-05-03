@@ -116,7 +116,7 @@ mongodb://localhost:37017/
 pip install -r requirements.txt
 ```
 
-📌 **Run import script manually** (if required) :
+📌 **Run import script manually** (if required). The variable use_docker need to be set at False in config.py. :
 ```bash
 python ./scripts/collection_import.py
 ```
@@ -266,7 +266,7 @@ mongodb://localhost:37017/
 pip install -r requirements.txt
 ```
 
-📌 **Exécuter le script d’import manuellement** (si besoin) :
+📌 **Exécuter le script d’import manuellement** (si besoin). La variable use_docker doit être à False dans config.py. :
 ```bash
 python -m scripts.collection_import
 ```
