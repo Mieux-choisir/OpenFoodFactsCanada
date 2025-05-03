@@ -114,7 +114,7 @@ class DataLoader:
 
             query = {}
             if product_ids is not None:
-                query = {"_id": {"$nin": product_ids}}
+                query = {"id_match": {"$nin": product_ids}}
 
             raw_products = list(collection.find(query))
 

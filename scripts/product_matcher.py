@@ -14,7 +14,7 @@ class ProductMatcher:
         products to matched_products collections
     """
 
-    def match_products(self, use_docker: bool = True) -> list[str]:
+    def match_products(self, use_docker: bool = True):
         """Matches products that have the same id between the off_products and the fdc_products collections.
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.
         """
@@ -26,6 +26,8 @@ class ProductMatcher:
 
         off_collection = db["off_products"]
         fdc_collection = db["fdc_products"]
+
+        unmatched_fdc_products = db["unmatched_fdc_products"]
 
         df1, df2 = self.__extract_data(db)
 
@@ -59,11 +61,18 @@ class ProductMatcher:
             )
             matched_fdc_collection.insert_many(matched_fdc_products)
 
+        if unmatched_fdc_products.count_documents({}) > 0:
+            logging.info("Unmatched FDC products already exist. Skipping insert.")
+        else:
+            unmatched_fdc_products_list = fdc_collection.find(
+                    {"id_match": {"$nin": list(matched_ids)}}
+                )
+            unmatched_fdc_products.insert_many(unmatched_fdc_products_list)
+
         logging.info(
             f"{len(matched_ids)} matched products between the two collections."
         )
 
-        return matched_ids
 
     @staticmethod
     def __extract_data(db: Database) -> (pd.DataFrame, pd.DataFrame):

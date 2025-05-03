@@ -89,38 +89,27 @@ def main():
     # data_importer.import_jsonl_off_data(off_jsonl_file, 100000)
     # data_importer.import_json_fdc_data(fdc_file)
 
-    data_loader = DataLoader()
-
     product_matcher = ProductMatcher()
 
-    fdc_products_from_db = data_loader.fetch_products_from_mongo(
-        use_docker=config.use_docker
-    )
-
-    ids = product_matcher.match_products(use_docker=config.use_docker)
+    product_matcher.match_products(use_docker=config.use_docker)
+    
     csv_creator = CsvCreator(
         f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
 
-    csv_creator.create_csv_files_for_products_not_existing_in_off(
-        fdc_products_from_db, ids
+    csv_creator.create_csv_files_for_products(
+        "unmatched_fdc_products", use_docker=config.use_docker
     )
-
-    del fdc_products_from_db, ids
 
     product_completer = ProductCompleter()
 
     product_completer.complete_products(use_docker=config.use_docker)
 
-    final_products_from_db = data_loader.fetch_products_from_mongo(
-        collection_name="final_products", use_docker=config.use_docker
-    )
-
     csv_creator_completed = CsvCreator(
         f"completed_off_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
 
-    csv_creator_completed.create_csv_files_for_products(final_products_from_db)
+    csv_creator_completed.create_csv_files_for_products("final_products", use_docker=config.use_docker)
 
 
 if __name__ == "__main__":

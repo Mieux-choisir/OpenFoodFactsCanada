@@ -3,6 +3,9 @@ import logging
 import os
 from datetime import datetime
 from decimal import Decimal
+from itertools import islice
+from pymongo import MongoClient
+from pymongo.synchronous.database import Database
 
 from domain.product.product import Product
 
@@ -250,44 +253,16 @@ class CsvCreator:
         }
 
     def create_csv_files_for_products_not_existing_in_off(
-        self, products: list[Product], existing_off_products_ids: list[str]
+        self, products: list[Product]
     ) -> None:
         logging.info("Creating csv files...")
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
-        logging.info(f"Number of products in FDC : {len(products)}")
         logging.info(
-            f"Number of products that matches : {len(existing_off_products_ids)}"
+            f"Number of products in FDC not in OFF : {len(products)}"
         )
 
-        test_set = set(existing_off_products_ids)
-        filtered_products = [
-            product for product in products if product.id_match not in test_set
-        ]
-        logging.info(
-            f"Number of products to create csv files for: {len(filtered_products)}"
-        )
-        batches = self.__create_batches(filtered_products, batch_size=10000)
-
-        for i in range(len(batches)):
-            csv_file = os.path.join(
-                parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
-            )
-            logging.info(f"Creating csv file: {csv_file}")
-            self.__create_csv_file_for_products_not_existing_in_off(
-                csv_file, batches[i], existing_off_products_ids
-            )
-            logging.info("Csv file created!")
-
-        logging.info("Finished creating csv files.")
-
-    def create_csv_files_for_products(self, products: list[Product]):
-        logging.info("Creating csv files...")
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        parent_dir = os.path.dirname(script_dir)
-
-        logging.info(f"Number of products to create csv files for: {len(products)}")
         batches = self.__create_batches(products, batch_size=10000)
 
         for i in range(len(batches)):
@@ -295,7 +270,41 @@ class CsvCreator:
                 parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
             )
             logging.info(f"Creating csv file: {csv_file}")
-            self.__create_csv_file_for_products(csv_file, batches[i])
+            self.__create_csv_file_for_products_not_existing_in_off(
+                csv_file, batches[i]
+            )
+            logging.info("Csv file created!")
+
+        logging.info("Finished creating csv files.")
+        
+
+    def create_csv_files_for_products(self, products_source: str, use_docker: bool = True):
+        logging.info("Creating csv files...")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(script_dir)
+
+        connection_string = (
+                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+            )
+        client = MongoClient(connection_string)
+        db = client["openfoodfacts"]
+        collection = db[products_source]
+
+        products = db[products_source].find().sort("id_match", 1)
+        cursor = iter(products)
+        batches = self.__batched_cursor(cursor)
+
+        count = collection.count_documents({})
+        logging.info(f"Number of products to create csv files for: {count}")
+
+        count = 0
+        for batch in batches:
+            csv_file = os.path.join(
+                parent_dir, "data", self.csv_files_base_names + f"_{count + 1}.csv"
+            )
+            count += 1
+            logging.info(f"Creating csv file: {csv_file}")
+            self.__create_csv_file_for_products(csv_file, batch)
             logging.info("Csv file created!")
 
         logging.info("Finished creating csv files.")
@@ -312,7 +321,6 @@ class CsvCreator:
         self,
         csv_file: str,
         products: list[Product],
-        existing_off_products_ids: list[str],
         warn_mandatory_columns: bool = False,
     ) -> None:
         with open(csv_file, "w", encoding="utf-8", newline="") as file:
@@ -329,17 +337,16 @@ class CsvCreator:
             filewriter.writerow(columns)
 
             for product in products:
-                if product.id_match not in existing_off_products_ids:
-                    list_to_write = self.__create_csv_line_for_product(product, columns)
-                    filewriter.writerow(list_to_write)
+                list_to_write = self.__create_csv_line_for_product(product, columns)
+                filewriter.writerow(list_to_write)
 
-                    empty_mandatory_columns = self.__check_fields_not_empty(
-                        self.mandatory_columns, list_to_write
+                empty_mandatory_columns = self.__check_fields_not_empty(
+                    self.mandatory_columns, list_to_write
+                )
+                if warn_mandatory_columns and empty_mandatory_columns:
+                    logging.warning(
+                        f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
                     )
-                    if warn_mandatory_columns and empty_mandatory_columns:
-                        logging.warning(
-                            f"WARNING: empty mandatory columns for product with code {product.id_match}:{empty_mandatory_columns}!"
-                        )
 
     def __create_csv_file_for_products(
         self,
@@ -518,3 +525,13 @@ class CsvCreator:
             return f"{rounded:.{max_decimals}f}".rstrip("0").rstrip(".")
         except (ValueError, TypeError):
             return ""
+        
+    def __batched_cursor(self, cursor, batch_size=10000):
+        batch = []
+        for product in cursor:
+            batch.append(Product.from_dict(product))
+            if len(batch) >= batch_size:
+                yield batch
+                batch = []  # Reset for the next batch
+        if batch:  # Yield remaining products in the last batch
+            yield batch
