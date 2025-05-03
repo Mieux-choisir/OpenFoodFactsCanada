@@ -27,47 +27,36 @@ class ProductMatcher:
         off_collection = db["off_products"]
         fdc_collection = db["fdc_products"]
 
-        unmatched_fdc_products = db["unmatched_fdc_products"]
+        off_ids = self.__stream_ids(off_collection)
+        fdc_ids = self.__stream_ids(fdc_collection)
 
-        df1, df2 = self.__extract_data(db)
-
-        ddf1 = dd.from_pandas(df1, npartitions=1)
-        ddf2 = dd.from_pandas(df2, npartitions=1)
-
-        ddf1 = ddf1.set_index("id_match")
-        ddf2 = ddf2.set_index("id_match")
-
-        merged = ddf1.join(ddf2, how="inner")
-
-        matched_ids = merged.compute().index.tolist()
+        matched_ids = off_ids & fdc_ids
+        unmatched_fdc_ids = fdc_ids - matched_ids
 
         matched_off_collection = db["matched_off_products"]
         matched_fdc_collection = db["matched_fdc_products"]
+        unmatched_fdc_collection = db["unmatched_fdc_products"]
 
         if matched_off_collection.count_documents({}) > 0:
             logging.info("Matched OFF products already exist. Skipping insert.")
         else:
-            matched_off_products = off_collection.find(
-                {"id_match": {"$in": list(matched_ids)}}
-            )
-            matched_off_collection.insert_many(matched_off_products)
-            logging.info(f"Inserted {len(matched_ids)} matched OFF products.")
+            cursor = off_collection.find({"id_match": {"$in": list(matched_ids)}})
+            self.__batch_insert(cursor, matched_off_collection)
+            logging.info(f"Inserted matched OFF products.")
 
         if matched_fdc_collection.count_documents({}) > 0:
             logging.info("Matched FDC products already exist. Skipping insert.")
         else:
-            matched_fdc_products = fdc_collection.find(
-                {"id_match": {"$in": list(matched_ids)}}
-            )
-            matched_fdc_collection.insert_many(matched_fdc_products)
+            cursor = fdc_collection.find({"id_match": {"$in": list(matched_ids)}})
+            self.__batch_insert(cursor, matched_fdc_collection)
+            logging.info(f"Inserted matched FDC products.")
 
-        if unmatched_fdc_products.count_documents({}) > 0:
+        if unmatched_fdc_collection.count_documents({}) > 0:
             logging.info("Unmatched FDC products already exist. Skipping insert.")
         else:
-            unmatched_fdc_products_list = fdc_collection.find(
-                    {"id_match": {"$nin": list(matched_ids)}}
-                )
-            unmatched_fdc_products.insert_many(unmatched_fdc_products_list)
+            cursor = fdc_collection.find({"id_match": {"$in": list(unmatched_fdc_ids)}})
+            self.__batch_insert(cursor, unmatched_fdc_collection)
+            logging.info(f"Inserted unmatched FDC products.")
 
         logging.info(
             f"{len(matched_ids)} matched products between the two collections."
@@ -104,3 +93,24 @@ class ProductMatcher:
             )
             logging.warning(fdc_duplicates)
         return df1, df2
+
+    @staticmethod
+    def __stream_ids(collection) -> set:
+        """Streams all 'id_match' values from a collection into a set."""
+        ids = set()
+        for doc in collection.find({}, {"id_match": 1, "_id": 0}):
+            if "id_match" in doc:
+                ids.add(doc["id_match"])
+        return ids
+    
+    @staticmethod
+    def __batch_insert(cursor, collection, batch_size=1000):
+        """Inserts documents from a cursor into a collection in batches."""
+        batch = []
+        for doc in cursor:
+            batch.append(doc)
+            if len(batch) >= batch_size:
+                collection.insert_many(batch)
+                batch.clear()
+        if batch:
+            collection.insert_many(batch)

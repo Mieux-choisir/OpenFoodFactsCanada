@@ -14,7 +14,6 @@ from scripts.config import Config
 from scripts.csv_creator import CsvCreator
 from scripts.data_downloader import DataDownloader
 from scripts.data_importer import DataImporter
-from scripts.data_loader import DataLoader
 from scripts.product_completer import ProductCompleter
 from scripts.product_matcher import ProductMatcher
 
@@ -86,8 +85,8 @@ def main():
     )
 
     # off_products = data_importer.import_csv_off_data(off_csv_file)
-    # data_importer.import_jsonl_off_data(off_jsonl_file, 100000)
-    # data_importer.import_json_fdc_data(fdc_file)
+    data_importer.import_jsonl_off_data(off_jsonl_file, 50000)
+    data_importer.import_json_fdc_data(fdc_file, 50000)
 
     product_matcher = ProductMatcher()
 

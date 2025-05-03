@@ -532,6 +532,6 @@ class CsvCreator:
             batch.append(Product.from_dict(product))
             if len(batch) >= batch_size:
                 yield batch
-                batch = []  # Reset for the next batch
-        if batch:  # Yield remaining products in the last batch
+                batch = [] 
+        if batch: 
             yield batch
