@@ -8,6 +8,7 @@ from scripts.data_importer import DataImporter
 VALID_FDC_PRODUCT_COUNT = 2
 VALID_OFF_PRODUCT_COUNT = 2
 LIMITED_OFF_PRODUCT_COUNT = 1
+BATCH_SIZE = 1000
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ def test_should_import_fdc_data_when_valid_json(data_importer):
     data_importer.product_mapper.map_fdc_dict_to_product.return_value = mock_product
 
     with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+        result = data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
 
     assert (
         len(result) == VALID_FDC_PRODUCT_COUNT
@@ -61,7 +62,7 @@ def test_should_ignore_non_us_products_in_fdc_data(data_importer):
     data_importer.product_mapper.map_fdc_dict_to_product.return_value = mock_product
 
     with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+        result = data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
 
     assert len(result) == 1, f"Expected 1 US product, but got {len(result)}"
 
@@ -70,7 +71,7 @@ def test_should_return_empty_list_when_fdc_file_is_empty(data_importer):
     json_content = "{}"
 
     with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+        result = data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
 
     assert result == [], "Expected an empty list when the FDC file is empty"
 

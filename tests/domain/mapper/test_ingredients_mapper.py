@@ -121,7 +121,7 @@ def test_should_return_ingredients_text_in_title_format_in_ingredients_for_given
 
     assert (
         result.ingredients_text == off_dict["ingredients_text"].title()
-    ), f"Expected ingredients text of {off_dict["ingredients_text"].title()}, got {result.ingredients_text}"
+    ), f"Expected ingredients text of {off_dict['ingredients_text'].title()}, got {result.ingredients_text}"
 
 
 def test_should_return_ingredients_list_from_ingredients_normalizer_in_ingredients_for_given_off_dict(

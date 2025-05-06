@@ -164,22 +164,22 @@ def test_should_assign_given_nutrient_values_in_nutriscore_data_for_given_fdc_di
 
     assert result.energy_100g == nutrient_values["energy_kcal_100g"] * float(
         CONVERSION_ENERGY_KCAL_TO_KJ
-    ), f"Expected energy value to be {nutrient_values["energy_100g"]}, got {result.energy_100g}"
+    ), f"Expected energy value to be {nutrient_values['energy_100g']}, got {result.energy_100g}"
     assert (
         result.fibers_100g == nutrient_values["fibers_100g"]
-    ), f"Expected fibers value to be {nutrient_values["fibers_100g"]}, got {result.fibers_100g}"
+    ), f"Expected fibers value to be {nutrient_values['fibers_100g']}, got {result.fibers_100g}"
     assert (
         result.proteins_100g == nutrient_values["proteins_100g"]
-    ), f"Expected proteins value to be {nutrient_values["proteins_100g"]}, got {result.proteins_100g}"
+    ), f"Expected proteins value to be {nutrient_values['proteins_100g']}, got {result.proteins_100g}"
     assert (
         result.saturated_fats_100g == nutrient_values["saturated_fats_100g"]
-    ), f"Expected saturated fats value to be {nutrient_values["saturated_fats_100g"]}, got {result.saturated_fats_100g}"
+    ), f"Expected saturated fats value to be {nutrient_values['saturated_fats_100g']}, got {result.saturated_fats_100g}"
     assert (
         result.sodium_100g == nutrient_values["sodium_100g"]
-    ), f"Expected sodium value to be {nutrient_values["sodium_100g"]}, got {result.sodium_100g}"
+    ), f"Expected sodium value to be {nutrient_values['sodium_100g']}, got {result.sodium_100g}"
     assert (
         result.sugar_100g == nutrient_values["sugar_100g"]
-    ), f"Expected sugar value to be {nutrient_values["sugar_100g"]}, got {result.sugar_100g}"
+    ), f"Expected sugar value to be {nutrient_values['sugar_100g']}, got {result.sugar_100g}"
 
 
 def test_should_return_empty_fruit_percentage_in_nutriscore_data_for_given_fdc_dict(
@@ -244,25 +244,25 @@ def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_
 
     assert (
         result.energy_100g == return_float_converter_value
-    ), f"Expected energy value to be {row[header.index("energy_100g")]}, got {result.energy_100g}"
+    ), f"Expected energy value to be {row[header.index('energy_100g')]}, got {result.energy_100g}"
     assert result.fibers_100g == float(
         row[header.index("fiber_100g")]
-    ), f"Expected energy value to be {row[header.index("fiber_100g")]}, got {result.fibers_100g}"
+    ), f"Expected energy value to be {row[header.index('fiber_100g')]}, got {result.fibers_100g}"
     assert (
         result.fruit_percentage == return_float_converter_value
-    ), f"Expected energy value to be {row[header.index("fruits-vegetables-nuts_100g")]}, got {result.fruit_percentage}"
+    ), f"Expected energy value to be {row[header.index('fruits-vegetables-nuts_100g')]}, got {result.fruit_percentage}"
     assert result.proteins_100g == float(
         row[header.index("proteins_100g")]
-    ), f"Expected energy value to be {row[header.index("proteins_100g")]}, got {result.proteins_100g}"
+    ), f"Expected energy value to be {row[header.index('proteins_100g')]}, got {result.proteins_100g}"
     assert (
         result.saturated_fats_100g == return_float_converter_value
-    ), f"Expected energy value to be {row[header.index("saturated-fat_100g")]}, got {result.saturated_fats_100g}"
+    ), f"Expected energy value to be {row[header.index('saturated-fat_100g')]}, got {result.saturated_fats_100g}"
     assert result.sodium_100g == float(
         row[header.index("sodium_100g")]
-    ), f"Expected energy value to be {row[header.index("sodium_100g")]}, got {result.sodium_100g}"
+    ), f"Expected energy value to be {row[header.index('sodium_100g')]}, got {result.sodium_100g}"
     assert result.sugar_100g == float(
         row[header.index("sugars_100g")]
-    ), f"Expected energy value to be {row[header.index("sugars_100g")]}, got {result.sugar_100g}"
+    ), f"Expected energy value to be {row[header.index('sugars_100g')]}, got {result.sugar_100g}"
 
 
 def test_should_return_empty_nutrient_values_for_invalid_values_in_nutriscore_data_for_given_off_row(
@@ -344,25 +344,25 @@ def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_
 
     assert (
         result.energy_100g == off_valid_dict["nutriments"]["energy_100g"]
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["energy_100g"]}, got {result.energy_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['energy_100g']}, got {result.energy_100g}"
     assert (
         result.fibers_100g == return_float_converter_value
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["fiber_100g"]}, got {result.fibers_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['fiber_100g']}, got {result.fibers_100g}"
     assert (
         result.fruit_percentage == return_float_converter_value
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["fruits-vegetables-nuts_100g"]}, got {result.fruit_percentage}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['fruits-vegetables-nuts_100g']}, got {result.fruit_percentage}"
     assert (
         result.proteins_100g == off_valid_dict["nutriments"]["proteins_100g"]
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["proteins_100g"]}, got {result.proteins_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['proteins_100g']}, got {result.proteins_100g}"
     assert (
         result.saturated_fats_100g == off_valid_dict["nutriments"]["saturated-fat_100g"]
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["saturated-fat_100g"]}, got {result.saturated_fats_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['saturated-fat_100g']}, got {result.saturated_fats_100g}"
     assert (
         result.sodium_100g == off_valid_dict["nutriments"]["sodium_100g"]
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["sodium_100g"]}, got {result.sodium_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['sodium_100g']}, got {result.sodium_100g}"
     assert (
         result.sugar_100g == off_valid_dict["nutriments"]["sugars_100g"]
-    ), f"Expected energy value to be {off_valid_dict["nutriments"]["sugars_100g"]}, got {result.sugar_100g}"
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['sugars_100g']}, got {result.sugar_100g}"
 
 
 def test_should_return_empty_nutrient_values_for_invalid_values_in_nutriscore_data_for_given_off_dict(

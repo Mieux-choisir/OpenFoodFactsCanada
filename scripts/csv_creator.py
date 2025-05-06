@@ -252,40 +252,41 @@ class CsvCreator:
             "nova_data.score": "NOVA group",
         }
 
-    def create_csv_files_for_products_not_existing_in_off(
-        self, products: list[Product]
-    ) -> None:
-        logging.info("Creating csv files...")
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        parent_dir = os.path.dirname(script_dir)
+    # def create_csv_files_for_products_not_existing_in_off(
+    #     self, products: list[Product]
+    # ) -> None:
+    #     logging.info("Creating csv files...")
+    #     script_dir = os.path.dirname(os.path.abspath(__file__))
+    #     parent_dir = os.path.dirname(script_dir)
 
-        logging.info(
-            f"Number of products in FDC not in OFF : {len(products)}"
-        )
+    #     logging.info(
+    #         f"Number of products in FDC not in OFF : {len(products)}"
+    #     )
 
-        batches = self.__create_batches(products, batch_size=10000)
+    #     batches = self.__create_batches(products, batch_size=10000)
 
-        for i in range(len(batches)):
-            csv_file = os.path.join(
-                parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
-            )
-            logging.info(f"Creating csv file: {csv_file}")
-            self.__create_csv_file_for_products_not_existing_in_off(
-                csv_file, batches[i]
-            )
-            logging.info("Csv file created!")
+    #     for i in range(len(batches)):
+    #         csv_file = os.path.join(
+    #             parent_dir, "data", self.csv_files_base_names + f"_{i + 1}.csv"
+    #         )
+    #         logging.info(f"Creating csv file: {csv_file}")
+    #         self.__create_csv_file_for_products_not_existing_in_off(
+    #             csv_file, batches[i]
+    #         )
+    #         logging.info("Csv file created!")
 
-        logging.info("Finished creating csv files.")
-        
+    #     logging.info("Finished creating csv files.")
 
-    def create_csv_files_for_products(self, products_source: str, use_docker: bool = True):
+    def create_csv_files_for_products(
+        self, products_source: str, use_docker: bool = True
+    ):
         logging.info("Creating csv files...")
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
 
         connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
-            )
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
         client = MongoClient(connection_string)
         db = client["openfoodfacts"]
         collection = db[products_source]
@@ -525,13 +526,13 @@ class CsvCreator:
             return f"{rounded:.{max_decimals}f}".rstrip("0").rstrip(".")
         except (ValueError, TypeError):
             return ""
-        
+
     def __batched_cursor(self, cursor, batch_size=10000):
         batch = []
         for product in cursor:
             batch.append(Product.from_dict(product))
             if len(batch) >= batch_size:
                 yield batch
-                batch = [] 
-        if batch: 
+                batch = []
+        if batch:
             yield batch

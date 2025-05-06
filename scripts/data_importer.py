@@ -52,7 +52,9 @@ class DataImporter:
                         logging.info(f"{count} products imported so far...")
                     if count >= batch:
                         self.data_loader.load_products_to_mongo(
-                            products, collection_name="off_products", use_docker=self.config.use_docker
+                            products,
+                            collection_name="off_products",
+                            use_docker=self.config.use_docker,
                         )
                         batch = batch_size + batch
                         products = []
@@ -98,7 +100,9 @@ class DataImporter:
                         break
                     if count >= batch:
                         self.data_loader.load_products_to_mongo(
-                            products, collection_name="off_products", use_docker=self.config.use_docker
+                            products,
+                            collection_name="off_products",
+                            use_docker=self.config.use_docker,
                         )
                         batch = batch_size + batch
                         products = []
@@ -107,8 +111,8 @@ class DataImporter:
 
         logging.info("OFF data imported")
         self.data_loader.load_products_to_mongo(
-                            products, collection_name="off_products", use_docker=self.config.use_docker
-                        )
+            products, collection_name="off_products", use_docker=self.config.use_docker
+        )
 
     def import_csv_off_data(self, filename: str, limit: int = None) -> list[Product]:
         """Imports the data of canadian food in a csv file into a list of products

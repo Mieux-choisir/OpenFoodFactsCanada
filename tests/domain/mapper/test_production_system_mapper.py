@@ -22,7 +22,7 @@ def test_should_return_given_labels_in_production_system_for_given_off_dict(
 
     assert (
         result.labels == off_dict["labels_tags"]
-    ), f"Expected labels field to be {off_dict["labels_tags"]}, got {result.labels}"
+    ), f"Expected labels field to be {off_dict['labels_tags']}, got {result.labels}"
 
 
 def test_should_return_empty_labels_list_for_absent_labels_tags_in_production_system_for_given_off_dict(

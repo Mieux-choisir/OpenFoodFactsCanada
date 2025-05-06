@@ -79,7 +79,7 @@ def test_should_return_given_list_in_packaging_field_in_packaging_for_given_off_
 
     assert (
         result.packaging == off_dict["packaging_tags"]
-    ), f"Expected packaging field to be {off_dict["packaging_tags"]}, got {result.packaging}"
+    ), f"Expected packaging field to be {off_dict['packaging_tags']}, got {result.packaging}"
 
 
 def test_should_return_empty_list_for_absent_value_in_packaging_field_in_packaging_for_given_off_dict(

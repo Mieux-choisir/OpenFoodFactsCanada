@@ -176,7 +176,7 @@ def test_should_return_brand_owner_field_for_not_empty_brand_owner_field_in_row_
 
     assert (
         result == off_dict["brand_owner"].title().strip()
-    ), f"Expected result brand owner to be {off_dict["brand_owner"].title().strip()}, got {result}"
+    ), f"Expected result brand owner to be {off_dict['brand_owner'].title().strip()}, got {result}"
 
 
 def test_should_return_brands_field_for_empty_brand_owner_field_and_not_empty_brands_field_in_row_for_given_off_dict(
@@ -188,4 +188,4 @@ def test_should_return_brands_field_for_empty_brand_owner_field_and_not_empty_br
 
     assert (
         result == off_empty_brand_owner_field_dict["brands"].title().strip()
-    ), f"Expected result brand owner to be {off_empty_brand_owner_field_dict["brands"].title().strip()}, got {result}"
+    ), f"Expected result brand owner to be {off_empty_brand_owner_field_dict['brands'].title().strip()}, got {result}"

@@ -91,7 +91,7 @@ def main():
     product_matcher = ProductMatcher()
 
     product_matcher.match_products(use_docker=config.use_docker)
-    
+
     csv_creator = CsvCreator(
         f"fdc_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
@@ -108,7 +108,9 @@ def main():
         f"completed_off_products_to_add_{datetime.now().strftime('%Y-%m-%d')}"
     )
 
-    csv_creator_completed.create_csv_files_for_products("final_products", use_docker=config.use_docker)
+    csv_creator_completed.create_csv_files_for_products(
+        "final_products", use_docker=config.use_docker
+    )
 
 
 if __name__ == "__main__":

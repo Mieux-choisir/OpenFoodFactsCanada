@@ -19,8 +19,8 @@ class ProductMatcher:
         Then adds the matched OFF products to the matched_off_products collection and the matched FDC products to the matched_fdc_products collection.
         """
         connection_string = (
-                "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
-            )
+            "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
+        )
         client = MongoClient(connection_string)
         db = client["openfoodfacts"]
 
@@ -62,7 +62,6 @@ class ProductMatcher:
             f"{len(matched_ids)} matched products between the two collections."
         )
 
-
     @staticmethod
     def __extract_data(db: Database) -> (pd.DataFrame, pd.DataFrame):
         """Extracts the data from the off_products and fdc_products collections as dataframes"""
@@ -102,7 +101,7 @@ class ProductMatcher:
             if "id_match" in doc:
                 ids.add(doc["id_match"])
         return ids
-    
+
     @staticmethod
     def __batch_insert(cursor, collection, batch_size=1000):
         """Inserts documents from a cursor into a collection in batches."""
