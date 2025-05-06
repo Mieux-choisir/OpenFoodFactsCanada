@@ -1,5 +1,4 @@
 import logging
-import dask.dataframe as dd
 import pandas as pd
 from pymongo import MongoClient
 from pymongo.synchronous.database import Database
@@ -42,21 +41,21 @@ class ProductMatcher:
         else:
             cursor = off_collection.find({"id_match": {"$in": list(matched_ids)}})
             self.__batch_insert(cursor, matched_off_collection)
-            logging.info(f"Inserted matched OFF products.")
+            logging.info("Inserted matched OFF products.")
 
         if matched_fdc_collection.count_documents({}) > 0:
             logging.info("Matched FDC products already exist. Skipping insert.")
         else:
             cursor = fdc_collection.find({"id_match": {"$in": list(matched_ids)}})
             self.__batch_insert(cursor, matched_fdc_collection)
-            logging.info(f"Inserted matched FDC products.")
+            logging.info("Inserted matched FDC products.")
 
         if unmatched_fdc_collection.count_documents({}) > 0:
             logging.info("Unmatched FDC products already exist. Skipping insert.")
         else:
             cursor = fdc_collection.find({"id_match": {"$in": list(unmatched_fdc_ids)}})
             self.__batch_insert(cursor, unmatched_fdc_collection)
-            logging.info(f"Inserted unmatched FDC products.")
+            logging.info("Inserted unmatched FDC products.")
 
         logging.info(
             f"{len(matched_ids)} matched products between the two collections."

@@ -28,7 +28,7 @@ class DataImporter:
         self.data_loader = DataLoader()
         self.config = Config()
 
-    def import_json_fdc_data(self, filename: str, batch_size: int) -> list[Product]:
+    def import_json_fdc_data(self, filename: str, batch_size: int):
         """Imports the data of branded food in a json file into a list of strings for each branded food
 
         Args:

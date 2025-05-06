@@ -3,9 +3,7 @@ import logging
 import os
 from datetime import datetime
 from decimal import Decimal
-from itertools import islice
 from pymongo import MongoClient
-from pymongo.synchronous.database import Database
 
 from domain.product.product import Product
 
