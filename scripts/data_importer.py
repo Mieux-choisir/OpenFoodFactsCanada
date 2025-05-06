@@ -53,7 +53,7 @@ class DataImporter:
                     if count >= batch:
                         self.data_loader.load_products_to_mongo(
                             products,
-                            collection_name="off_products",
+                            collection_name="fdc_products",
                             use_docker=self.config.use_docker,
                         )
                         batch = batch_size + batch
