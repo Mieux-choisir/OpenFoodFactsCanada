@@ -1,4 +1,3 @@
-from decimal import Decimal
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -6,8 +5,6 @@ import pytest
 from domain.mapper.number_mapper import NumberMapper
 from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.utils.converter import Converter
-
-CONVERSION_ENERGY_KCAL_TO_KJ = Decimal(4.1868)
 
 
 @pytest.fixture
@@ -75,7 +72,7 @@ def off_valid_dict():
     off_dict = {
         "nutriscore_grade": "a",
         "nutriments": {
-            "energy_100g": 45.2,
+            "energy-kcal_100g": 45.2,
             "fiber_100g": 54,
             "fruits-vegetables-nuts_100g": 75,
             "proteins_100g": 20,
@@ -93,7 +90,7 @@ def off_invalid_dict():
     off_dict = {
         "nutriscore_grade": None,
         "nutriments": {
-            "energy_100g": None,
+            "energy-kcal_100g": None,
             "fiber_100g": "other",
             "fruits-vegetables-nuts_100g": "75g",
             "proteins_100g": None,
@@ -128,9 +125,9 @@ def test_should_assign_given_nutrient_values_in_nutriscore_data_for_given_fdc_di
 
     result = nutriscore_data_mapper.map_fdc_dict_to_nutriscore_data(food_nutrients)
 
-    assert result.energy_100g == nutrient_values["energy_kcal_100g"] * float(
-        CONVERSION_ENERGY_KCAL_TO_KJ
-    ), f"Expected energy value to be {nutrient_values['energy_100g']}, got {result.energy_100g}"
+    assert (
+        result.energy_kcal_100g == nutrient_values["energy_kcal_100g"]
+    ), f"Expected energy value to be {nutrient_values['energy_kcal_100g']}, got {result.energy_kcal_100g}"
     assert (
         result.fibers_100g == nutrient_values["fibers_100g"]
     ), f"Expected fibers value to be {nutrient_values['fibers_100g']}, got {result.fibers_100g}"
@@ -208,8 +205,8 @@ def test_should_assign_given_valid_nutrient_values_in_nutriscore_data_for_given_
         result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_valid_dict)
 
     assert (
-        result.energy_100g == off_valid_dict["nutriments"]["energy_100g"]
-    ), f"Expected energy value to be {off_valid_dict['nutriments']['energy_100g']}, got {result.energy_100g}"
+        result.energy_kcal_100g == off_valid_dict["nutriments"]["energy-kcal_100g"]
+    ), f"Expected energy value to be {off_valid_dict['nutriments']['energy-kcal_100g']}, got {result.energy_kcal_100g}"
     assert (
         result.fibers_100g == return_float_converter_value
     ), f"Expected energy value to be {off_valid_dict['nutriments']['fiber_100g']}, got {result.fibers_100g}"
@@ -236,8 +233,8 @@ def test_should_return_empty_nutrient_values_for_invalid_values_in_nutriscore_da
     result = nutriscore_data_mapper.map_off_dict_to_nutriscore_data(off_invalid_dict)
 
     assert (
-        result.energy_100g is None
-    ), f"Expected energy value to be {None}, got {result.energy_100g}"
+        result.energy_kcal_100g is None
+    ), f"Expected energy value to be {None}, got {result.energy_kcal_100g}"
     assert (
         result.fibers_100g is None
     ), f"Expected energy value to be {None}, got {result.fibers_100g}"
