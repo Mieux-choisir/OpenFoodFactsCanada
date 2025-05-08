@@ -18,19 +18,25 @@ class NutrientAmountMapper:
             "mg": 1000,
             "cg": 100,
             "dg": 10,
-            "iu": Decimal(3.33),
         }
 
     def map_nutrient(self, nutrient_value, nutrient_unit: str):
         """Maps the given nutrient value to its corresponding value in grams"""
+        if nutrient_value is None or nutrient_unit is None:
+            return None
+
         converted_value = None
+        nutrient_unit = nutrient_unit.strip().lower()
 
-        if nutrient_unit is not None and nutrient_unit.strip().lower() == "g":
+        if nutrient_unit == "g":
             converted_value = nutrient_value
-        elif (
-            nutrient_unit is not None
-            and nutrient_unit.lower() in self.unit_conversions_to_g.keys()
-        ):
-            converted_value = nutrient_value / self.unit_conversions_to_g[nutrient_unit]
+        elif nutrient_unit == "iu":
+            converted_value = (
+                Decimal(nutrient_value) * Decimal("0.3") / Decimal("1000000")
+            )
+        elif nutrient_unit in self.unit_conversions_to_g:
+            converted_value = (
+                Decimal(nutrient_value) / self.unit_conversions_to_g[nutrient_unit]
+            )
 
-        return converted_value
+        return float(converted_value) if converted_value is not None else None

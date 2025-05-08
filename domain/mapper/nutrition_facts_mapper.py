@@ -16,7 +16,6 @@ class NutritionFactsMapper:
     This is a class that maps products values to NutritionFacts objects.
 
     Attributes:
-        energy_kcal_to_kj (Decimal): The decimal value to convert energy value from kcal to kj
         sodium_to_salt (Decimal): The decimal value to convert sodium value to salt value
 
     Methods:
@@ -26,7 +25,6 @@ class NutritionFactsMapper:
     """
 
     def __init__(self):
-        self.energy_kcal_to_kj = Decimal(4.1868)
         self.sodium_to_salt = Decimal(2.5)
         self.units_in_nutrition_table = {
             "fat": "g",
@@ -97,7 +95,6 @@ class NutritionFactsMapper:
             "saturated-fat_100g",
             "sugars_100g",
             "carbohydrates_100g",
-            "energy_100g",
             "energy-kcal_100g",
             "vitamin-a_100g",
             "proteins_100g",
@@ -162,7 +159,6 @@ class NutritionFactsMapper:
             "saturated-fat_100g",
             "sugars_100g",
             "carbohydrates_100g",
-            "energy_100g",
             "energy-kcal_100g",
             "vitamin-a_100g",
             "proteins_100g",
@@ -324,7 +320,6 @@ class NutritionFactsMapper:
                     value * self.sodium_to_salt, unit
                 )
             if field == "energy_kcal_100g" and value is not None:
-                nutrition_facts_data["energy_100g"] = value * self.energy_kcal_to_kj
                 nutrition_facts_data["energy_kcal_100g"] = round(value)
 
             if field != "energy_kcal_100g":
@@ -352,19 +347,10 @@ class NutritionFactsMapper:
         sodium_serving = self.__get_nutrient_level_per_serving(
             food_nutrients_per_serving, "sodium"
         )
-        calories_per_serving = self.__get_nutrient_level_per_serving(
-            food_nutrients_per_serving, "calories"
-        )
 
         salt_serving = (
             float(sodium_serving) * float(self.sodium_to_salt)
             if sodium_serving is not None
-            else None
-        )
-
-        energy_serving = (
-            round(float(calories_per_serving) * float(self.energy_kcal_to_kj))
-            if calories_per_serving is not None
             else None
         )
 
@@ -401,10 +387,8 @@ class NutritionFactsMapper:
             iron_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "iron"
             ),
-            energy_kcal_serving=(
-                round(calories_per_serving)
-                if calories_per_serving is not None
-                else None
+            energy_kcal_serving=self.__get_nutrient_level_per_serving(
+                food_nutrients_per_serving, "calories"
             ),
             potassium_serving=self.__get_nutrient_level_per_serving(
                 food_nutrients_per_serving, "potassium"
@@ -413,7 +397,6 @@ class NutritionFactsMapper:
                 food_nutrients_per_serving, "addedSugar"
             ),
             salt_serving=salt_serving,
-            energy_serving=energy_serving,
         )
 
     def __get_nutrient_level_per_serving(
@@ -429,15 +412,18 @@ class NutritionFactsMapper:
 
     @staticmethod
     def __get_nutrient_level_per_100g(food_nutrients, searched_id):
-        """Returns the nutrient level of a nutrient by its id in a given food nutrients dictionary
+        """Returns the nutrient level of a nutrient by its id in a given food nutrients dictionary.
+        Returns None if the amount is greater than 100.
+
         Args:
             food_nutrients: the nutrients dictionary in which the specific nutrient level is searched
-            searched_id: the id of the wanted nutrient"""
+            searched_id: the id of the wanted nutrient
+        """
         return next(
             (
                 item["amount"]
                 for item in food_nutrients
-                if item["nutrient"]["id"] == searched_id
+                if item["nutrient"]["id"] == searched_id and item["amount"] <= 100
             ),
             None,
         )
