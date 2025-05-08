@@ -19,6 +19,10 @@ class ProductCompleter:
 
         final_products = db["final_products"]
 
+        if final_products.count_documents({}) > 0:
+            logging.info("Final products table already exist. Deleting old version.")
+            final_products.drop()
+
         off_cursor = iter(matched_off_products)
         fdc_cursor = iter(matched_fdc_products)
 

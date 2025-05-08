@@ -100,6 +100,7 @@ class DataLoader:
         db_name: str = "openfoodfacts",
         collection_name: str = "fdc_products",
         use_docker: bool = True,
+        product_ids: list[str] = None,
     ) -> list[Product]:
         try:
             logging.info(
@@ -111,18 +112,13 @@ class DataLoader:
             client = MongoClient(connection_string)
             collection = client[db_name][collection_name]
 
-            raw_products = list(collection.find({}))
+            query = {}
+            if product_ids is not None:
+                query = {"id_match": {"$nin": product_ids}}
 
-            if raw_products:
-                logging.info("Contenu du premier raw_products: %s", raw_products[0])
-            else:
-                logging.info("Aucun document raw récupéré.")
+            raw_products = list(collection.find(query))
 
             products = [Product.from_dict(doc) for doc in raw_products]
-            if products:
-                logging.info("Contenu du premier Product: %s", products[0])
-            else:
-                logging.info("Aucun objet Product converti.")
 
             logging.info(f"Nombre de produits récupérés: {len(products)}")
             return products
