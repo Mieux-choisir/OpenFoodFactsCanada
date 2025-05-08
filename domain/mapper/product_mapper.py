@@ -7,7 +7,6 @@ from domain.mapper.nutriscore_data_mapper import NutriscoreDataMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.mapper.category_mapper import CategoryMapper
 from domain.product.product import Product
-from domain.utils.converter import Converter
 from domain.validator.nova_data_validator import NovaDataValidator
 from domain.validator.product_validator import ProductValidator
 from datetime import datetime, timezone
@@ -15,11 +14,10 @@ from datetime import datetime, timezone
 
 class ProductMapper:
     """
-    This is a class that maps objects (rows or dicts) read from different files to Product objects.
+    This is a class that maps objects dicts read from different files to Product objects.
 
     Methods:
         map_fdc_dict_to_product(product_dict): Maps the given dictionary to a Product object
-        map_off_row_to_product(row, header): Maps the given csv row to a Product object
         map_off_dict_to_product(product_dict): Maps the given dictionary to a Product object
     """
 
@@ -110,49 +108,6 @@ class ProductMapper:
             nova_data=None,
         )
 
-    def map_off_row_to_product(
-        self, row: list[str], header: list[str]
-    ) -> Product | None:
-        """Maps a row from a csv export of OFF to a product object"""
-
-        id_index = header.index("code")
-        product_name_index = header.index("product_name")
-        quantity_name_index = header.index("quantity")
-        serving_size_index = header.index("serving_quantity")
-        modified_date_index = header.index("last_modified_t")
-        category_tag_index = header.index("categories_tags")
-
-        return Product(
-            id_match=row[id_index].strip().lstrip("0").replace("-", ""),
-            id_original=row[id_index].strip(),
-            product_name=(
-                row[product_name_index].strip().title()
-                if row[product_name_index] != ""
-                else None
-            ),
-            modified_date=datetime.fromtimestamp(
-                Converter.safe_int(row[modified_date_index]), tz=timezone.utc
-            ),
-            quantity=row[quantity_name_index],
-            is_raw=self.__off_csv_is_raw_aliment(row, header),
-            brands=BrandsMapper.map_off_row_to_brands(row, header),
-            brand_owner=BrandsMapper.map_off_row_to_brand_owner(row, header),
-            off_categories_en=self.category_mapper.get_off_categories_of_off_product(
-                row[category_tag_index]
-            ),
-            food_groups_en=FoodGroupsMapper.map_off_row_to_food_groups(row, header),
-            ingredients=self.ingredients_mapper.map_off_row_to_ingredients(row, header),
-            serving_size=Converter.safe_float(row[serving_size_index]),
-            nutrition_facts=self.nutrition_facts_mapper.map_off_row_to_nutrition_facts(
-                row, header
-            ),
-            nutriscore_data=self.nutriscore_data_mapper.map_off_row_to_nutriscore_data(
-                row, header
-            ),
-            ecoscore_data=EcoscoreDataMapper.map_off_row_to_ecoscore_data(row, header),
-            nova_data=NovaDataMapper.map_off_row_to_nova_data(row, header),
-        )
-
     def map_off_dict_to_product(self, product_dict: dict) -> Product | None:
         """Maps a dictionary from a jsonl export of OFF to a product object"""
 
@@ -218,40 +173,6 @@ class ProductMapper:
             ),
             nova_data=NovaDataMapper.map_off_dict_to_nova_data(product_dict),
         )
-
-    @staticmethod
-    def __off_csv_is_raw_aliment(row: list[str], header: list[str]) -> bool:
-        """Checks if the aliment is raw based on its row values"""
-        # Check the NOVA group
-        nova_index = header.index("nova_group")
-        nova_group = row[nova_index]
-        try:
-            if NovaDataValidator.check_nova_raw_group(nova_group):
-                return True
-            if NovaDataValidator.check_nova_transformed_group(nova_group):
-                return False
-        except ValueError:
-            pass
-
-        # Check the PNNS groups
-        pnns_index = header.index("pnns_groups_1")
-        if ProductValidator.check_pnns_groups(row[pnns_index]):
-            return True
-
-        # Check the categories
-        cat_index = header.index("categories_tags")
-        if ProductValidator.check_string_categories(row[cat_index]):
-            return True
-
-        # Check the additives
-        additives_index = header.index("additives_n")
-        try:
-            if ProductValidator.check_additives(row[additives_index], nova_group):
-                return True
-        except ValueError:
-            pass
-
-        return False
 
     @staticmethod
     def __off_json_is_raw_aliment(product_dict: dict) -> bool:

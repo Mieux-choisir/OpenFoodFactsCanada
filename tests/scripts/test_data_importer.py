@@ -130,26 +130,3 @@ def test_should_apply_limit_on_off_jsonl_data(mock_loader, data_importer):
     mock_loader.assert_called_once_with(
         [mock_product], collection_name="off_products", use_docker=False
     )
-
-
-# ----------------------------------------------------------------
-# Tests import_csv_off_data
-# ----------------------------------------------------------------
-
-
-def test_should_import_off_csv_data(data_importer):
-    csv_content = "code\tproduct_name\n123\tMilk\n456\tCheese\n"
-    mock_product = MagicMock(spec=Product)
-    data_importer.product_mapper.map_off_row_to_product.return_value = mock_product
-
-    with patch("builtins.open", mock_open(read_data=csv_content)), patch(
-        "csv.reader",
-        return_value=iter(
-            [["code", "product_name"], ["123", "Milk"], ["456", "Cheese"]]
-        ),
-    ):
-        result = data_importer.import_csv_off_data("mock_file.csv")
-
-    assert (
-        len(result) == VALID_OFF_PRODUCT_COUNT
-    ), f"Expected {VALID_OFF_PRODUCT_COUNT} products, got {len(result)}"

@@ -6,25 +6,8 @@ class IngredientsOriginMapper:
     This is a class that maps products values to IngredientsOrigins objects.
 
     Methods:
-        map_off_row_to_ingredients_origin(row, header): Maps the given csv row to an IngredientsOrigins object
         map_off_dict_to_ingredients_origin(product_dict): Maps the given dictionary to an IngredientsOrigins object
     """
-
-    @staticmethod
-    def map_off_row_to_ingredients_origin(
-        row: list[str], header: list[str]
-    ) -> IngredientsOrigins:
-        """Maps the ingredients origins of a given OFF (csv) product to an IngredientsOrigins object containing:
-        - origins: a list of the ingredients origins
-        - percent: the percentage of the origins
-        - transportation_score: the transportation score of the product"""
-        origin_index = header.index("origins")
-
-        return IngredientsOrigins(
-            origins=row[origin_index].split(","),
-            percent=None,
-            transportation_score=None,
-        )
 
     @staticmethod
     def map_off_dict_to_ingredients_origin(product_dict: dict) -> IngredientsOrigins:

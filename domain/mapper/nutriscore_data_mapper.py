@@ -15,7 +15,6 @@ class NutriscoreDataMapper:
 
     Methods:
         map_fdc_dict_to_nutriscore_data(food_nutrients): Maps the given food_nutrients list to a NutriscoreData object
-        map_off_row_to_nutriscore_data(row, header): Maps the given csv row to a NutriscoreData object
         map_off_dict_to_nutriscore_data(product_dict): Maps the given dictionary to a NutriscoreData object
     """
 
@@ -76,36 +75,6 @@ class NutriscoreDataMapper:
             nutriscore_data[field] = NutrientAmountMapper().map_nutrient(value, unit)
 
         return NutriscoreData(**nutriscore_data)
-
-    def map_off_row_to_nutriscore_data(
-        self, row: list[str], header: list[str]
-    ) -> NutriscoreData:
-        """Maps the values in a given OFF (csv) product to a NutriscoreData object"""
-
-        def safe_get(field_name: str):
-            try:
-                idx = header.index(field_name)
-                return row[idx] if idx < len(row) and row[idx] != "" else None
-            except ValueError:
-                return None
-
-        return NutriscoreData(
-            score=(
-                self.number_mapper.map_letter_to_number(safe_get("nutriscore_grade"))
-                if safe_get("nutriscore_grade")
-                else None
-            ),
-            energy_100g=Converter.safe_float(safe_get("energy_100g")),
-            fibers_100g=safe_get("fiber_100g"),
-            fruit_percentage=Converter.safe_float(
-                safe_get("fruits-vegetables-nuts_100g")
-            ),
-            proteins_100g=safe_get("proteins_100g"),
-            saturated_fats_100g=Converter.safe_float(safe_get("saturated-fat_100g")),
-            sodium_100g=safe_get("sodium_100g"),
-            sugar_100g=safe_get("sugars_100g"),
-            is_beverage=None,
-        )
 
     def map_off_dict_to_nutriscore_data(self, product_dict: dict) -> NutriscoreData:
         """Maps the values in a given OFF (jsonl) product to a NutriscoreData object"""
