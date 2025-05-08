@@ -64,7 +64,7 @@ def test_should_return_given_origins_in_ingredients_origins_for_given_off_dict(
 
     assert (
         result.origins == off_dict["origins"]
-    ), f"Expected origins of {off_dict["origins"]}, got {result.origins}"
+    ), f"Expected origins of {off_dict['origins']}, got {result.origins}"
 
 
 def test_should_return_empty_percent_in_ingredients_origins_for_given_off_dict(

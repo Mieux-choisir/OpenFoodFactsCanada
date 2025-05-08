@@ -85,7 +85,7 @@ def test_should_return_correct_score_for_present_score_in_nova_data_for_given_of
 
     assert result.score == int(
         off_dict["nova_group"]
-    ), f"Expected nova score to be {int(off_dict["nova_group"])}, got {result.score}"
+    ), f"Expected nova score to be {int(off_dict['nova_group'])}, got {result.score}"
 
 
 def test_should_return_empty_score_for_invalid_score_in_nova_data_for_given_off_dict(

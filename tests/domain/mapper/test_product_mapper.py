@@ -462,10 +462,10 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_fdc_dict
 
     assert (
         result.product_name == fdc_dict["description"].strip().title()
-    ), f"Expected product name field to be {fdc_dict["description"].strip()}, got {result.product_name}"
+    ), f"Expected product name field to be {fdc_dict['description'].strip()}, got {result.product_name}"
     assert (
         result.brand_owner == fdc_dict["brandOwner"].strip()
-    ), f"Expected brand name field to be {fdc_dict["brandOwner"].strip()}, got {result.brand_owner}"
+    ), f"Expected brand name field to be {fdc_dict['brandOwner'].strip()}, got {result.brand_owner}"
 
 
 def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
@@ -475,7 +475,7 @@ def test_should_return_given_id_for_id_original_in_product_for_given_fdc_dict(
 
     assert (
         result.id_original == fdc_dict["gtinUpc"].strip()
-    ), f"Expected original id field to be {fdc_dict["gtinUpc"].strip()}, got {result.id_original}"
+    ), f"Expected original id field to be {fdc_dict['gtinUpc'].strip()}, got {result.id_original}"
 
 
 def test_should_return_id_without_zeros_at_the_beginning_and_without_hyphens_for_id_match_in_product_for_given_fdc_dict(
@@ -496,7 +496,7 @@ def test_should_return_given_brand_name_in_brands_list_in_product_for_given_fdc_
 
     assert result.brands == [
         fdc_dict["brandName"].strip()
-    ], f"Expected brands field to be {[fdc_dict["gtinUpc"].strip()]}, got {result.brands}"
+    ], f"Expected brands field to be {[fdc_dict['gtinUpc'].strip()]}, got {result.brands}"
 
 
 def test_should_return_empty_brands_list_in_product_for_given_fdc_dict(
@@ -514,7 +514,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_fdc_dict(
 
     assert (
         result.ingredients == mock_fdc_functions["ingredients"]
-    ), f"Expected ingredients field to be {mock_fdc_functions["ingredients"]}, got {result.ingredients}"
+    ), f"Expected ingredients field to be {mock_fdc_functions['ingredients']}, got {result.ingredients}"
 
 
 def test_should_return_mapped_off_categories_in_product_for_fdc_dict(
@@ -545,7 +545,7 @@ def test_should_return_mapped_nutrition_facts_in_product_for_given_fdc_dict(
 
     assert (
         result.nutrition_facts == mock_fdc_functions["nutrition_facts"]
-    ), f"Expected nutrition facts field to be {mock_fdc_functions["nutrition_facts"]}, got {result.nutrition_facts}"
+    ), f"Expected nutrition facts field to be {mock_fdc_functions['nutrition_facts']}, got {result.nutrition_facts}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_fdc_dict(
@@ -555,7 +555,7 @@ def test_should_return_mapped_nutriscore_data_in_product_for_given_fdc_dict(
 
     assert (
         result.nutriscore_data == mock_fdc_functions["nutriscore_data"]
-    ), f"Expected nutriscore data field to be {mock_fdc_functions["nutriscore_data"]}, got {result.nutriscore_data}"
+    ), f"Expected nutriscore data field to be {mock_fdc_functions['nutriscore_data']}, got {result.nutriscore_data}"
 
 
 def test_should_return_correctly_split_list_for_food_groups_en_in_product_for_given_fdc_dict(
@@ -635,7 +635,7 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_row(
 
     assert (
         result.product_name == row[header.index("product_name")].strip().title()
-    ), f"Expected product name field to be {row[header.index("product_name")].strip().title()}, got {result.product_name}"
+    ), f"Expected product name field to be {row[header.index('product_name')].strip().title()}, got {result.product_name}"
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_row(
@@ -647,7 +647,7 @@ def test_should_return_empty_string_fields_for_given_empty_strings_in_product_fo
 
     assert (
         result.product_name is None
-    ), f"Expected product name field to be {row[header.index("product_name")].strip().title()}, got {result.product_name}"
+    ), f"Expected product name field to be {row[header.index('product_name')].strip().title()}, got {result.product_name}"
 
 
 def test_should_return_mapped_brand_owner_name_in_product_for_given_off_row(
@@ -659,7 +659,7 @@ def test_should_return_mapped_brand_owner_name_in_product_for_given_off_row(
 
     assert (
         result.brand_owner == mock_off_row_functions["brand_owner"]
-    ), f"Expected brand name field to be {mock_off_row_functions["brand_owner"]}, got {result.brand_owner}"
+    ), f"Expected brand name field to be {mock_off_row_functions['brand_owner']}, got {result.brand_owner}"
 
 
 def test_should_return_given_id_for_id_original_in_product_for_given_off_row(
@@ -671,7 +671,7 @@ def test_should_return_given_id_for_id_original_in_product_for_given_off_row(
 
     assert (
         result.id_original == row[header.index("code")].strip()
-    ), f"Expected original id field to be {row[header.index("code")].strip()}, got {result.id_original}"
+    ), f"Expected original id field to be {row[header.index('code')].strip()}, got {result.id_original}"
 
 
 def test_should_return_id_without_zeros_at_the_beginning_and_without_hyphens_for_id_match_in_product_for_given_off_row(
@@ -781,7 +781,7 @@ def test_should_return_mapped_brands_in_product_for_given_off_row(
 
     assert (
         result.brands == mock_off_row_functions["brands"]
-    ), f"Expected brands field to be {mock_off_row_functions["brands"]}, got {result.brands}"
+    ), f"Expected brands field to be {mock_off_row_functions['brands']}, got {result.brands}"
 
 
 def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_row(
@@ -793,7 +793,7 @@ def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_r
 
     assert (
         result.food_groups_en == mock_off_row_functions["food_groups"]
-    ), f"Expected food groups en field to be {mock_off_row_functions["food_groups"]}, got {result.food_groups_en}"
+    ), f"Expected food groups en field to be {mock_off_row_functions['food_groups']}, got {result.food_groups_en}"
 
 
 def test_should_return_mapped_ingredients_in_product_for_given_off_row(
@@ -805,7 +805,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_row(
 
     assert (
         result.ingredients == mock_off_row_functions["ingredients"]
-    ), f"Expected ingredients field to be {mock_off_row_functions["ingredients"]}, got {result.ingredients}"
+    ), f"Expected ingredients field to be {mock_off_row_functions['ingredients']}, got {result.ingredients}"
 
 
 def test_should_return_mapped_off_categories_in_product_for_off_row(
@@ -841,7 +841,7 @@ def test_should_return_mapped_nutrition_facts_in_product_for_given_off_row(
 
     assert (
         result.nutrition_facts == mock_off_row_functions["nutrition_facts"]
-    ), f"Expected nutrition facts field to be {mock_off_row_functions["nutrition_facts"]}, got {result.nutrition_facts}"
+    ), f"Expected nutrition facts field to be {mock_off_row_functions['nutrition_facts']}, got {result.nutrition_facts}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_row(
@@ -853,7 +853,7 @@ def test_should_return_mapped_nutriscore_data_in_product_for_given_off_row(
 
     assert (
         result.nutriscore_data == mock_off_row_functions["nutriscore_data"]
-    ), f"Expected nutriscore data field to be {mock_off_row_functions["nutriscore_data"]}, got {result.nutriscore_data}"
+    ), f"Expected nutriscore data field to be {mock_off_row_functions['nutriscore_data']}, got {result.nutriscore_data}"
 
 
 def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_row(
@@ -865,7 +865,7 @@ def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_row(
 
     assert (
         result.ecoscore_data == mock_off_row_functions["ecoscore_data"]
-    ), f"Expected ecoscore data field to be {mock_off_row_functions["ecoscore_data"]}, got {result.ecoscore_data}"
+    ), f"Expected ecoscore data field to be {mock_off_row_functions['ecoscore_data']}, got {result.ecoscore_data}"
 
 
 def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(
@@ -877,7 +877,7 @@ def test_should_return_mapped_nova_data_field_in_product_for_given_off_row(
 
     assert (
         result.nova_data == mock_off_row_functions["nova_data"]
-    ), f"Expected nova data field to be {mock_off_row_functions["nova_data"]}, got {result.nova_data}"
+    ), f"Expected nova data field to be {mock_off_row_functions['nova_data']}, got {result.nova_data}"
 
 
 # ----------------------------------------------------------------
@@ -892,7 +892,7 @@ def test_should_return_correctly_formatted_strings_in_product_for_given_off_dict
 
     assert (
         result.product_name == off_dict["product_name"].strip().title()
-    ), f"Expected product name field to be {off_dict["product_name"].strip().title()}, got {result.product_name}"
+    ), f"Expected product name field to be {off_dict['product_name'].strip().title()}, got {result.product_name}"
 
 
 def test_should_return_empty_string_fields_for_given_empty_strings_in_product_for_given_off_dict(
@@ -912,7 +912,7 @@ def test_should_return_mapped_brand_owner_name_in_product_for_given_off_dict(
 
     assert (
         result.brand_owner == mock_off_dict_functions["brand_owner"]
-    ), f"Expected brand owner field to be {mock_off_dict_functions["brand_owner"]}, got {result.brand_name}"
+    ), f"Expected brand owner field to be {mock_off_dict_functions['brand_owner']}, got {result.brand_name}"
 
 
 def test_should_return_given_id_for_id_original_in_product_for_given_off_dict(
@@ -922,7 +922,7 @@ def test_should_return_given_id_for_id_original_in_product_for_given_off_dict(
 
     assert (
         result.id_original == off_dict["code"].strip()
-    ), f"Expected original id field to be {off_dict["code"].strip()}, got {result.id_original}"
+    ), f"Expected original id field to be {off_dict['code'].strip()}, got {result.id_original}"
 
 
 def test_should_return_id_without_zeros_at_the_beginning_id_and_without_hyphens_for_id_match_in_product_for_given_off_dict(
@@ -1002,7 +1002,7 @@ def test_should_return_mapped_brands_in_product_for_given_off_dict(
 
     assert (
         result.brands == mock_off_dict_functions["brands"]
-    ), f"Expected brands field to be {mock_off_dict_functions["brands"]}, got {result.brands}"
+    ), f"Expected brands field to be {mock_off_dict_functions['brands']}, got {result.brands}"
 
 
 def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_dict(
@@ -1012,7 +1012,7 @@ def test_should_return_correctly_split_food_groups_en_in_product_for_given_off_d
 
     assert (
         result.food_groups_en == mock_off_dict_functions["food_groups"]
-    ), f"Expected food groups en field to be {mock_off_dict_functions["food_groups"]}, got {result.food_groups_en}"
+    ), f"Expected food groups en field to be {mock_off_dict_functions['food_groups']}, got {result.food_groups_en}"
 
 
 def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
@@ -1022,7 +1022,7 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
 
     assert (
         result.ingredients == mock_off_dict_functions["ingredients"]
-    ), f"Expected ingredients field to be {mock_off_dict_functions["ingredients"]}, got {result.ingredients}"
+    ), f"Expected ingredients field to be {mock_off_dict_functions['ingredients']}, got {result.ingredients}"
 
 
 def test_should_return_mapped_off_categories_in_product_for_off_dict(
@@ -1053,7 +1053,7 @@ def test_should_return_mapped_nutrition_facts_in_product_for_given_off_dict(
 
     assert (
         result.nutrition_facts == mock_off_dict_functions["nutrition_facts"]
-    ), f"Expected nutrition facts field to be {mock_off_dict_functions["nutrition_facts"]}, got {result.nutrition_facts}"
+    ), f"Expected nutrition facts field to be {mock_off_dict_functions['nutrition_facts']}, got {result.nutrition_facts}"
 
 
 def test_should_return_mapped_nutriscore_data_in_product_for_given_off_dict(
@@ -1063,7 +1063,7 @@ def test_should_return_mapped_nutriscore_data_in_product_for_given_off_dict(
 
     assert (
         result.nutriscore_data == mock_off_dict_functions["nutriscore_data"]
-    ), f"Expected nutrition facts field to be {mock_off_dict_functions["nutriscore_data"]}, got {result.nutriscore_data}"
+    ), f"Expected nutrition facts field to be {mock_off_dict_functions['nutriscore_data']}, got {result.nutriscore_data}"
 
 
 def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_dict(
@@ -1073,7 +1073,7 @@ def test_should_return_mapped_ecoscore_data_field_in_product_for_given_off_dict(
 
     assert (
         result.ecoscore_data == mock_off_dict_functions["ecoscore_data"]
-    ), f"Expected ecoscore data field to be {mock_off_dict_functions["ecoscore_data"]}, got {result.ecoscore_data}"
+    ), f"Expected ecoscore data field to be {mock_off_dict_functions['ecoscore_data']}, got {result.ecoscore_data}"
 
 
 def test_should_return_mapped_nova_data_field_in_product_for_given_off_dict(
@@ -1083,4 +1083,4 @@ def test_should_return_mapped_nova_data_field_in_product_for_given_off_dict(
 
     assert (
         result.nova_data == mock_off_dict_functions["nova_data"]
-    ), f"Expected nova data field to be {mock_off_dict_functions["nova_data"]}, got {result.nova_data}"
+    ), f"Expected nova data field to be {mock_off_dict_functions['nova_data']}, got {result.nova_data}"

@@ -8,6 +8,7 @@ from scripts.data_importer import DataImporter
 VALID_FDC_PRODUCT_COUNT = 2
 VALID_OFF_PRODUCT_COUNT = 2
 LIMITED_OFF_PRODUCT_COUNT = 1
+BATCH_SIZE = 1000
 
 
 @pytest.fixture
@@ -25,7 +26,8 @@ def data_importer(product_mapper):
 # ----------------------------------------------------------------
 
 
-def test_should_import_fdc_data_when_valid_json(data_importer):
+@patch("scripts.data_loader.DataLoader.load_products_to_mongo")
+def test_should_import_fdc_data_when_valid_json(mock_loader, data_importer):
     json_content = """
     {
         "BrandedFoods": [
@@ -35,20 +37,22 @@ def test_should_import_fdc_data_when_valid_json(data_importer):
     }
     """
     mock_product = MagicMock(spec=Product)
-    data_importer.product_mapper.map_fdc_dict_to_product.return_value = mock_product
+    mock_mapper = MagicMock(spec=ProductMapper)
+    mock_mapper.map_fdc_dict_to_product = MagicMock(return_value=mock_product)
+
+    data_importer = DataImporter(mock_mapper)
+    data_importer.config = MagicMock()
+    data_importer.config.use_docker = False
 
     with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+        data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
 
-    assert (
-        len(result) == VALID_FDC_PRODUCT_COUNT
-    ), f"Expected {VALID_FDC_PRODUCT_COUNT} products, got {len(result)}"
-    assert all(
-        isinstance(p, Product) for p in result
-    ), "All returned elements should be instances of Product"
+    assert mock_mapper.map_fdc_dict_to_product.call_count == 2
+    mock_loader.assert_called()
 
 
-def test_should_ignore_non_us_products_in_fdc_data(data_importer):
+@patch("scripts.data_loader.DataLoader.load_products_to_mongo")
+def test_should_ignore_non_us_products_in_fdc_data(mock_loader, data_importer):
     json_content = """
     {
         "BrandedFoods": [
@@ -58,21 +62,37 @@ def test_should_ignore_non_us_products_in_fdc_data(data_importer):
     }
     """
     mock_product = MagicMock(spec=Product)
-    data_importer.product_mapper.map_fdc_dict_to_product.return_value = mock_product
+    mock_mapper = MagicMock(spec=ProductMapper)
+    mock_mapper.map_fdc_dict_to_product = MagicMock(return_value=mock_product)
+
+    data_importer = DataImporter(mock_mapper)
+    data_importer.config = MagicMock()
+    data_importer.config.use_docker = False
 
     with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+        data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
 
-    assert len(result) == 1, f"Expected 1 US product, but got {len(result)}"
+    assert mock_mapper.map_fdc_dict_to_product.call_count == 1
 
 
-def test_should_return_empty_list_when_fdc_file_is_empty(data_importer):
+@patch("scripts.data_loader.DataLoader.load_products_to_mongo")
+def test_should_return_empty_list_when_fdc_file_is_empty(mock_loader, data_importer):
     json_content = "{}"
 
-    with patch("builtins.open", mock_open(read_data=json_content)):
-        result = data_importer.import_json_fdc_data("mock_file.json")
+    mock_mapper = MagicMock(spec=ProductMapper)
+    mock_mapper.map_fdc_dict_to_product = MagicMock()
 
-    assert result == [], "Expected an empty list when the FDC file is empty"
+    data_importer = DataImporter(mock_mapper)
+    data_importer.config = MagicMock()
+    data_importer.config.use_docker = False
+
+    with patch("builtins.open", mock_open(read_data=json_content)):
+        data_importer.import_json_fdc_data("mock_file.json", BATCH_SIZE)
+
+    mock_mapper.map_fdc_dict_to_product.assert_not_called()
+    mock_loader.assert_called_once_with(
+        [], collection_name="fdc_products", use_docker=False
+    )
 
 
 # ----------------------------------------------------------------
@@ -80,32 +100,36 @@ def test_should_return_empty_list_when_fdc_file_is_empty(data_importer):
 # ----------------------------------------------------------------
 
 
-def test_should_import_off_jsonl_data(data_importer):
+@patch("scripts.data_loader.DataLoader.load_products_to_mongo")
+def test_should_import_off_jsonl_data(mock_loader, data_importer):
     json_lines = '{"code": "123"}\n{"code": "456"}\n'
     mock_product = MagicMock(spec=Product)
     data_importer.product_mapper.map_off_dict_to_product.return_value = mock_product
+    data_importer.config = MagicMock()
+    data_importer.config.use_docker = False
 
     with patch("builtins.open", mock_open(read_data=json_lines)):
-        result = data_importer.import_jsonl_off_data("mock_file.jsonl")
+        data_importer.import_jsonl_off_data("mock_file.jsonl", batch_size=100)
 
-    assert (
-        len(result) == VALID_OFF_PRODUCT_COUNT
-    ), f"Expected {VALID_OFF_PRODUCT_COUNT} products, got {len(result)}"
+    mock_loader.assert_called_once_with(
+        [mock_product, mock_product], collection_name="off_products", use_docker=False
+    )
 
 
-def test_should_apply_limit_on_off_jsonl_data(data_importer):
+@patch("scripts.data_loader.DataLoader.load_products_to_mongo")
+def test_should_apply_limit_on_off_jsonl_data(mock_loader, data_importer):
     json_lines = '{"code": "123"}\n{"code": "456"}\n'
     mock_product = MagicMock(spec=Product)
     data_importer.product_mapper.map_off_dict_to_product.return_value = mock_product
+    data_importer.config = MagicMock()
+    data_importer.config.use_docker = False
 
     with patch("builtins.open", mock_open(read_data=json_lines)):
-        result = data_importer.import_jsonl_off_data(
-            "mock_file.jsonl", limit=LIMITED_OFF_PRODUCT_COUNT
-        )
+        data_importer.import_jsonl_off_data("mock_file.jsonl", batch_size=100, limit=1)
 
-    assert (
-        len(result) == LIMITED_OFF_PRODUCT_COUNT
-    ), f"Expected {LIMITED_OFF_PRODUCT_COUNT} products, got {len(result)}"
+    mock_loader.assert_called_once_with(
+        [mock_product], collection_name="off_products", use_docker=False
+    )
 
 
 # ----------------------------------------------------------------

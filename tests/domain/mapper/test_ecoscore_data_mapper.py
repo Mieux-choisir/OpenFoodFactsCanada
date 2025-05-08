@@ -107,7 +107,7 @@ def test_should_return_correct_origins_in_ecoscore_data_for_given_off_row(
 
     assert (
         result.ingredients_origins == mock_off_row_functions["origins"]
-    ), f"Expected origins of {mock_off_row_functions["origins"]}, got {result.ingredients_origins}"
+    ), f"Expected origins of {mock_off_row_functions['origins']}, got {result.ingredients_origins}"
 
 
 def test_should_return_correct_packaging_in_ecoscore_data_for_given_off_row(
@@ -120,7 +120,7 @@ def test_should_return_correct_packaging_in_ecoscore_data_for_given_off_row(
 
     assert (
         result.packaging == mock_off_row_functions["packaging"]
-    ), f"Expected packaging of {mock_off_row_functions["packaging"]}, got {result.packaging}"
+    ), f"Expected packaging of {mock_off_row_functions['packaging']}, got {result.packaging}"
 
 
 def test_should_return_correct_production_system_in_ecoscore_data_for_given_off_row(
@@ -133,7 +133,7 @@ def test_should_return_correct_production_system_in_ecoscore_data_for_given_off_
 
     assert (
         result.production_system == mock_off_row_functions["production_system"]
-    ), f"Expected production system of {mock_off_row_functions["production_system"]}, got {result.production_system}"
+    ), f"Expected production system of {mock_off_row_functions['production_system']}, got {result.production_system}"
 
 
 def test_should_return_empty_threatened_species_in_ecoscore_data_for_given_off_row(
@@ -183,7 +183,7 @@ def test_should_return_correct_origins_in_ecoscore_data_for_given_off_dict(
 
     assert (
         result.ingredients_origins == mock_off_dict_functions["origins"]
-    ), f"Expected origins of {mock_off_dict_functions["origins"]}, got {result.ingredients_origins}"
+    ), f"Expected origins of {mock_off_dict_functions['origins']}, got {result.ingredients_origins}"
 
 
 def test_should_return_correct_packaging_in_ecoscore_data_for_given_off_dict(
@@ -195,7 +195,7 @@ def test_should_return_correct_packaging_in_ecoscore_data_for_given_off_dict(
 
     assert (
         result.packaging == mock_off_dict_functions["packaging"]
-    ), f"Expected packaging of {mock_off_dict_functions["packaging"]}, got {result.packaging}"
+    ), f"Expected packaging of {mock_off_dict_functions['packaging']}, got {result.packaging}"
 
 
 def test_should_return_correct_production_system_in_ecoscore_data_for_given_off_dict(
@@ -207,7 +207,7 @@ def test_should_return_correct_production_system_in_ecoscore_data_for_given_off_
 
     assert (
         result.production_system == mock_off_dict_functions["production_system"]
-    ), f"Expected production system of {mock_off_dict_functions["production_system"]}, got {result.production_system}"
+    ), f"Expected production system of {mock_off_dict_functions['production_system']}, got {result.production_system}"
 
 
 def test_should_return_empty_threatened_species_in_ecoscore_data_for_given_off_dict(
