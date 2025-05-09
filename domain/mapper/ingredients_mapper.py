@@ -11,7 +11,6 @@ class IngredientsMapper:
 
     Methods:
         map_fdc_dict_to_ingredients(ingredients): Maps the given ingredients string to an Ingredients object
-        map_off_row_to_ingredients(row, header): Maps the given csv row to an Ingredients object
         map_off_dict_to_ingredients(product_dict): Maps the given dictionary to an Ingredients object
     """
 
@@ -28,21 +27,6 @@ class IngredientsMapper:
 
         return Ingredients(
             ingredients_list=ingredients_list, ingredients_text=ingredients.title()
-        )
-
-    def map_off_row_to_ingredients(
-        self, row: list[str], header: list[str]
-    ) -> Ingredients:
-        """Maps the ingredients string of a given OFF (csv) product to an Ingredients object containing:
-        - ingredients_list: a normalized list of ingredients
-        - ingredients_text: the formatted ingredients string"""
-        ingredients_text_index = header.index("ingredients_text")
-
-        return Ingredients(
-            ingredients_list=self.ingredient_normalizer.normalise_ingredients_list(
-                row[ingredients_text_index]
-            ),
-            ingredients_text=row[ingredients_text_index].title(),
         )
 
     def map_off_dict_to_ingredients(self, product_dict: dict) -> Ingredients:

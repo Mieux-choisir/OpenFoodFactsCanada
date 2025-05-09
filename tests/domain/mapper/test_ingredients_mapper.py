@@ -60,54 +60,6 @@ def test_should_correctly_call_ingredients_normalizer_for_given_fdc_dict(
 
 
 # ----------------------------------------------------------------
-# Tests map_off_row_to_ingredients
-# ----------------------------------------------------------------
-
-
-def test_should_return_ingredients_text_in_title_format_in_ingredients_for_given_off_row(
-    ingredients_mapper,
-):
-    row = ["FLOUR, SUGAR, PEANUTS."]
-    header = ["ingredients_text"]
-
-    result = ingredients_mapper.map_off_row_to_ingredients(row, header)
-
-    assert (
-        result.ingredients_text == row[0].title()
-    ), f"Expected ingredients text of {row[0].title()}, got {result.ingredients_text}"
-
-
-def test_should_return_ingredients_list_from_ingredients_normalizer_in_ingredients_for_given_off_row(
-    ingredients_mapper,
-):
-    row = ["FLOUR, SUGAR, PEANUTS."]
-    header = ["ingredients_text"]
-    ingredients_list = ["Flour", "sugar", "Peanuts"]
-    ingredients_mapper.ingredient_normalizer.normalise_ingredients_list.return_value = (
-        ingredients_list
-    )
-
-    result = ingredients_mapper.map_off_row_to_ingredients(row, header)
-
-    assert (
-        result.ingredients_list == ingredients_list
-    ), f"Expected ingredients list of {ingredients_list}, got {result.ingredients_list}"
-
-
-def test_should_correctly_call_ingredients_normalizer_for_given_off_row(
-    ingredients_mapper,
-):
-    row = ["FLOUR, SUGAR, PEANUTS."]
-    header = ["ingredients_text"]
-
-    ingredients_mapper.map_off_row_to_ingredients(row, header)
-
-    ingredients_mapper.ingredient_normalizer.normalise_ingredients_list.assert_called_with(
-        row[0]
-    )
-
-
-# ----------------------------------------------------------------
 # Tests map_off_dict_to_ingredients
 # ----------------------------------------------------------------
 

@@ -50,22 +50,6 @@ def fdc_dict():
 
 
 @pytest.fixture
-def off_rows():
-    header = [
-        "fat_100g",
-        "salt_100g",
-        "saturated-fat_100g",
-        "sugars_100g",
-        "carbohydrates_100g",
-        "energy-kcal_100g",
-        "vitamin-a_100g",
-    ]
-    row = ["45.2", "2.2", "63.78", "45.14", "423", "10", "120"]
-
-    return row, header
-
-
-@pytest.fixture
 def off_dict():
     off_dict = {
         "nutriments": {
@@ -169,35 +153,6 @@ def test_should_return_empty_is_for_prepared_food_field_for_other_state_code_in_
     )
 
     assert result.nutrition_facts_per_serving.is_for_prepared_food is None
-
-
-# ----------------------------------------------------------------
-# Tests map_off_row_to_nutrition_facts
-# ----------------------------------------------------------------
-
-
-def test_should_return_correct_nutrition_facts_for_given_off_row(
-    nutrition_facts_mapper, off_rows
-):
-    row, header = off_rows
-
-    result = nutrition_facts_mapper.map_off_row_to_nutrition_facts(row, header)
-
-    expected_nutrition_facts = NutritionFacts(
-        nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(
-            fat_100g=row[header.index("fat_100g")],
-            salt_100g=row[header.index("salt_100g")],
-            saturated_fats_100g=row[header.index("saturated-fat_100g")],
-            sugar_100g=row[header.index("sugars_100g")],
-            carbohydrates_100g=row[header.index("carbohydrates_100g")],
-            energy_kcal_100g=row[header.index("energy-kcal_100g")],
-            vitamin_a_100g=row[header.index("vitamin-a_100g")],
-        )
-    )
-
-    assert (
-        result == expected_nutrition_facts
-    ), f"Expected {expected_nutrition_facts}, got {result}"
 
 
 # ----------------------------------------------------------------

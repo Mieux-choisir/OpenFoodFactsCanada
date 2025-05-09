@@ -8,7 +8,6 @@ from domain.product.complexFields.nutritionFactsPerHundredGrams import (
 from domain.product.complexFields.nutritionFactsPerServing import (
     NutritionFactsPerServing,
 )
-from domain.utils.converter import Converter
 
 
 class NutritionFactsMapper:
@@ -20,7 +19,6 @@ class NutritionFactsMapper:
 
     Methods:
         map_fdc_dict_to_nutrition_facts(food_nutrients): Maps the given food nutrients list to a NutritionFacts object
-        map_off_row_to_nutrition_facts(row, header): Maps the given csv row to a NutritionFacts object
         map_off_dict_to_nutrition_facts(product_dict): Maps the given dictionary to a NutritionFacts object
     """
 
@@ -61,91 +59,6 @@ class NutritionFactsMapper:
         return NutritionFacts(
             nutrition_facts_per_hundred_grams=nutrition_facts_per_100g,
             nutrition_facts_per_serving=nutrition_facts_per_serving,
-        )
-
-    @staticmethod
-    def map_off_row_to_nutrition_facts(
-        row: list[str], header: list[str]
-    ) -> NutritionFacts:
-        """Maps the values in a given OFF (csv) product to a NutritionFacts object"""
-        field_mapping = {
-            "saturated-fat_100g": "saturated_fats_100g",
-            "sugars_100g": "sugar_100g",
-            "trans-fat_100g": "trans_fats_100g",
-            "fiber_100g": "fibers_100g",
-            "monounsaturated-fat_100g": "monounsaturated_fats_100g",
-            "polyunsaturated-fat_100g": "polyunsaturated_fats_100g",
-            "energy-kcal_100g": "energy_kcal_100g",
-            "vitamin-a_100g": "vitamin_a_100g",
-            "vitamin-b1_100g": "vitamin_b1_100g",
-            "vitamin-b2_100g": "vitamin_b2_100g",
-            "vitamin-b6_100g": "vitamin_b6_100g",
-            "vitamin-b9_100g": "vitamin_b9_100g",
-            "vitamin-b12_100g": "vitamin_b12_100g",
-            "vitamin-c_100g": "vitamin_c_100g",
-            "vitamin-pp_100g": "vitamin_pp_100g",
-            "pantothenic-acid_100g": "pantothenic_acid_100g",
-            "soluble-fiber_100g": "soluble_fiber_100g",
-            "insoluble-fiber_100g": "insoluble_fiber_100g",
-        }
-
-        fields = [
-            "fat_100g",
-            "salt_100g",
-            "saturated-fat_100g",
-            "sugars_100g",
-            "carbohydrates_100g",
-            "energy-kcal_100g",
-            "vitamin-a_100g",
-            "proteins_100g",
-            "fiber_100g",
-            "sodium_100g",
-            "monounsaturated-fat_100g",
-            "polyunsaturated-fat_100g",
-            "trans-fat_100g",
-            "cholesterol_100g",
-            "calcium_100g",
-            "iron_100g",
-            "potassium_100g",
-            "vitamin-b1_100g",
-            "vitamin-b2_100g",
-            "vitamin-b6_100g",
-            "vitamin-b9_100g",
-            "vitamin-b12_100g",
-            "vitamin-c_100g",
-            "vitamin-pp_100g",
-            "phosphorus_100g",
-            "magnesium_100g",
-            "zinc_100g",
-            "folates_100g",
-            "pantothenic-acid_100g",
-            "soluble-fiber_100g",
-            "insoluble-fiber_100g",
-            "copper_100g",
-            "manganese_100g",
-            "polyols_100g",
-            "selenium_100g",
-            "phylloguinone_100g",
-            "iodine_100g",
-            "biotin_100g",
-            "caffeine_100g",
-            "molybdenum_100g",
-            "chromium_100g",
-        ]
-
-        nutrition_facts_data = {
-            field_mapping.get(field, field): (
-                Converter.safe_float(row[header.index(field)])
-                if field in header and header.index(field) < len(row)
-                else None
-            )
-            for field in fields
-        }
-
-        return NutritionFacts(
-            nutrition_facts_per_hundred_grams=NutritionFactsPerHundredGrams(
-                **nutrition_facts_data
-            )
         )
 
     @staticmethod

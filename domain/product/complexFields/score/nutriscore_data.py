@@ -18,7 +18,7 @@ class NutriscoreData(ComplexField):
         score (Optional[int]: The NutriScore
     """
 
-    energy_100g: Optional[float] = None
+    energy_kcal_100g: Optional[float] = None
     fibers_100g: Optional[float] = None
     proteins_100g: Optional[float] = None
     saturated_fats_100g: Optional[float] = None
@@ -33,7 +33,7 @@ class NutriscoreData(ComplexField):
         if not data:
             return cls()
         return cls(
-            energy_100g=data.get("energy_100g"),
+            energy_kcal_100g=data.get("energy_kcal_100g"),
             fibers_100g=data.get("fibers_100g"),
             proteins_100g=data.get("proteins_100g"),
             saturated_fats_100g=data.get("saturated_fats_100g"),
