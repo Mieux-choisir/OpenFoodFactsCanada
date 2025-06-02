@@ -3,6 +3,8 @@ from collections import Counter
 
 from pymongo import MongoClient
 
+from scripts.statistics_creator import StatisticsCreator
+
 
 class ProductCompleter:
     def complete_products(self, use_docker=True):
@@ -16,6 +18,9 @@ class ProductCompleter:
 
         matched_off_products = db["matched_off_products"].find().sort("id_match", 1)
         matched_fdc_products = db["matched_fdc_products"].find().sort("id_match", 1)
+
+        nb_matched_off_products = db["matched_off_products"].count_documents({})
+        nb_matched_fdc_products = db["matched_fdc_products"].count_documents({})
 
         final_products = db["final_products"]
 
@@ -41,7 +46,7 @@ class ProductCompleter:
 
             while off_product and fdc_product:
                 if off_product["id_match"] == fdc_product["id_match"]:
-                    merged_off_product, overwritten, completed = self.merge_documents(
+                    merged_off_product, overwritten, completed = self.__merge_documents(
                         off_product, fdc_product
                     )
 
@@ -57,18 +62,15 @@ class ProductCompleter:
                     off_product = next(off_cursor, None)
                     fdc_product = next(fdc_cursor, None)
 
-            logging.info("=== Merge Summary ===")
-            logging.info("Most overwritten fields:")
-            for field, count in overwrite_counter.most_common():
-                logging.info(f"  {field}: {count} times")
+            StatisticsCreator().make_merge_summary(
+                overwrite_counter,
+                complete_counter,
+                count_skipped,
+                nb_matched_off_products,
+                nb_matched_fdc_products,
+            )
 
-            logging.info("Most completed fields:")
-            for field, count in complete_counter.most_common():
-                logging.info(f"  {field}: {count} times")
-
-            logging.info(f"Total skipped products: {count_skipped}")
-
-    def merge_documents(self, off_product, fdc_product, parent_key=""):
+    def __merge_documents(self, off_product, fdc_product, parent_key=""):
         if not isinstance(off_product, dict) or not isinstance(fdc_product, dict):
             return off_product if off_product is not None else fdc_product, [], []
 
@@ -111,7 +113,7 @@ class ProductCompleter:
             ]:
                 merged[key] = off_value
             elif isinstance(off_value, dict) and isinstance(fdc_value, dict):
-                merged_value, sub_overwritten, sub_completed = self.merge_documents(
+                merged_value, sub_overwritten, sub_completed = self.__merge_documents(
                     off_value, fdc_value, full_key
                 )
                 merged[key] = merged_value
