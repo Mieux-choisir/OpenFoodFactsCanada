@@ -70,6 +70,7 @@ class CategoryMapper:
 
     @staticmethod
     def get_fdc_category(category: str) -> str:
+        """Returns the formatted given FDC category"""
         formatted_category = re.sub(
             " +[-&/()']* *|[=&/()]", "-", category.strip().lower().replace(",", "")
         )

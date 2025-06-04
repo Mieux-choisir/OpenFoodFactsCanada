@@ -341,7 +341,7 @@ def __record_values_for_field_fdc(
     if show_values:
         __show_recorded_values(hashable_values, non_hashable_values)
 
-    logging.info(f"values for {field_name} field recorded")
+    logging.info(f"Values for {field_name} field recorded")
     return hashable_values, non_hashable_values
 
 

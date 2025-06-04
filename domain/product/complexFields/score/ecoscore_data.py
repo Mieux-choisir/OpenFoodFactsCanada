@@ -26,6 +26,7 @@ class EcoscoreData(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "EcoscoreData":
+        """Creates an EcoscoreData object from a data dictionary"""
         if not data:
             return cls()
         score = data.get("score")

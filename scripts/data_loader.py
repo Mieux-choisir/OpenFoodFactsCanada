@@ -102,9 +102,20 @@ class DataLoader:
         use_docker: bool = True,
         product_ids: list[str] = None,
     ) -> list[Product]:
+        """Fetches the products stored in the collection with the given name from the MongoDB database with the given name.
+         If the list of product_ids has ids then only the products with the given ids are fetched from the collection.
+
+         Args:
+             db_name(str): The name of the MongoDB databse used to fetch products
+             collection_name(str): The name of the MongoDB collection used to fetch products
+             use_docker(bool): A boolean indicating whether to use docker
+             product_ids(list[str]): A list of the ids of the wanted products, if empty, all products are fetched
+
+        Returns:
+            A list of the fetched products"""
         try:
             logging.info(
-                f"Récupération des produits depuis MongoDB ({db_name}.{collection_name})..."
+                f"Fetching products from MongoDB ({db_name}.{collection_name})..."
             )
             connection_string = (
                 "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
@@ -120,8 +131,9 @@ class DataLoader:
 
             products = [Product.from_dict(doc) for doc in raw_products]
 
-            logging.info(f"Nombre de produits récupérés: {len(products)}")
+            logging.info(f"Number of fetched products: {len(products)}")
             return products
+
         except Exception as e:
-            logging.error("Erreur lors de la récupération des produits: %s", e)
+            logging.error("Error when fetching products: %s", e)
             return []

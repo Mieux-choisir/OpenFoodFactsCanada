@@ -17,6 +17,7 @@ class NovaData(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "NovaData":
+        """Creates a NovaData object from a data dictionary"""
         if not data:
             return cls()
         return cls(

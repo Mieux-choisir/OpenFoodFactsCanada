@@ -1,9 +1,9 @@
 from typing import Optional, Dict, Any
 from domain.product.complexFields.complex_field import ComplexField
-from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+from domain.product.complexFields.nutrition_facts_per_hundred_grams import (
     NutritionFactsPerHundredGrams,
 )
-from domain.product.complexFields.nutritionFactsPerServing import (
+from domain.product.complexFields.nutrition_facts_per_serving import (
     NutritionFactsPerServing,
 )
 
@@ -22,17 +22,20 @@ class NutritionFacts(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "NutritionFacts":
+        """Creates a NutritionFacts object from a data dictionary"""
         if not data:
             return cls()
-        nhg_data = data.get("nutrition_facts_per_hundred_grams")
-        nserving_data = data.get("nutrition_facts_per_serving")
+        hundred_grams_data = data.get("nutrition_facts_per_hundred_grams")
+        serving_data = data.get("nutrition_facts_per_serving")
         return cls(
             nutrition_facts_per_hundred_grams=(
-                NutritionFactsPerHundredGrams.from_dict(nhg_data) if nhg_data else None
+                NutritionFactsPerHundredGrams.from_dict(hundred_grams_data)
+                if hundred_grams_data
+                else None
             ),
             nutrition_facts_per_serving=(
-                NutritionFactsPerServing.from_dict(nserving_data)
-                if nserving_data
+                NutritionFactsPerServing.from_dict(serving_data)
+                if serving_data
                 else None
             ),
         )

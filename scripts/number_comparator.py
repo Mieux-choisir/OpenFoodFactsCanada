@@ -8,13 +8,18 @@ class NumberComparator:
         100g, False otherwise
     """
 
-    def is_same_number(self, value, second_value, tolerance=0.1):
+    @staticmethod
+    def is_same_number(
+        value, second_value, tolerance=0.1
+    ):  # TODO used only in tests => remove it or call it in the import script
+        """Checks if two given numbers have the same value with a tolerance of difference"""
         return (
             abs(value - second_value) <= max(abs(value), abs(second_value)) * tolerance
         )
 
     @staticmethod
     def replace_null_string(off_field: float, fdc_field: float) -> float:
+        """Replaces None values with empty strings"""
         if off_field is None and fdc_field is not None:
             return fdc_field
         return off_field

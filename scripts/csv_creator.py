@@ -9,6 +9,21 @@ from domain.product.product import Product
 
 
 class CsvCreator:
+    """
+    This is a class that creates csv files that contain the data of products.
+
+    Attributes:
+        csv_files_base_names (str): The decimal value to convert sodium value to salt value
+        mandatory_columns (list[str]): The list of mandatory columns in the csv files
+        recommended_columns (list[str]): The list of recommended columns in the csv files
+        optional_columns (list[str]): The list of optional columns in the csv files
+        product_field_to_columns_mapping (dict): The mapping of the attributes of the class Product to the columns of the csv files
+
+    Methods:
+        create_csv_files_for_products(products_source, use_docker): Creates csv files that contain data on the products of the MongoDB collection with the
+        given name. Each csv file has a maximum number of products (10000 by default).
+    """
+
     def __init__(self, csv_files_base_names):
         self.csv_files_base_names = csv_files_base_names
         self.mandatory_columns = [
@@ -253,6 +268,8 @@ class CsvCreator:
     def create_csv_files_for_products(
         self, products_source: str, use_docker: bool = True
     ):
+        """Creates csv files that contain data on the products of the MongoDB collection with the given products_source name.
+        Each csv file has a maximum number of products (10000 by default)."""
         logging.info("Creating csv files...")
         script_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(script_dir)
@@ -287,6 +304,7 @@ class CsvCreator:
     def __create_batches(
         products: list[Product], batch_size=10000
     ) -> list[list[Product]]:
+        """Creates batches of batch_size products."""
         return [
             products[i : i + batch_size] for i in range(0, len(products), batch_size)
         ]
@@ -297,6 +315,13 @@ class CsvCreator:
         products: list[Product],
         warn_mandatory_columns: bool = False,
     ) -> None:
+        """Creates one csv file that contains data on the given products.
+
+        Args:
+            csv_file(str): The name of the csv file
+            products(list[Product]): The list of the products to add in the csv file
+            warn_mandatory_columns(bool): A boolean indicating whether to get warning messages when a mandatory column is empty for each product
+        """
         with open(csv_file, "w", encoding="utf-8", newline="") as file:
             filewriter = csv.writer(
                 file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
@@ -325,6 +350,13 @@ class CsvCreator:
     def __create_csv_line_for_product(
         self, product: Product, columns: list[str]
     ) -> list[str]:
+        """Creates a line for a csv file that contain data on the given product.
+
+        Args:
+            product(Product): The product used to create the line
+            columns(list[str]): The list of the columns to fill for the line
+        Returns:
+            A line for the csv file stored as a list"""
         line = [""] * len(columns)
         serving_size_index = columns.index("Serving size")
 
@@ -363,6 +395,16 @@ class CsvCreator:
         return line
 
     def __add_values(self, columns, line, key, value, old_key_name, nutrition_data_per):
+        """Adds the values stored in the given key field of a product in the corresponding index of the list line based on the list columns.
+
+        Args:
+            columns (list[str]): The list of the names of the columns
+            line (list[str]): The list of the values of the columns
+            key (str): The name of the current field
+            value: The value stored in the field. Can be any type or class.
+            old_key_name (str): The name of the parent field if it exists
+            nutrition_data_per (str): A string representing the base reference on the nutrition data
+        """
         current_key_name = old_key_name + "." + key if old_key_name != "" else key
 
         if (
@@ -400,6 +442,8 @@ class CsvCreator:
 
     @staticmethod
     def __is_simple_field(value) -> bool:
+        """Checks if the given value is a simple field.
+        Here a simple field is defined as str, int, float, decimal, list or datetime."""
         is_simple_field = (
             isinstance(value, str)
             or isinstance(value, int)
@@ -412,6 +456,7 @@ class CsvCreator:
 
     @staticmethod
     def __format_value(value):
+        """Formats the given value in a string type. Adds commas between values for lists."""
         formatted_value = ""
         if isinstance(value, list):
             if len(value) > 0:
@@ -420,13 +465,15 @@ class CsvCreator:
                 formatted_value += str(value[-1])
 
         else:
-            formatted_value = str(value) if not isinstance(value, list) else value
+            formatted_value = str(value)
+
         return formatted_value
 
     @staticmethod
     def __check_fields_not_empty(
         checked_columns: list[str], values_list: list[str]
     ) -> list[str]:
+        """Checks which columns have an empty value (ie empty string) in the values list and returns a list of the columns with empty values."""
         empty_fields = []
 
         for i in range(len(checked_columns)):
@@ -437,6 +484,7 @@ class CsvCreator:
 
     @staticmethod
     def __format_serving_size(household_text, size, unit):
+        """Formats the serving size."""
         if isinstance(household_text, str) and household_text.strip().lower() == "none":
             household_text = ""
 
@@ -461,6 +509,7 @@ class CsvCreator:
 
     @staticmethod
     def __format_decimal(value: float | str | None, max_decimals: int = 5) -> str:
+        """Formats a value to a rounded value with a given number of maximum decimals."""
         try:
             number = float(value)
             rounded = round(number, max_decimals)
@@ -469,7 +518,9 @@ class CsvCreator:
         except (ValueError, TypeError):
             return ""
 
-    def __batched_cursor(self, cursor, batch_size=10000):
+    @staticmethod
+    def __batched_cursor(cursor, batch_size=10000):
+        """Creates batches of a given cursor."""
         batch = []
         for product in cursor:
             batch.append(Product.from_dict(product))

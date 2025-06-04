@@ -5,10 +5,10 @@ import pytest
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.mapper.nutrition_facts_mapper import NutritionFactsMapper
 from domain.product.complexFields.nutrition_facts import NutritionFacts
-from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+from domain.product.complexFields.nutrition_facts_per_hundred_grams import (
     NutritionFactsPerHundredGrams,
 )
-from domain.product.complexFields.nutritionFactsPerServing import (
+from domain.product.complexFields.nutrition_facts_per_serving import (
     NutritionFactsPerServing,
 )
 

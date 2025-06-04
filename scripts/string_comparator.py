@@ -84,12 +84,14 @@ class StringComparator:
 
     @staticmethod
     def replace_null_string(off_field: str, fdc_field: str) -> str:
+        """Returns the FDC field value if the OFF value is null and the FDC value is not, otherwise returns the OFF field value"""
         if off_field is None and fdc_field is not None:
             return fdc_field
         return off_field
 
     @staticmethod
     def replace_null_list(off_list: List[str], fdc_list: List[str]) -> List[str]:
+        """Returns the FDC list if the OFF list is null and the FDC list is not, otherwise returns the OFF list"""
         if off_list is None and fdc_list is not None:
             return fdc_list
         return off_list

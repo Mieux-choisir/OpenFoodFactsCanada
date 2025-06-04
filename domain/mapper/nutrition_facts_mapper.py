@@ -2,10 +2,10 @@ from decimal import Decimal
 
 from domain.mapper.nutrient_amount_mapper import NutrientAmountMapper
 from domain.product.complexFields.nutrition_facts import NutritionFacts
-from domain.product.complexFields.nutritionFactsPerHundredGrams import (
+from domain.product.complexFields.nutrition_facts_per_hundred_grams import (
     NutritionFactsPerHundredGrams,
 )
-from domain.product.complexFields.nutritionFactsPerServing import (
+from domain.product.complexFields.nutrition_facts_per_serving import (
     NutritionFactsPerServing,
 )
 
@@ -46,7 +46,13 @@ class NutritionFactsMapper:
         food_nutrients_per_serving: dict,
         preparation_state_code: str,
     ) -> NutritionFacts:
+        """Maps the values in a given FDC product to a NutritionFacts object
 
+        Args:
+            food_nutrients_per_100g: list of nutrients amounts per hundred grams stored in dictionaries
+            food_nutrients_per_serving: nutrients amounts per serving stored in a dictionary
+            preparation_state_code: the preparation state code for which the nutrients amounts are given
+        """
         nutrition_facts_per_100g = self.__map_fdc_dict_to_nutrition_facts_per_100g(
             food_nutrients_per_100g
         )
@@ -180,6 +186,7 @@ class NutritionFactsMapper:
     def __map_fdc_dict_to_nutrition_facts_per_100g(
         self, food_nutrients: list[dict]
     ) -> NutritionFactsPerHundredGrams:
+        """Maps the values in a given list of nutrient amounts per hundred grams to a NutritionFactsPerHundredGrams object"""
         nutrient_ids = {
             "fat_100g": 1004,
             "sodium_100g": 1093,
@@ -245,6 +252,7 @@ class NutritionFactsMapper:
     def __map_fdc_dict_to_nutrition_facts_per_serving(
         self, food_nutrients_per_serving: dict, preparation_state_code: str
     ) -> NutritionFactsPerServing:
+        """Maps the values in a given list of nutrient amounts per serving to a NutritionFactsPerServing object"""
         is_for_prepared_food = None
         if (
             preparation_state_code is not None
@@ -315,6 +323,11 @@ class NutritionFactsMapper:
     def __get_nutrient_level_per_serving(
         self, food_nutrients_per_serving: dict, nutrient_name: str
     ) -> float:
+        """Returns the value of a given nutrient from its name from the dictionary food_nutrients_per_serving.
+
+        Args:
+            food_nutrients_per_serving: the nutrients dictionary in which the specific nutrient amount is searched
+            nutrient_name: the name of the wanted nutrient"""
         value = None
         if food_nutrients_per_serving.get(nutrient_name) is not None:
             value = food_nutrients_per_serving.get(nutrient_name).get("value")
@@ -344,9 +357,11 @@ class NutritionFactsMapper:
     @staticmethod
     def __get_nutrient_unit(food_nutrients, searched_id):
         """Returns the nutrient unit of a nutrient by its id in a given food nutrients dictionary
+
         Args:
             food_nutrients: the nutrients dictionary in which the specific nutrient unit is searched
-            searched_id: the id of the wanted nutrient"""
+            searched_id: the id of the wanted nutrient
+        """
         return next(
             (
                 item["nutrient"]["unitName"].lower()

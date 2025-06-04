@@ -76,6 +76,8 @@ class Product(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Product":
+        """Creates a Product object from a data dictionary"""
+
         def parse_mongo_date(date_value):
             if not date_value:
                 return None
@@ -83,7 +85,7 @@ class Product(ComplexField):
                 try:
                     return cls.parse_date(date_value)
                 except Exception as e:
-                    logging.warning(f"Impossible de parser la date '{date_value}': {e}")
+                    logging.warning(f"Cannot parse the date '{date_value}': {e}")
                     return None
             return date_value
 

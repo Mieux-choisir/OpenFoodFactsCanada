@@ -44,6 +44,7 @@ class NutritionFactsPerServing(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "NutritionFactsPerServing":
+        """Creates a NutritionFactsPerServing object from a data dictionary"""
         if not data:
             return cls()
         return cls(
