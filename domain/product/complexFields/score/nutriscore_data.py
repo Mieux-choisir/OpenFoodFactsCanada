@@ -8,7 +8,8 @@ class NutriscoreData(ComplexField):
     This is a class that stores data on the NutriScore of a product.
 
     Attributes:
-        energy_100g (Optional[float]): The amount of energy (kJ) in 100g of the product
+        energy_kcal_100g (Optional[float]): The amount of energy (kcal) in 100g of the product
+        fibers_100g (Optional[float]): The amount of fibers (g) in 100g of the product
         proteins_100g (Optional[float]): The amount of proteins (g) in 100g of the product
         saturated_fats_100g (Optional[float]): The amount of saturated fats (g) in 100g of the product
         sodium_100g (Optional[float]): The amount of sodium (g) in 100g of the product

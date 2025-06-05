@@ -23,30 +23,6 @@ def test_should_return_false_for_invalid_pnns_group(product_validator):
     assert result is False
 
 
-def test_should_return_true_for_raw_food_category(product_validator):
-    category = "en:vegetables"
-
-    result = product_validator.check_string_categories(category)
-
-    assert result is True
-
-
-def test_should_return_false_for_transformed_food_category(product_validator):
-    category = "en:snacks"
-
-    result = product_validator.check_string_categories(category)
-
-    assert result is False
-
-
-def test_should_return_false_for_mixed_food_category(product_validator):
-    category = "en:vegetables,en:snacks"
-
-    result = product_validator.check_string_categories(category)
-
-    assert result is False
-
-
 def test_should_return_true_for_raw_food_category_list(product_validator):
     category = ["en:vegetables"]
 

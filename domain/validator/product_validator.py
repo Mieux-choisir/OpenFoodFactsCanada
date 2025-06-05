@@ -42,19 +42,6 @@ class ProductValidator:
         return False
 
     @staticmethod
-    def check_string_categories(category: str) -> bool:
-        """Returns True if the given category is a foundation food AND not a non foundation food, False otherwise"""
-        if category:
-            categories = set(category.split(","))
-            if any(cat in ProductValidator.raw_food_categories for cat in categories):
-                if not any(
-                    cat in ProductValidator.transformed_food_categories
-                    for cat in categories
-                ):
-                    return True
-        return False
-
-    @staticmethod
     def check_list_categories(category: list) -> bool:
         """Returns True if the given category is a foundation food AND not a non foundation food, False otherwise"""
         if (
