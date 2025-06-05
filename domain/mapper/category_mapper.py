@@ -1,5 +1,3 @@
-import re
-
 from domain.utils.category_creator import CategoryCreator
 
 
@@ -49,16 +47,6 @@ class CategoryMapper:
                         break
 
         return off_categories
-
-    @staticmethod
-    def get_fdc_category(category: str) -> str:  # TODO no used
-        """Returns the formatted given FDC category"""
-        formatted_category = re.sub(
-            " +[-&/()']* *|[=&/()]", "-", category.strip().lower().replace(",", "")
-        )
-        formatted_category = "en:" + formatted_category.rstrip("-")
-
-        return formatted_category
 
     def __get_off_categories_from_given_categories(
         self, given_categories_list: list[str]
