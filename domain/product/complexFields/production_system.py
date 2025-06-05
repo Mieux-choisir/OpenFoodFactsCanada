@@ -19,6 +19,7 @@ class ProductionSystem(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ProductionSystem":
+        """Creates a ProductionSystem object from a data dictionary"""
         if not data:
             return cls()
         return cls(

@@ -47,9 +47,7 @@ class ProductMapper:
         ingredients_field = "ingredients"
         food_nutrients_field = "foodNutrients"
 
-        category_field = (
-            "brandedFoodCategory"  # TODO convert fdc categories to off food groups
-        )
+        category_field = "brandedFoodCategory"
 
         return Product(
             id_match=product_dict[id_field]

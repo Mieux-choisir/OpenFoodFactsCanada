@@ -37,41 +37,6 @@ def category_mapper(category_creator):
 
 
 # ----------------------------------------------------------------
-# Tests get_off_categories_of_off_product
-# ----------------------------------------------------------------
-
-
-def test_should_return_other_category_for_absent_category_in_off_categories(
-    category_mapper,
-):
-    absent_category = "en:absent-category"
-
-    result = category_mapper.get_off_categories_of_off_product(absent_category)
-
-    assert result == ["en:other"]
-
-
-def test_should_return_corresponding_category_in_for_found_category_in_off_categories(
-    category_mapper,
-):
-    present_category = "en:other-category1"
-
-    result = category_mapper.get_off_categories_of_off_product(present_category)
-
-    assert result == ["en:category1"]
-
-
-def test_should_return_only_most_precise_categories_for_found_categories_in_hierarchical_order_in_off_categories(
-    category_mapper,
-):
-    present_categories = "en:other-category1, en:category2, en:category3, en:category4"
-
-    result = category_mapper.get_off_categories_of_off_product(present_categories)
-
-    assert result.sort() == ["en:category3", "en:category4"].sort()
-
-
-# ----------------------------------------------------------------
 # Tests get_off_categories_of_fdc_product
 # ----------------------------------------------------------------
 

@@ -66,16 +66,10 @@ class Product(ComplexField):
     ecoscore_data: Optional[EcoscoreData] = EcoscoreData()
     nova_data: Optional[NovaData] = NovaData()
 
-    def has_at_least_one_score(self) -> bool:
-        """Returns true if the product has at least one score available (ie not None)"""
-        return self.product_name is not None and (
-            self.nutriscore_data.score is not None
-            or self.ecoscore_data.score is not None
-            or self.nova_data.score is not None
-        )
-
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Product":
+        """Creates a Product object from a data dictionary"""
+
         def parse_mongo_date(date_value):
             if not date_value:
                 return None
@@ -83,7 +77,7 @@ class Product(ComplexField):
                 try:
                     return cls.parse_date(date_value)
                 except Exception as e:
-                    logging.warning(f"Impossible de parser la date '{date_value}': {e}")
+                    logging.warning(f"Cannot parse the date '{date_value}': {e}")
                     return None
             return date_value
 

@@ -17,6 +17,7 @@ class Packaging(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Packaging":
+        """Creates a Packaging object from a data dictionary"""
         if not data:
             return cls()
         return cls(

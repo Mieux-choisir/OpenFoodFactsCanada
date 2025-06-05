@@ -22,9 +22,8 @@ class NutriscoreDataMapper:
         self.number_mapper = number_mapper
         self.energy_kcal_to_kj = Decimal(4.1868)
 
-    def map_fdc_dict_to_nutriscore_data(
-        self, food_nutrients: list[dict]
-    ) -> NutriscoreData:
+    @staticmethod
+    def map_fdc_dict_to_nutriscore_data(food_nutrients: list[dict]) -> NutriscoreData:
         """Maps the given food nutrients list of an FDC product to a NutriscoreData object"""
         nutrient_ids = {
             "fibers_100g": 1079,

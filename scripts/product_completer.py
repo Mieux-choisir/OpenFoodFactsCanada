@@ -5,8 +5,16 @@ from pymongo import MongoClient
 
 
 class ProductCompleter:
-    def complete_products(self, use_docker=True):
+    """
+    This is a class that completes products.
 
+    Methods:
+        complete_products(use_docker): Completes the OFF products with the data of FDC products and stores the updated products in a new collection.
+    """
+
+    def complete_products(self, use_docker=True):
+        """Completes the OFF products with the data of FDC products and stores the updated products in a new collection.
+        At the end of the completion a summary of the modifications is given."""
         connection_string = (
             "mongodb://mongo:27017/" if use_docker else "mongodb://localhost:37017"
         )
@@ -41,7 +49,7 @@ class ProductCompleter:
 
             while off_product and fdc_product:
                 if off_product["id_match"] == fdc_product["id_match"]:
-                    merged_off_product, overwritten, completed = self.merge_documents(
+                    merged_off_product, overwritten, completed = self.__merge_documents(
                         off_product, fdc_product
                     )
 
@@ -68,7 +76,10 @@ class ProductCompleter:
 
             logging.info(f"Total skipped products: {count_skipped}")
 
-    def merge_documents(self, off_product, fdc_product, parent_key=""):
+    def __merge_documents(self, off_product, fdc_product, parent_key=""):
+        """Completes the given OFF product with the data of the given FDC product.
+        Returns the updated product, the list of its overwritten fields and the list of its completed fields.
+        """
         if not isinstance(off_product, dict) or not isinstance(fdc_product, dict):
             return off_product if off_product is not None else fdc_product, [], []
 
@@ -111,7 +122,7 @@ class ProductCompleter:
             ]:
                 merged[key] = off_value
             elif isinstance(off_value, dict) and isinstance(fdc_value, dict):
-                merged_value, sub_overwritten, sub_completed = self.merge_documents(
+                merged_value, sub_overwritten, sub_completed = self.__merge_documents(
                     off_value, fdc_value, full_key
                 )
                 merged[key] = merged_value

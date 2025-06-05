@@ -644,11 +644,6 @@ def test_should_return_mapped_ingredients_in_product_for_given_off_dict(
 def test_should_return_mapped_off_categories_in_product_for_off_dict(
     product_mapper, off_dict, mock_off_dict_functions
 ):
-    product_mapper.category_mapper.get_off_categories_of_off_product.return_value = [
-        "en:breads",
-        "en:meals",
-    ]
-
     result = product_mapper.map_off_dict_to_product(off_dict)
 
     assert result.off_categories_en == ["en:breads", "en:meals"]

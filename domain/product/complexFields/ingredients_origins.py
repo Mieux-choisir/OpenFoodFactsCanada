@@ -19,6 +19,7 @@ class IngredientsOrigins(ComplexField):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "IngredientsOrigins":
+        """Creates an IngredientsOrigins object from a data dictionary"""
         if not data:
             return cls()
         return cls(
